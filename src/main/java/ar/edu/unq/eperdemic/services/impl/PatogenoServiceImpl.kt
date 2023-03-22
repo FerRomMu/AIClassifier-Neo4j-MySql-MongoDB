@@ -12,7 +12,7 @@ class PatogenoServiceImpl(var patogenoDAO: PatogenoDAO) : PatogenoService {
     }
 
     override fun recuperarPatogeno(id: Long): Patogeno {
-        TODO("not implemented")
+        return patogenoDAO.recuperar(id);
     }
 
     override fun recuperarATodosLosPatogenos(): List<Patogeno> {
