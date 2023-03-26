@@ -1,7 +1,6 @@
 package ar.edu.unq.eperdemic
 
 import ar.edu.unq.eperdemic.modelo.Patogeno
-import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCPatogenoDAO
 import ar.edu.unq.eperdemic.services.PatogenoService
@@ -31,4 +30,14 @@ class PatogenoServiceTest {
         Assertions.assertEquals(patogenoCreado.id!! , patogeno.id!! )
     }
 
+    @Test
+    fun testRecuperarATodos(){
+        val otroPatogeno = Patogeno("Covid")
+        otroPatogeno.id = 2
+
+        //patogenoService.crearPatogeno(otroPatogeno)
+
+        val patogenos = patogenoService.recuperarATodosLosPatogenos()
+        Assertions.assertEquals(2, patogenos.size)
+    }
 }
