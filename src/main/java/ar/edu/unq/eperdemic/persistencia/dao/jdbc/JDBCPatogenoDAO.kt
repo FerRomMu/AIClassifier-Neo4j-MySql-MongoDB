@@ -73,15 +73,8 @@ class JDBCPatogenoDAO : PatogenoDAO {
 
     init {
         val initializeScript = javaClass.classLoader.getResource("createAll.sql").readText()
-        execute {connection ->
-            val scripts = initializeScript.split(";")
-            scripts.forEach{ script ->
-                connection.prepareStatement(script)
-                    .use {
-                        it.execute()
-                    }
-            }
-            null
+        execute {
+            it.prepareStatement(initializeScript).use { ps -> ps.execute() }
         }
     }
 }

@@ -1,26 +1,33 @@
 package ar.edu.unq.eperdemic
 
 import ar.edu.unq.eperdemic.modelo.Patogeno
+import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCPatogenoDAO
+import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 
-
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(PER_CLASS)
 class PatogenoServiceTest {
+    private val patogenoDAO: PatogenoDAO = JDBCPatogenoDAO()
+    lateinit var patogeno: Patogeno
+    private val patogenoService: PatogenoService = PatogenoServiceImpl(patogenoDAO);
+
+    @BeforeEach
+    fun crearModelo() {
+
+        patogeno = Patogeno("Gripe");
+        patogeno.cantidadDeEspecies = 1
+        patogeno.id = 1;
+
+    }
 
     @Test
     fun testCrear(){
-        val dao = JDBCPatogenoDAO();
-        val service = PatogenoServiceImpl(dao);
+        val patogenoCreado = patogenoService.crearPatogeno(patogeno);
 
-        val patogeno = Patogeno("Gripe");
-        patogeno.id = 1;
-
-        service.crearPatogeno(patogeno);
-        assertTrue(true);
+        Assertions.assertEquals(patogenoCreado.id!! , patogeno.id!! )
     }
 
 }
