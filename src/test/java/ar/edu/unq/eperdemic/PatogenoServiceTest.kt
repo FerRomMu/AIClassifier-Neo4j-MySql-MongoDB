@@ -22,14 +22,15 @@ class PatogenoServiceTest {
     @BeforeEach
     fun crearModelo() {
 
-        patogeno = Patogeno("Gripe");
-        patogeno.cantidadDeEspecies = 1
-        patogeno.id = 1;
+        dataService.crearSetDatosIniciales()
 
     }
 
     @Test
     fun testCrear(){
+        patogeno = Patogeno("Gripe");
+        patogeno.cantidadDeEspecies = 1
+        patogeno.id = 10000000;
         val patogenoCreado = patogenoService.crearPatogeno(patogeno);
 
         Assertions.assertEquals(patogenoCreado.id!! , patogeno.id!! )
