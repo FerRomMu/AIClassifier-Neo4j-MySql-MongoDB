@@ -8,7 +8,12 @@ class JDBCDataDAO: DataDAO {
 
     override fun clear() {
         execute { conn: Connection ->
-            conn.prepareStatement("DELETE * FROM patogeno").use { ps ->
+            conn.prepareStatement("DELETE FROM patogeno WHERE id!=0").use { ps ->
+                ps.execute()
+            }
+        }
+        execute { conn: Connection ->
+            conn.prepareStatement("DELETE FROM patogeno WHERE id=0").use { ps ->
                 ps.execute()
             }
         }
