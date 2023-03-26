@@ -51,7 +51,7 @@ class JDBCPatogenoDAO : PatogenoDAO {
 
 
             return JDBCConnector.execute { conn: Connection ->
-                conn.prepareStatement("SELECT id, tipo, cantidadDeEspecies FROM patogeno ORDER BY ASC tipo")
+                conn.prepareStatement("SELECT id, tipo, cantidadDeEspecies FROM patogeno ORDER BY tipo ASC")
                     .use { ps ->
                         val resultSet = ps.executeQuery()
                         var patogeno: Patogeno? = null
