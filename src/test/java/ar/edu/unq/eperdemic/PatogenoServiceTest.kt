@@ -5,8 +5,12 @@ import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCPatogenoDAO
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+
 
 @TestInstance(PER_CLASS)
 class PatogenoServiceTest {
@@ -18,7 +22,7 @@ class PatogenoServiceTest {
     fun crearModelo() {
 
         patogeno = Patogeno("Gripe");
-        patogeno.cantidadDeEspecies = 1
+        patogeno.cantidadDeEspecies = 0
         patogeno.id = 1;
 
     }
@@ -27,9 +31,18 @@ class PatogenoServiceTest {
     fun testCrear(){
         val patogenoCreado = patogenoService.crearPatogeno(patogeno);
 
-        Assertions.assertEquals(patogenoCreado.id!! , patogeno.id!! )
+        assertEquals(patogenoCreado.id!! , patogeno.id!! )
     }
 
+    @Test
+    fun testRecuperar() {
+        val patogenoObtenido = patogenoService.recuperarPatogeno(1)
+
+        assertEquals(1, patogenoObtenido.id!!)
+        assertEquals(0, patogenoObtenido.cantidadDeEspecies)
+        assertEquals("Gripe", patogenoObtenido.tipo)
+    }
+    
     @Test
     fun testRecuperarATodos(){
         val otroPatogeno = Patogeno("Covid")
