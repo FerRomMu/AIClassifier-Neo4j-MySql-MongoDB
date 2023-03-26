@@ -13,7 +13,7 @@ class DataServiceImpl(val patogenoDao: PatogenoDAO, val dataDao: DataDAO): DataS
 
     override fun crearSetDatosIniciales() {
         val patogeno = Patogeno("Tipo 0")
-        for (i in 0..50){
+        for (i in 0..20){
             patogeno.id = i.toLong()
             patogeno.tipo = "Tipo $i"
             patogeno.cantidadDeEspecies = i
