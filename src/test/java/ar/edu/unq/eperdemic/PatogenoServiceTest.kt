@@ -42,4 +42,15 @@ class PatogenoServiceTest {
         assertEquals(0, patogenoObtenido.cantidadDeEspecies)
         assertEquals("Gripe", patogenoObtenido.tipo)
     }
+    
+    @Test
+    fun testRecuperarATodos(){
+        val otroPatogeno = Patogeno("Covid")
+        otroPatogeno.id = 2
+
+        //patogenoService.crearPatogeno(otroPatogeno)
+
+        val patogenos = patogenoService.recuperarATodosLosPatogenos()
+        Assertions.assertEquals(2, patogenos.size)
+    }
 }

@@ -48,8 +48,28 @@ class JDBCPatogenoDAO : PatogenoDAO {
     }
 
     override fun recuperarATodos(): List<Patogeno> {
-        TODO("not implemented")
-    }
+
+
+            return JDBCConnector.execute { conn: Connection ->
+                conn.prepareStatement("SELECT id, tipo, cantidadDeEspecies FROM patogeno ORDER BY tipo ASC")
+                    .use { ps ->
+                        val resultSet = ps.executeQuery()
+                        var patogeno: Patogeno? = null
+                        val patogenos = mutableListOf<Patogeno>();
+                        while (resultSet.next()) {
+                            patogeno = Patogeno(resultSet.getString("tipo"))
+
+                            var pID =  resultSet.getInt("id").toLong();
+                            patogeno.id = pID;
+
+                            patogeno.cantidadDeEspecies = resultSet.getInt("cantidadDeEspecies")
+                            patogenos.add(patogeno)
+                        }
+                        patogenos.toList()
+                    }
+            }
+        }
+
 
     init {
         val initializeScript = javaClass.classLoader.getResource("createAll.sql").readText()
