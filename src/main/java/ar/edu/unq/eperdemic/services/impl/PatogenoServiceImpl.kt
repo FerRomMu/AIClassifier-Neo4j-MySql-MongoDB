@@ -20,7 +20,10 @@ class PatogenoServiceImpl(var patogenoDAO: PatogenoDAO) : PatogenoService {
     }
 
     override fun agregarEspecie(id: Long, nombre: String, paisDeOrigen: String): Especie {
-        TODO("not implemented")
+        val patogenoAActualizar = patogenoDAO.recuperar(id);
+        val especie = patogenoAActualizar.crearEspecie(nombre,paisDeOrigen);
+        patogenoDAO.actualizar(patogenoAActualizar);
+        return especie;
     }
 
     override fun actualizarPatogeno(patogeno: Patogeno) {

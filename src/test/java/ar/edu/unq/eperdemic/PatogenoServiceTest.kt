@@ -57,6 +57,17 @@ class PatogenoServiceTest {
     }
 
     @Test
+    fun testAgregarEspecie() {
+        var patogenoToTest = patogenoService.recuperarPatogeno(1)
+        assertEquals(1, patogenoToTest.cantidadDeEspecies)
+
+        patogenoService.agregarEspecie(1, "sars", "China")
+
+        patogenoToTest = patogenoService.recuperarPatogeno(1)
+        assertEquals(2, patogenoToTest.cantidadDeEspecies)
+    }
+
+    @Test
     fun testActualizarPatogeno() {
         val patogenoAActualizar = patogenoService.recuperarPatogeno(2)
         patogenoAActualizar.tipo = "Tipo 2 actualizado"
