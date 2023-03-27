@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic
 
+import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCDataDAO
@@ -13,76 +14,73 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.runner.RunWith
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
+import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.junit.jupiter.MockitoExtension
 
 
-@TestInstance(PER_CLASS)
+//@TestInstance(PER_CLASS)
+//@RunWith(MockitoJUnitRunner::class)
+
+@ExtendWith(MockitoExtension::class)
 class PatogenoServiceTest {
-    private val patogenoDAO: PatogenoDAO = JDBCPatogenoDAO()
-    lateinit var patogeno: Patogeno
-    private val patogenoService: PatogenoService = PatogenoServiceImpl(patogenoDAO);
-    private val dataDAO = JDBCDataDAO();
-    private val dataService = DataServiceImpl(patogenoDAO, dataDAO)
+
+    @Mock
+    lateinit var patogenoDAO : PatogenoDAO;
+
+    lateinit var patogeno :Patogeno;
+
+    @InjectMocks
+    lateinit var patogenoService: PatogenoServiceImpl;
 
     @BeforeEach
     fun crearModelo() {
-
-        dataService.crearSetDatosIniciales()
-
     }
+
 
     @Test
     fun testCrearPatogeno(){
-        patogeno = Patogeno("Gripe");
-        patogeno.cantidadDeEspecies = 1
-        patogeno.id = 10000000;
-        val patogenoCreado = patogenoService.crearPatogeno(patogeno);
-
-        assertEquals(patogenoCreado.id!! , patogeno.id!! )
+        patogeno = Patogeno("Gripe")
+        patogenoService.crearPatogeno(patogeno)
+        Mockito.verify(patogenoDAO).crear(patogeno)
     }
 
     @Test
     fun testRecuperarPatogeno() {
-        val patogenoObtenido = patogenoService.recuperarPatogeno(1)
-
-        assertEquals(1, patogenoObtenido.id!!)
-        assertEquals(1, patogenoObtenido.cantidadDeEspecies)
-        assertEquals("Tipo 1", patogenoObtenido.tipo)
+        var id : Long = 1;
+        patogenoService.recuperarPatogeno(id)
+        Mockito.verify(patogenoDAO).recuperar(id)
     }
     
     @Test
     fun testRecuperarATodosLosPatogenos(){
-        val patogenos = patogenoService.recuperarATodosLosPatogenos()
-
-        assertEquals(21, patogenos.size)
+        patogenoService.recuperarATodosLosPatogenos()
+        Mockito.verify(patogenoDAO).recuperarATodos()
     }
 
     @Test
     fun testAgregarEspecie() {
-        var patogenoToTest = patogenoService.recuperarPatogeno(1)
-        assertEquals(1, patogenoToTest.cantidadDeEspecies)
+        patogeno = Patogeno("Gripe")
+        var id : Long = 1;
+        `when`(patogenoDAO.recuperar(id)).thenReturn(patogeno)
 
-        patogenoService.agregarEspecie(1, "sars", "China")
-
-        patogenoToTest = patogenoService.recuperarPatogeno(1)
-        assertEquals(2, patogenoToTest.cantidadDeEspecies)
+        patogenoService.agregarEspecie(id,"Gripe","Chile")
+        Mockito.verify(patogenoDAO).recuperar(id)
+        Mockito.verify(patogenoDAO).actualizar(patogeno)
     }
 
     @Test
     fun testActualizarPatogeno() {
-        val patogenoAActualizar = patogenoService.recuperarPatogeno(2)
-        patogenoAActualizar.tipo = "Tipo 2 actualizado"
-        patogenoAActualizar.cantidadDeEspecies = 3000
-
-        patogenoService.actualizarPatogeno(patogenoAActualizar)
-
-        val patogenoActualizado = patogenoService.recuperarPatogeno(patogenoAActualizar.id!!)
-
-        assertEquals("Tipo 2 actualizado", patogenoActualizado.tipo)
-        assertEquals(3000, patogenoActualizado.cantidadDeEspecies)
+        patogeno = Patogeno("Gripe")
+        patogenoService.actualizarPatogeno(patogeno)
+        Mockito.verify(patogenoDAO).actualizar(patogeno)
     }
 
-    @AfterEach
-    fun restartDB() {
-        dataService.deleteAll()
-    }
+
 }
