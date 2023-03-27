@@ -55,6 +55,17 @@ class PatogenoServiceTest {
         assertEquals(21, patogenos.size)
     }
 
+    @Test
+    fun testAgregarEspecie() {
+        var patogenoToTest = patogenoService.recuperarPatogeno(1)
+        assertEquals(1, patogenoToTest.cantidadDeEspecies)
+
+        patogenoService.agregarEspecie(1, "sars", "China")
+
+        patogenoToTest = patogenoService.recuperarPatogeno(1)
+        assertEquals(2, patogenoToTest.cantidadDeEspecies)
+    }
+
     @AfterEach
     fun restartDB() {
         dataService.deleteAll()
