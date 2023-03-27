@@ -31,7 +31,7 @@ class PatogenoServiceTest {
     }
 
     @Test
-    fun testCrear(){
+    fun testCrearPatogeno(){
         patogeno = Patogeno("Gripe");
         patogeno.cantidadDeEspecies = 1
         patogeno.id = 10000000;
@@ -41,18 +41,33 @@ class PatogenoServiceTest {
     }
 
     @Test
-    fun testRecuperar() {
+    fun testRecuperarPatogeno() {
         val patogenoObtenido = patogenoService.recuperarPatogeno(1)
 
         assertEquals(1, patogenoObtenido.id!!)
-        assertEquals(0, patogenoObtenido.cantidadDeEspecies)
-        assertEquals("Gripe", patogenoObtenido.tipo)
+        assertEquals(1, patogenoObtenido.cantidadDeEspecies)
+        assertEquals("Tipo 1", patogenoObtenido.tipo)
     }
     
     @Test
-    fun testRecuperarATodos(){
+    fun testRecuperarATodosLosPatogenos(){
         val patogenos = patogenoService.recuperarATodosLosPatogenos()
+
         assertEquals(21, patogenos.size)
+    }
+
+    @Test
+    fun testActualizarPatogeno() {
+        val patogenoAActualizar = patogenoService.recuperarPatogeno(2)
+        patogenoAActualizar.tipo = "Tipo 2 actualizado"
+        patogenoAActualizar.cantidadDeEspecies = 3000
+
+        patogenoService.actualizarPatogeno(patogenoAActualizar)
+
+        val patogenoActualizado = patogenoService.recuperarPatogeno(patogenoAActualizar.id!!)
+
+        assertEquals("Tipo 2 actualizado", patogenoActualizado.tipo)
+        assertEquals(3000, patogenoActualizado.cantidadDeEspecies)
     }
 
     @AfterEach

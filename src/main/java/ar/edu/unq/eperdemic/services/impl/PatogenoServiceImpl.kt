@@ -23,4 +23,8 @@ class PatogenoServiceImpl(var patogenoDAO: PatogenoDAO) : PatogenoService {
         TODO("not implemented")
     }
 
+    override fun actualizarPatogeno(patogeno: Patogeno) {
+            patogenoDAO.actualizar(patogeno)
+    }
+
 }
