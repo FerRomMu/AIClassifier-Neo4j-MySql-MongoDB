@@ -22,7 +22,15 @@ class JDBCPatogenoDAO : PatogenoDAO {
     }
 
     override fun actualizar(patogeno: Patogeno) {
-        TODO("not implemented")
+        execute { conn: Connection ->
+            conn.prepareStatement("UPDATE patogeno SET tipo = ?, cantidadDeEspecies = ? WHERE id = ?")
+                .use { ps ->
+                    ps.setString(1, patogeno.tipo)
+                    ps.setInt(2, patogeno.cantidadDeEspecies)
+                    ps.setLong(3,patogeno.id!!)
+                    ps.execute()
+                }
+        }
     }
 
     override fun recuperar(patogenoId: Long): Patogeno {
