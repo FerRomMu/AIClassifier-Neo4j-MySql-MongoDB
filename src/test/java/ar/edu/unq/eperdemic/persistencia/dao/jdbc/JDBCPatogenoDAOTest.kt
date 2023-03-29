@@ -65,6 +65,13 @@ internal class JDBCPatogenoDAOTest {
     }
 
     @Test
+    fun `Si creo un patogeno con tipo existente me devuelve un error`() {
+
+        TODO("")
+
+    }
+
+    @Test
     fun `Si actualizo un patogeno existente este se actualiza`() {
 
         val patogenoAActualizar = patogenoDAO.recuperar(1)
