@@ -81,16 +81,21 @@ internal class JDBCPatogenoDAOTest {
     }
 
     @Test
-    fun recuperarTest() {
+    fun `Si recupero un patogeno existente recibo una instancia de él`() {
 
-        val patogenoCreado = patogenoDAO.crear(patogeno);
-        val patogenoObtenido = patogenoDAO.recuperar(10000000)
+        val patogenoObtenido = patogenoDAO.recuperar(1)
 
-        assertEquals(10000000, patogenoObtenido.id!!)
+        assertEquals(1, patogenoObtenido.id!!)
         assertEquals(1, patogenoObtenido.cantidadDeEspecies)
-        assertEquals("Gripe", patogenoObtenido.tipo)
+        assertEquals("Tipo 1", patogenoObtenido.tipo)
 
-        assertTrue(patogenoObtenido !== patogeno)
+    }
+
+    @Test
+    fun `Si recupero un patogeno inexistente lanza error`(){
+
+        TODO("hay que implementar esta logica")
+
     }
 
     @Test
