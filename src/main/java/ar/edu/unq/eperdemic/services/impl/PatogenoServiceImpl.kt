@@ -26,8 +26,4 @@ class PatogenoServiceImpl(var patogenoDAO: PatogenoDAO) : PatogenoService {
         return especie;
     }
 
-    override fun actualizarPatogeno(patogeno: Patogeno) {
-            patogenoDAO.actualizar(patogeno)
-    }
-
 }
