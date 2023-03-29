@@ -10,11 +10,10 @@ class JDBCPatogenoDAO : PatogenoDAO {
 
     override fun crear(patogeno: Patogeno): Patogeno {
         execute { conn: Connection ->
-            conn.prepareStatement("INSERT INTO patogeno (tipo, id, cantidadDeEspecies) VALUES (?,?,?)")
+            conn.prepareStatement("INSERT INTO patogeno (tipo, cantidadDeEspecies) VALUES (?,?)")
                 .use  { ps ->
                     ps.setString(1, patogeno.tipo)
-                    ps.setLong(2, patogeno.id!!)
-                    ps.setInt(3, patogeno.cantidadDeEspecies)
+                    ps.setInt(2, patogeno.cantidadDeEspecies)
                     ps.execute()
                 }
         }
