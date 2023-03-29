@@ -58,6 +58,13 @@ internal class JDBCPatogenoDAOTest {
     }
 
     @Test
+    fun `Si creo un patogeno con id existente me devuelve un error`() {
+
+        TODO("")
+
+    }
+
+    @Test
     fun `Si actualizo un patogeno existente este se actualiza`() {
 
         val patogenoAActualizar = patogenoDAO.recuperar(1)
@@ -99,25 +106,6 @@ internal class JDBCPatogenoDAOTest {
     }
 
     @Test
-    fun recuperar2IdIgualesTest() {
-
-
-        val patogenoDuplicado = Patogeno("sarampion");
-        patogenoDuplicado.cantidadDeEspecies = 250
-        patogenoDuplicado.id = 10000000;
-
-        val patogenoCreado = patogenoDAO.crear(patogeno);
-        val patogenoCreadoDuplicado = patogenoDAO.crear(patogenoDuplicado);
-
-
-        val exception = assertThrows(RuntimeException::class.java) {
-            val mensaje = patogenoDAO.recuperar(10000000)
-        }
-        assertEquals("Existe mas de un patogeno con el id 10000000", exception)
-
-    }
-
-    @Test
     fun recuperarATodos() {
         val patogeno2 = Patogeno("sarampion");
         patogeno2.cantidadDeEspecies = 250
@@ -139,6 +127,5 @@ internal class JDBCPatogenoDAOTest {
     fun restartDB() {
         dataService.deleteAll()
     }
-
 
 }
