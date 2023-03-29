@@ -8,12 +8,7 @@ class JDBCDataDAO: DataDAO {
 
     override fun clear() {
         execute { conn: Connection ->
-            conn.prepareStatement("DELETE FROM patogeno WHERE id!=0").use { ps ->
-                ps.execute()
-            }
-        }
-        execute { conn: Connection ->
-            conn.prepareStatement("DELETE FROM patogeno WHERE id=0").use { ps ->
+            conn.prepareStatement("DELETE FROM patogeno").use { ps ->
                 ps.execute()
             }
         }
@@ -21,8 +16,11 @@ class JDBCDataDAO: DataDAO {
 
     init {
         val initializeScript = javaClass.classLoader.getResource("createAll.sql").readText()
-        JDBCConnector.execute {
+        execute {
             it.prepareStatement(initializeScript).use { ps -> ps.execute() }
+        }
+        execute {
+            it.prepareStatement("SET SQL_SAFE_UPDATES=0").use { ps -> ps.execute() }
         }
     }
 }
