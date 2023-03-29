@@ -5,8 +5,8 @@ import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCPatogenoDAO
 import ar.edu.unq.eperdemic.services.PatogenoService
-import ar.edu.unq.eperdemic.services.impl.DataServiceImpl
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
+import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -21,12 +21,12 @@ class PatogenoServiceTest {
     lateinit var patogeno: Patogeno
     private val patogenoService: PatogenoService = PatogenoServiceImpl(patogenoDAO);
     private val dataDAO = JDBCDataDAO();
-    private val dataService = DataServiceImpl(patogenoDAO, dataDAO)
+    private val dataService = DataServiceJDBC(patogenoDAO, dataDAO)
 
     @BeforeEach
     fun crearModelo() {
 
-        dataService.crearSetDatosIniciales()
+        dataService.crearSetDeDatosIniciales()
 
     }
 
@@ -83,6 +83,6 @@ class PatogenoServiceTest {
 
     @AfterEach
     fun restartDB() {
-        dataService.deleteAll()
+        dataService.eliminarTodo()
     }
 }

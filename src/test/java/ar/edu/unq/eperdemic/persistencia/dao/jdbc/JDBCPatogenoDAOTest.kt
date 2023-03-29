@@ -3,8 +3,8 @@ package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.services.PatogenoService
-import ar.edu.unq.eperdemic.services.impl.DataServiceImpl
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
+import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -21,7 +21,7 @@ internal class JDBCPatogenoDAOTest {
 
     private val patogenoService: PatogenoService = PatogenoServiceImpl(patogenoDAO);
     private val dataDAO = JDBCDataDAO();
-    private val dataService = DataServiceImpl(patogenoDAO, dataDAO)
+    private val dataService = DataServiceJDBC(patogenoDAO, dataDAO)
 
     @BeforeEach
     fun setUp() {
@@ -29,7 +29,7 @@ internal class JDBCPatogenoDAOTest {
         patogeno.cantidadDeEspecies = 1
         patogeno.id = 10000000;
 
-        dataService.crearSetDatosIniciales()
+        dataService.crearSetDeDatosIniciales()
 
     }
 
@@ -116,7 +116,7 @@ internal class JDBCPatogenoDAOTest {
     @Test
     fun `RecuperarTodos trae los datos en orden`() {
 
-        dataService.deleteAll()
+        dataService.eliminarTodo()
 
         val patogenoA = Patogeno("A")
         val patogenoC = Patogeno("C")
@@ -145,7 +145,7 @@ internal class JDBCPatogenoDAOTest {
     @Test
     fun `si no hay datos en la BD recuperarTodos devuelve una lista vacia`() {
 
-        dataService.deleteAll()
+        dataService.eliminarTodo()
         val ningunPatogeno = patogenoDAO.recuperarATodos()
 
         assertTrue(ningunPatogeno.isEmpty())
@@ -154,7 +154,7 @@ internal class JDBCPatogenoDAOTest {
 
     @AfterEach
     fun restartDB() {
-        dataService.deleteAll()
+        dataService.eliminarTodo()
     }
 
 }
