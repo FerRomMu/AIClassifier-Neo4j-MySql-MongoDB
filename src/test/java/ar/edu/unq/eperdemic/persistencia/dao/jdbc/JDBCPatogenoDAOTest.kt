@@ -106,21 +106,50 @@ internal class JDBCPatogenoDAOTest {
     }
 
     @Test
-    fun recuperarATodos() {
-        val patogeno2 = Patogeno("sarampion");
-        patogeno2.cantidadDeEspecies = 250
-        patogeno2.id = 200;
-
-        val patogeno3 = Patogeno("sarampion");
-        patogeno2.cantidadDeEspecies = 250
-        patogeno2.id = 150;
-
-        val patogenoCreado1 = patogenoDAO.crear(patogeno);
-        val patogenoCreado2 = patogenoDAO.crear(patogeno2);
-        val patogenoCreado3 = patogenoDAO.crear(patogeno3);
+    fun `RecuperarTodos trae todo el set de datos iniciales`() {
 
         val patogenos = patogenoDAO.recuperarATodos()
-        assertEquals(3, patogenos.size)
+        assertEquals(21, patogenos.size)
+
+    }
+
+    @Test
+    fun `RecuperarTodos trae los datos en orden`() {
+
+        dataService.deleteAll()
+
+        val patogenoA = Patogeno("A")
+        val patogenoC = Patogeno("C")
+        val patogenoB = Patogeno("B")
+        val patogenoD = Patogeno("D")
+
+        patogenoA.id = 1
+        patogenoC.id = 2
+        patogenoB.id = 3
+        patogenoD.id = 4
+
+        patogenoDAO.crear(patogenoA)
+        patogenoDAO.crear(patogenoC)
+        patogenoDAO.crear(patogenoB)
+        patogenoDAO.crear(patogenoD)
+
+        val nombres = patogenoDAO.recuperarATodos().map { it -> it.tipo }
+
+        assertEquals("A", nombres[0])
+        assertEquals("B", nombres[1])
+        assertEquals("C", nombres[2])
+        assertEquals("D", nombres[3])
+
+    }
+
+    @Test
+    fun `si no hay datos en la BD recuperarTodos devuelve una lista vacia`() {
+
+        dataService.deleteAll()
+        val ningunPatogeno = patogenoDAO.recuperarATodos()
+
+        assertTrue(ningunPatogeno.isEmpty())
+
     }
 
     @AfterEach
