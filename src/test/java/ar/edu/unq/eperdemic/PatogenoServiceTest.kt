@@ -25,6 +25,7 @@ class PatogenoServiceTest {
 
     @BeforeEach
     fun crearModelo() {
+
     }
 
 
@@ -65,6 +66,5 @@ class PatogenoServiceTest {
         patogenoService.actualizarPatogeno(patogeno)
         Mockito.verify(patogenoDAO).actualizar(patogeno)
     }
-
 
 }
