@@ -44,9 +44,8 @@ internal class JDBCPatogenoDAOTest {
 
     }
 
-
     @Test
-    fun `Si persisto un patogeno puedo recuperarlo`() {
+    fun `Si persisto un patogeno puedo recuperar una nueva instancia de él`() {
 
         val patogenoCreado = patogenoDAO.crear(patogeno);
         val patogenoRecuperado = patogenoDAO.recuperar(patogeno.id!!)
@@ -59,21 +58,26 @@ internal class JDBCPatogenoDAOTest {
     }
 
     @Test
-    fun actualizarTest() {
+    fun `Si actualizo un patogeno existente este se actualiza`() {
 
-        val patogenoCreado = patogenoDAO.crear(patogeno);
-
-        val patogenoAActualizar = patogenoDAO.recuperar(10000000)
-        patogenoAActualizar.tipo = "Tipo 2 actualizado"
-        patogenoAActualizar.cantidadDeEspecies = 3000
+        val patogenoAActualizar = patogenoDAO.recuperar(1)
+        patogenoAActualizar.tipo = "Tipo 1 actualizado"
+        patogenoAActualizar.cantidadDeEspecies = 2
 
         patogenoService.actualizarPatogeno(patogenoAActualizar)
 
         val patogenoActualizado = patogenoDAO.recuperar(patogenoAActualizar.id!!)
 
-        assertEquals("Tipo 2 actualizado", patogenoActualizado.tipo)
-        assertEquals(3000, patogenoActualizado.cantidadDeEspecies)
+        assertEquals("Tipo 1 actualizado", patogenoActualizado.tipo)
+        assertEquals(2, patogenoActualizado.cantidadDeEspecies)
         assertTrue(patogenoAActualizar !== patogeno)
+    }
+
+    @Test
+    fun `Si actualizo un patogeno inexistente lanza error`() {
+
+        TODO("hay que implementar esta logica")
+
     }
 
     @Test
