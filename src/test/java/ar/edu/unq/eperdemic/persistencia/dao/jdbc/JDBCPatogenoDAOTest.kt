@@ -27,7 +27,6 @@ internal class JDBCPatogenoDAOTest {
     fun setUp() {
         patogeno = Patogeno("Gripe");
         patogeno.cantidadDeEspecies = 1
-        patogeno.id = 10000000;
 
         dataService.crearSetDeDatosIniciales()
 
@@ -154,7 +153,7 @@ internal class JDBCPatogenoDAOTest {
 
     @AfterEach
     fun restartDB() {
-        dataService.eliminarTodo()
+        //dataService.eliminarTodo()
     }
 
 }

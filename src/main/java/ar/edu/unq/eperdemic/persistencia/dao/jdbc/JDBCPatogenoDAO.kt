@@ -4,17 +4,22 @@ import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCConnector.execute
 import java.sql.Connection
+import java.sql.Statement
 
 
 class JDBCPatogenoDAO : PatogenoDAO {
 
     override fun crear(patogeno: Patogeno): Patogeno {
         execute { conn: Connection ->
-            conn.prepareStatement("INSERT INTO patogeno (tipo, cantidadDeEspecies) VALUES (?,?)")
+            conn.prepareStatement("INSERT INTO patogeno (tipo, cantidadDeEspecies) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS)
                 .use  { ps ->
                     ps.setString(1, patogeno.tipo)
                     ps.setInt(2, patogeno.cantidadDeEspecies)
                     ps.execute()
+                    val rs = ps.generatedKeys
+                    if (rs.next()) {
+                        patogeno.id = rs.getLong(1)
+                    }
                 }
         }
         return patogeno;
