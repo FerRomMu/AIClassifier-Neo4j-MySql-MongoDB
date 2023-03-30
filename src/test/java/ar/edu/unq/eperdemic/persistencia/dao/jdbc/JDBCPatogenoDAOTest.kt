@@ -90,7 +90,7 @@ internal class JDBCPatogenoDAOTest {
         patogeno.id = 80890
 
         assertThrows(DataNotFoundException::class.java) { patogenoDAO.actualizar(patogeno) }
-        
+
     }
 
     @Test
@@ -114,8 +114,8 @@ internal class JDBCPatogenoDAOTest {
     @Test
     fun `Si recupero un patogeno inexistente lanza error`(){
 
-        TODO("hay que implementar esta logica")
-
+        assertThrows(DataNotFoundException::class.java) { patogenoDAO.recuperar(9342) }
+        
     }
 
     @Test

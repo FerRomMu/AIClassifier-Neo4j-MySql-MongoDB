@@ -60,7 +60,7 @@ class JDBCPatogenoDAO : PatogenoDAO {
                         patogeno.cantidadDeEspecies = resultSet.getInt("cantidadDeEspecies")
                         patogeno.id = patogenoId;
                     }
-                    patogeno!!
+                    patogeno?: throw DataNotFoundException("No hay patogeno con el Id dado.")
                 }
         }
 
