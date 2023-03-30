@@ -27,4 +27,14 @@ class PatogenoTest {
         patogeno.crearEspecie("unaEspecie", "Japon")
         assertEquals(1, patogeno.cantidadDeEspecies)
     }
+
+    @Test
+    fun `crearEspecie me devuelve una especie con los datos correctos`() {
+
+        val especieCreada = patogeno.crearEspecie("unaEspecie", "Japon")
+        assertEquals("unaEspecie", especieCreada.nombre)
+        assertEquals("Japon", especieCreada.paisDeOrigen)
+        assertEquals(patogeno, especieCreada.patogeno)
+
+    }
 }
