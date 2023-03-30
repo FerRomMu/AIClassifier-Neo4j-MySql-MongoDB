@@ -1,5 +1,7 @@
 package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 
+import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
+import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCConnector.execute
@@ -27,13 +29,17 @@ class JDBCPatogenoDAO : PatogenoDAO {
     }
 
     override fun actualizar(patogeno: Patogeno) {
+        patogeno.id?: throw IdNotFoundException("No se encontró Id en el patógeno dado.")
         execute { conn: Connection ->
             conn.prepareStatement("UPDATE patogeno SET tipo = ?, cantidadDeEspecies = ? WHERE id = ?")
                 .use { ps ->
                     ps.setString(1, patogeno.tipo)
                     ps.setInt(2, patogeno.cantidadDeEspecies)
                     ps.setLong(3,patogeno.id!!)
-                    ps.execute()
+                    val rowsAffected = ps.executeUpdate()
+                    if (rowsAffected == 0) {
+                        throw DataNotFoundException("No se encontró ningún patógeno con el ID ${patogeno.id}")
+                    }
                 }
         }
     }

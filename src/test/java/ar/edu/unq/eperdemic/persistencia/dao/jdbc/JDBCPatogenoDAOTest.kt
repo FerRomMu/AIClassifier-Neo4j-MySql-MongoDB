@@ -1,5 +1,7 @@
 package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 
+import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
+import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
@@ -85,7 +87,16 @@ internal class JDBCPatogenoDAOTest {
     @Test
     fun `Si actualizo un patogeno inexistente lanza error`() {
 
-        TODO("hay que implementar esta logica")
+        patogeno.id = 80890
+
+        assertThrows(DataNotFoundException::class.java) { patogenoDAO.actualizar(patogeno) }
+        
+    }
+
+    @Test
+    fun `Si actualizo un patogeno sin id lanza error`() {
+
+        assertThrows(IdNotFoundException::class.java) { patogenoDAO.actualizar(patogeno) }
 
     }
 
