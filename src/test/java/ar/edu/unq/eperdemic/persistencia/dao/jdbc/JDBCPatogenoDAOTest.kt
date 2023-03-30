@@ -24,7 +24,6 @@ internal class JDBCPatogenoDAOTest {
     fun setUp() {
         patogeno = Patogeno("Gripe");
         patogeno.cantidadDeEspecies = 1
-        patogeno.id = 10000000;
 
         dataService.crearSetDeDatosIniciales()
 
@@ -64,7 +63,8 @@ internal class JDBCPatogenoDAOTest {
     @Test
     fun `Si actualizo un patogeno existente este se actualiza`() {
 
-        val patogenoAActualizar = patogenoDAO.recuperar(1)
+        val patogenoAActualizar = patogenoDAO.crear(patogeno);
+
         patogenoAActualizar.tipo = "Tipo 1 actualizado"
         patogenoAActualizar.cantidadDeEspecies = 2
 
@@ -74,7 +74,7 @@ internal class JDBCPatogenoDAOTest {
 
         assertEquals("Tipo 1 actualizado", patogenoActualizado.tipo)
         assertEquals(2, patogenoActualizado.cantidadDeEspecies)
-        assertTrue(patogenoAActualizar !== patogeno)
+
     }
 
     @Test
@@ -87,12 +87,12 @@ internal class JDBCPatogenoDAOTest {
     @Test
     fun `Si recupero un patogeno existente recibo una instancia de él`() {
 
-        val patogenoObtenido = patogenoDAO.recuperar(1)
+        patogenoDAO.crear(patogeno);
+        val patogenoObtenido = patogenoDAO.recuperar(patogeno.id!!)
 
-        assertEquals(1, patogenoObtenido.id!!)
+        assertEquals(patogeno.id, patogenoObtenido.id!!)
         assertEquals(1, patogenoObtenido.cantidadDeEspecies)
-        assertEquals("Tipo 1", patogenoObtenido.tipo)
-
+        assertEquals("Gripe", patogenoObtenido.tipo)
     }
 
     @Test
