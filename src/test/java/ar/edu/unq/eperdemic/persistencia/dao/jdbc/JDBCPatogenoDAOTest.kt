@@ -1,14 +1,14 @@
 package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 
+import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
+import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
+import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 
 @TestInstance(PER_CLASS)
@@ -26,7 +26,6 @@ internal class JDBCPatogenoDAOTest {
         patogeno.cantidadDeEspecies = 1
 
         dataService.crearSetDeDatosIniciales()
-
     }
 
     @Test
@@ -34,9 +33,9 @@ internal class JDBCPatogenoDAOTest {
 
         val patogenoCreado = patogenoDAO.crear(patogeno);
 
-        assertEquals(patogenoCreado.id!! , patogeno.id!! )
-        assertEquals(patogenoCreado.tipo!!, patogeno.tipo!!)
-        assertEquals(patogenoCreado.cantidadDeEspecies!!, patogeno.cantidadDeEspecies!!)
+        assertEquals(patogenoCreado.id!! , patogeno.id )
+        assertEquals(patogenoCreado.tipo, patogeno.tipo)
+        assertEquals(patogenoCreado.cantidadDeEspecies, patogeno.cantidadDeEspecies)
 
     }
 
@@ -46,17 +45,26 @@ internal class JDBCPatogenoDAOTest {
         val patogenoCreado = patogenoDAO.crear(patogeno);
         val patogenoRecuperado = patogenoDAO.recuperar(patogeno.id!!)
 
-        assertEquals(patogenoRecuperado.id!! , patogeno.id!! )
-        assertEquals(patogenoRecuperado.tipo!!, patogeno.tipo!!)
-        assertEquals(patogenoRecuperado.cantidadDeEspecies!!, patogeno.cantidadDeEspecies!!)
+        assertEquals(patogenoRecuperado.id!! , patogeno.id )
+        assertEquals(patogenoRecuperado.tipo, patogeno.tipo)
+        assertEquals(patogenoRecuperado.cantidadDeEspecies, patogeno.cantidadDeEspecies)
 
         assertTrue(patogenoRecuperado != patogenoCreado)
     }
 
     @Test
-    fun `Si creo un patogeno con id existente me devuelve un error`() {
+    fun `Si intento crear un patogeno ya creado me devuelve un error`() {
 
-        TODO("")
+        patogenoDAO.crear(patogeno)
+        assertThrows(DataDuplicationException::class.java) { patogenoDAO.crear(patogeno) }
+
+    }
+
+    @Test
+    fun `Si creo un patogeno con tipo existente me devuelve un error`() {
+
+        patogeno.tipo = "Tipo 1"
+        assertThrows(java.sql.SQLIntegrityConstraintViolationException::class.java) { patogenoDAO.crear(patogeno) }
 
     }
 
@@ -80,7 +88,15 @@ internal class JDBCPatogenoDAOTest {
     @Test
     fun `Si actualizo un patogeno inexistente lanza error`() {
 
-        TODO("hay que implementar esta logica")
+        patogeno.id = 80890
+        assertThrows(DataNotFoundException::class.java) { patogenoDAO.actualizar(patogeno) }
+
+    }
+
+    @Test
+    fun `Si actualizo un patogeno sin id lanza error`() {
+
+        assertThrows(IdNotFoundException::class.java) { patogenoDAO.actualizar(patogeno) }
 
     }
 
@@ -98,7 +114,7 @@ internal class JDBCPatogenoDAOTest {
     @Test
     fun `Si recupero un patogeno inexistente lanza error`(){
 
-        TODO("hay que implementar esta logica")
+        assertThrows(DataNotFoundException::class.java) { patogenoDAO.recuperar(9342) }
 
     }
 
@@ -119,11 +135,6 @@ internal class JDBCPatogenoDAOTest {
         val patogenoC = Patogeno("C")
         val patogenoB = Patogeno("B")
         val patogenoD = Patogeno("D")
-
-        patogenoA.id = 1
-        patogenoC.id = 2
-        patogenoB.id = 3
-        patogenoD.id = 4
 
         patogenoDAO.crear(patogenoA)
         patogenoDAO.crear(patogenoC)
