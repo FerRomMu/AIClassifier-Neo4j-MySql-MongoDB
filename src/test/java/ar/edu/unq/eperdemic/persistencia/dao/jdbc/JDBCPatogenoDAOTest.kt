@@ -25,7 +25,6 @@ internal class JDBCPatogenoDAOTest {
         patogeno.cantidadDeEspecies = 1
 
         dataService.crearSetDeDatosIniciales()
-
     }
 
     @Test
@@ -33,9 +32,9 @@ internal class JDBCPatogenoDAOTest {
 
         val patogenoCreado = patogenoDAO.crear(patogeno);
 
-        assertEquals(patogenoCreado.id!! , patogeno.id!! )
-        assertEquals(patogenoCreado.tipo!!, patogeno.tipo!!)
-        assertEquals(patogenoCreado.cantidadDeEspecies!!, patogeno.cantidadDeEspecies!!)
+        assertEquals(patogenoCreado.id!! , patogeno.id )
+        assertEquals(patogenoCreado.tipo, patogeno.tipo)
+        assertEquals(patogenoCreado.cantidadDeEspecies, patogeno.cantidadDeEspecies)
 
     }
 
@@ -45,9 +44,9 @@ internal class JDBCPatogenoDAOTest {
         val patogenoCreado = patogenoDAO.crear(patogeno);
         val patogenoRecuperado = patogenoDAO.recuperar(patogeno.id!!)
 
-        assertEquals(patogenoRecuperado.id!! , patogeno.id!! )
-        assertEquals(patogenoRecuperado.tipo!!, patogeno.tipo!!)
-        assertEquals(patogenoRecuperado.cantidadDeEspecies!!, patogeno.cantidadDeEspecies!!)
+        assertEquals(patogenoRecuperado.id!! , patogeno.id )
+        assertEquals(patogenoRecuperado.tipo, patogeno.tipo)
+        assertEquals(patogenoRecuperado.cantidadDeEspecies, patogeno.cantidadDeEspecies)
 
         assertTrue(patogenoRecuperado != patogenoCreado)
     }
