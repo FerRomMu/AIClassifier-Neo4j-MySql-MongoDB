@@ -1,4 +1,3 @@
 package ar.edu.unq.eperdemic.exceptions
 
-class IdNotFoundException(msg: String): Exception(msg)  {
-}
+class IdNotFoundException(msg: String): Exception(msg)

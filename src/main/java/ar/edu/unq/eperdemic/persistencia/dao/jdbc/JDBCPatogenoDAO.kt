@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 
+import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Patogeno
@@ -12,7 +13,7 @@ import java.sql.Statement
 class JDBCPatogenoDAO : PatogenoDAO {
 
     override fun crear(patogeno: Patogeno): Patogeno {
-
+        if (patogeno.id != null) { throw DataDuplicationException("El patogeno ya existe en la base de datos.") }
         execute { conn: Connection ->
             conn.prepareStatement("INSERT INTO patogeno (tipo, cantidadDeEspecies) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS)
                 .use  { ps ->

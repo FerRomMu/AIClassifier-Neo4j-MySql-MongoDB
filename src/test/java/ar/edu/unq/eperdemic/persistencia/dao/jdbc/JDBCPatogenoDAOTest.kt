@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 
+import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Patogeno
@@ -52,9 +53,10 @@ internal class JDBCPatogenoDAOTest {
     }
 
     @Test
-    fun `Si creo un patogeno con id me devuelve un error`() {
+    fun `Si intento crear un patogeno ya creado me devuelve un error`() {
 
-        TODO("Debería ser un error?")
+        patogenoDAO.crear(patogeno)
+        assertThrows(DataDuplicationException::class.java) { patogenoDAO.crear(patogeno) }
 
     }
 
@@ -62,8 +64,8 @@ internal class JDBCPatogenoDAOTest {
     fun `Si creo un patogeno con tipo existente me devuelve un error`() {
 
         patogeno.tipo = "Tipo 1"
-
         assertThrows(java.sql.SQLIntegrityConstraintViolationException::class.java) { patogenoDAO.crear(patogeno) }
+
     }
 
     @Test
@@ -87,7 +89,6 @@ internal class JDBCPatogenoDAOTest {
     fun `Si actualizo un patogeno inexistente lanza error`() {
 
         patogeno.id = 80890
-
         assertThrows(DataNotFoundException::class.java) { patogenoDAO.actualizar(patogeno) }
 
     }
@@ -134,11 +135,6 @@ internal class JDBCPatogenoDAOTest {
         val patogenoC = Patogeno("C")
         val patogenoB = Patogeno("B")
         val patogenoD = Patogeno("D")
-
-        patogenoA.id = 1
-        patogenoC.id = 2
-        patogenoB.id = 3
-        patogenoD.id = 4
 
         patogenoDAO.crear(patogenoA)
         patogenoDAO.crear(patogenoC)
