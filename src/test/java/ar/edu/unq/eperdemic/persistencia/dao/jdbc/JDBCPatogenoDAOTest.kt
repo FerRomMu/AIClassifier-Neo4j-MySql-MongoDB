@@ -2,8 +2,6 @@ package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
-import ar.edu.unq.eperdemic.services.PatogenoService
-import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -19,7 +17,6 @@ internal class JDBCPatogenoDAOTest {
     private val patogenoDAO: PatogenoDAO = JDBCPatogenoDAO()
     lateinit var patogeno: Patogeno
 
-    private val patogenoService: PatogenoService = PatogenoServiceImpl(patogenoDAO);
     private val dataDAO = JDBCDataDAO();
     private val dataService = DataServiceJDBC(patogenoDAO, dataDAO)
 
@@ -27,7 +24,6 @@ internal class JDBCPatogenoDAOTest {
     fun setUp() {
         patogeno = Patogeno("Gripe");
         patogeno.cantidadDeEspecies = 1
-        patogeno.id = 10000000;
 
         dataService.crearSetDeDatosIniciales()
 
@@ -74,17 +70,18 @@ internal class JDBCPatogenoDAOTest {
     @Test
     fun `Si actualizo un patogeno existente este se actualiza`() {
 
-        val patogenoAActualizar = patogenoDAO.recuperar(1)
+        val patogenoAActualizar = patogenoDAO.crear(patogeno);
+
         patogenoAActualizar.tipo = "Tipo 1 actualizado"
         patogenoAActualizar.cantidadDeEspecies = 2
 
-        patogenoService.actualizarPatogeno(patogenoAActualizar)
+        patogenoDAO.actualizar(patogenoAActualizar)
 
         val patogenoActualizado = patogenoDAO.recuperar(patogenoAActualizar.id!!)
 
         assertEquals("Tipo 1 actualizado", patogenoActualizado.tipo)
         assertEquals(2, patogenoActualizado.cantidadDeEspecies)
-        assertTrue(patogenoAActualizar !== patogeno)
+
     }
 
     @Test
@@ -97,12 +94,12 @@ internal class JDBCPatogenoDAOTest {
     @Test
     fun `Si recupero un patogeno existente recibo una instancia de él`() {
 
-        val patogenoObtenido = patogenoDAO.recuperar(1)
+        patogenoDAO.crear(patogeno);
+        val patogenoObtenido = patogenoDAO.recuperar(patogeno.id!!)
 
-        assertEquals(1, patogenoObtenido.id!!)
+        assertEquals(patogeno.id, patogenoObtenido.id!!)
         assertEquals(1, patogenoObtenido.cantidadDeEspecies)
-        assertEquals("Tipo 1", patogenoObtenido.tipo)
-
+        assertEquals("Gripe", patogenoObtenido.tipo)
     }
 
     @Test

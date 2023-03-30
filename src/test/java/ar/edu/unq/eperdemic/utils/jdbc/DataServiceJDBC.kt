@@ -14,7 +14,6 @@ class DataServiceJDBC (val patogenoDao: PatogenoDAO, val dataDao: DataDAO): Data
     override fun crearSetDeDatosIniciales() {
         val patogeno = Patogeno("Tipo 0")
         for (i in 0..20){
-            patogeno.id = i.toLong()
             patogeno.tipo = "Tipo $i"
             patogeno.cantidadDeEspecies = i
             patogenoDao.crear(patogeno)
