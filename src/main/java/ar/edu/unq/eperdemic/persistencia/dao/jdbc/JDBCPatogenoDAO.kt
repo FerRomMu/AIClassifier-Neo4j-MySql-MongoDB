@@ -10,6 +10,7 @@ import java.sql.Statement
 class JDBCPatogenoDAO : PatogenoDAO {
 
     override fun crear(patogeno: Patogeno): Patogeno {
+
         execute { conn: Connection ->
             conn.prepareStatement("INSERT INTO patogeno (tipo, cantidadDeEspecies) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS)
                 .use  { ps ->

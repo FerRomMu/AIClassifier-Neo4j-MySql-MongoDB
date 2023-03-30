@@ -3,12 +3,9 @@ package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 
 @TestInstance(PER_CLASS)
@@ -54,17 +51,18 @@ internal class JDBCPatogenoDAOTest {
     }
 
     @Test
-    fun `Si creo un patogeno con id existente me devuelve un error`() {
+    fun `Si creo un patogeno con id me devuelve un error`() {
 
-        TODO("")
+        TODO("Debería ser un error?")
 
     }
 
     @Test
     fun `Si creo un patogeno con tipo existente me devuelve un error`() {
 
-        TODO("")
+        patogeno.tipo = "Tipo 1"
 
+        assertThrows(java.sql.SQLIntegrityConstraintViolationException::class.java) { patogenoDAO.crear(patogeno) }
     }
 
     @Test
