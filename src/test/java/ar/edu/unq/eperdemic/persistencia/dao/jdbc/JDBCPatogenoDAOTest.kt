@@ -2,8 +2,6 @@ package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
-import ar.edu.unq.eperdemic.services.PatogenoService
-import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -19,7 +17,6 @@ internal class JDBCPatogenoDAOTest {
     private val patogenoDAO: PatogenoDAO = JDBCPatogenoDAO()
     lateinit var patogeno: Patogeno
 
-    private val patogenoService: PatogenoService = PatogenoServiceImpl(patogenoDAO);
     private val dataDAO = JDBCDataDAO();
     private val dataService = DataServiceJDBC(patogenoDAO, dataDAO)
 
@@ -71,7 +68,7 @@ internal class JDBCPatogenoDAOTest {
         patogenoAActualizar.tipo = "Tipo 1 actualizado"
         patogenoAActualizar.cantidadDeEspecies = 2
 
-        patogenoService.actualizarPatogeno(patogenoAActualizar)
+        patogenoDAO.actualizar(patogenoAActualizar)
 
         val patogenoActualizado = patogenoDAO.recuperar(patogenoAActualizar.id!!)
 

@@ -11,6 +11,5 @@ interface PatogenoService {
     fun recuperarATodosLosPatogenos(): List<Patogeno>
 
     fun agregarEspecie(id: Long, nombre: String, paisDeOrigen : String) : Especie
-    fun actualizarPatogeno(patogeno: Patogeno)
 
 }

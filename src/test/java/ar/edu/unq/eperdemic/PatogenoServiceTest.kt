@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -58,13 +59,7 @@ class PatogenoServiceTest {
         patogenoService.agregarEspecie(id,"Gripe","Chile")
         Mockito.verify(patogenoDAO).recuperar(id)
         Mockito.verify(patogenoDAO).actualizar(patogeno)
-    }
-
-    @Test
-    fun testActualizarPatogeno() {
-        patogeno = Patogeno("Gripe")
-        patogenoService.actualizarPatogeno(patogeno)
-        Mockito.verify(patogenoDAO).actualizar(patogeno)
+        assertEquals(1, patogeno.cantidadDeEspecies)
     }
 
 }
