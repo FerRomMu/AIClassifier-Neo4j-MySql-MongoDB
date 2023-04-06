@@ -3,7 +3,6 @@ package ar.edu.unq.eperdemic.modelo
 import java.io.Serializable
 
 @Entity
-@Table(name="Patogeno")
 class Patogeno(var tipo: String) : Serializable{
 
     @Id
