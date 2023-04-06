@@ -17,5 +17,11 @@
 
         <property name="hibernate.hbm2ddl.auto">update</property>
 
+        <mapping class="ar.edu.unq.eperdemic.modelo.Especie" />
+        <mapping class="ar.edu.unq.eperdemic.modelo.Patogeno" />
+        <mapping class="ar.edu.unq.eperdemic.modelo.ReporteDeContagios" />
+        <mapping class="ar.edu.unq.eperdemic.modelo.Ubicacion" />
+        <mapping class="ar.edu.unq.eperdemic.modelo.Vector" />
+
     </session-factory>
 </hibernate-configuration>
