@@ -1,5 +1,5 @@
 package ar.edu.unq.eperdemic.services
-
+/*
 import ar.edu.unq.eperdemic.modelo.Mutacion
 
 interface MutacionService {
@@ -7,4 +7,4 @@ interface MutacionService {
     /* Operaciones CRUD */
     fun crearMutacion(mutacion: Mutacion): Mutacion
     fun recuperarMutacion(mutacionId: Long): Mutacion
-}
+}*/

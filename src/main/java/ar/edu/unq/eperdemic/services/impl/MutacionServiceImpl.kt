@@ -1,5 +1,5 @@
 package ar.edu.unq.eperdemic.services.impl
-
+/*
 import ar.edu.unq.eperdemic.modelo.Mutacion
 import ar.edu.unq.eperdemic.services.MutacionService
 
@@ -16,4 +16,4 @@ class MutacionServiceImpl: MutacionService {
     override fun recuperarMutacion(mutacionId: Long): Mutacion {
         TODO("Not yet implemented")
     }
-}
+}*/
