@@ -7,6 +7,7 @@ import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.services.UbicacionService
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Assertions.*
 internal class VectorServiceImplTest {
     lateinit var vector: Vector
     lateinit var vectorService: VectorServiceImpl
+    lateinit var ubicacionService: UbicacionServiceImpl
     lateinit var  vectorDAO: HibernateVectorDAO
     lateinit var ubicacionDAO: HibernateUbicacionDAO
 
@@ -26,6 +28,7 @@ internal class VectorServiceImplTest {
         vectorDAO = HibernateVectorDAO()
 
         vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO)
+        ubicacionService = UbicacionServiceImpl(ubicacionDAO)
 
 
     }
@@ -44,8 +47,7 @@ internal class VectorServiceImplTest {
 
     @Test
     fun `crearVector que no existe`() {
-        var ubicacion = Ubicacion("Quilmes",null)
-        ubicacionDAO.guardar(ubicacion)
+        val ubicacion = ubicacionService.crearUbicacion("Quilmes")
 
         vectorService.crearVector(TipoDeVector.Persona,ubicacion.id!!)
     }
