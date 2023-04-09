@@ -15,11 +15,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 
 internal class VectorServiceImplTest {
-    lateinit var vector: Vector
     lateinit var vectorService: VectorServiceImpl
     lateinit var ubicacionService: UbicacionServiceImpl
-    lateinit var  vectorDAO: HibernateVectorDAO
+    lateinit var vectorDAO: HibernateVectorDAO
     lateinit var ubicacionDAO: HibernateUbicacionDAO
+    lateinit var bernal: Ubicacion
 
     @BeforeEach
     fun setUp() {
@@ -30,7 +30,7 @@ internal class VectorServiceImplTest {
         vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO)
         ubicacionService = UbicacionServiceImpl(ubicacionDAO)
 
-
+        bernal = ubicacionService.crearUbicacion("Bernal")
     }
 
     @Test
@@ -46,14 +46,10 @@ internal class VectorServiceImplTest {
     }
 
     @Test
-    fun `crearVector que no existe`() {
-        val ubicacion = ubicacionService.crearUbicacion("Quilmes")
-
-        vectorService.crearVector(TipoDeVector.Persona,ubicacion.id!!)
-    }
-
-    @Test
-    fun recuperarVector() {
+    fun `crearVector que no existe y lo recupera de la BD`() {
+        val fercho = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
+        val ferchoRecuperado = vectorService.recuperarVector(fercho.id!!)
+        assertEquals(fercho.id, ferchoRecuperado.id)
     }
 
     @Test

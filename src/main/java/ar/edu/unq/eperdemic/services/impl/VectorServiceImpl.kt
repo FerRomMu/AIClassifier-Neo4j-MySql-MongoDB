@@ -33,9 +33,9 @@ class VectorServiceImpl(
 
     override fun crearVector(tipo: TipoDeVector, ubicacionId: Long): Vector {
         return runTrx {
-            var ubicacionDelVector = ubicacionDAO.recuperar(ubicacionId);
+            val ubicacionDelVector = ubicacionDAO.recuperar(ubicacionId);
 
-            var vector = Vector(null, tipo, ubicacionDelVector)
+            val vector = Vector(null, tipo, ubicacionDelVector)
             vectorDAO.guardar(vector)
 
             vector
@@ -43,7 +43,7 @@ class VectorServiceImpl(
     }
 
     override fun recuperarVector(vectorId: Long): Vector {
-        TODO("Not yet implemented")
+        return runTrx { vectorDAO.recuperar(vectorId) }
     }
 
     override fun borrarVector(vectorId: Long) {
