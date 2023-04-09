@@ -24,7 +24,11 @@ class VectorServiceImpl(
     }
 
     override fun infectar(vector: Vector, especie: Especie) {
-        TODO("Not yet implemented")
+        runTrx {
+            vector.agregarEspecie(especie)
+            vectorDAO.guardar(vector)
+        }
+
     }
 
     override fun enfermedades(vectorId: Long): List<Especie> {
