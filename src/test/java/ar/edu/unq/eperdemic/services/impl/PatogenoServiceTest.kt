@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.services.impl
 
+import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
@@ -28,11 +29,10 @@ class PatogenoServiceTest {
     fun crearModelo() {
         patogenoDAO = HibernatePatogenoDAO()
         patogenoService = PatogenoServiceImpl(patogenoDAO)
-
     }
 
     @Test
-    fun testCrearUnPatogenoConIdYSinEspecies(){
+    fun `si creo un patogeno este recibe un id`(){
         patogeno = Patogeno("Gripe")
         assertNull(patogeno.id)
 
@@ -41,25 +41,20 @@ class PatogenoServiceTest {
     }
 
     @Test
-    fun testRecuperarUnPatogenoYaCreado() {
+    fun `si creo un patogeno lo puedo recuperar con sus datos`() {
+        patogeno = Patogeno("Gripe")
 
+        patogenoService.crearPatogeno(patogeno)
+        val patogenoRecuperado = patogenoService.recuperarPatogeno(patogeno.id!!)
+
+        assertEquals(patogenoRecuperado.id!!, patogeno.id)
+        assertEquals(patogenoRecuperado.tipo, patogeno.tipo)
+        assertEquals(patogenoRecuperado.cantidadDeEspecies, patogeno.cantidadDeEspecies)
     }
-    
-    @Test
-    fun testRecuperarATodosLosPatogenos(){
-
-    }
 
     @Test
-    fun testAgregarEspecie() {
-        /*patogeno = Patogeno("Gripe")
-        var id : Long = 1;
-        `when`(patogenoDAO.recuperar(id)).thenReturn(patogeno)
-
-        patogenoService.agregarEspecie(id,"Gripe","Chile")
-        Mockito.verify(patogenoDAO).recuperar(id)
-        Mockito.verify(patogenoDAO).actualizar(patogeno)
-        assertEquals(1, patogeno.cantidadDeEspecies)*/
+    fun `si trato de recuperar un patogeno inexistente falla`() {
+        assertThrows(IdNotFoundException::class.java) { patogenoService.recuperarPatogeno(10000001) }
     }
 
     @AfterEach
