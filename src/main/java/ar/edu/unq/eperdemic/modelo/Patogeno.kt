@@ -1,15 +1,13 @@
 package ar.edu.unq.eperdemic.modelo
 
 import java.io.Serializable
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 class Patogeno(var tipo: String) : Serializable{
 
     @Id
-    @Column(name="Id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id : Long? = null
 
     @Column(name="CantidadDeEspecies")
