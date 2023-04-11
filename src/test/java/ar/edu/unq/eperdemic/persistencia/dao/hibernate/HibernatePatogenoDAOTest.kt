@@ -49,7 +49,7 @@ class HibernatePatogenoDAOTest {
             val patogenoActualizado = patogenoDAO.recuperar(patogeno.id!!)
             patogenoActualizado
         }
-        
+
         assertEquals(1, patogenoActualizado.cantidadDeEspecies)
     }
 
