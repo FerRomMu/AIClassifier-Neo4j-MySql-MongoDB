@@ -37,6 +37,7 @@ class VectorServiceImpl(
 
             val vector = Vector(tipo)
             vector.ubicacion = ubicacionDelVector
+
             vectorDAO.guardar(vector)
 
             vector

@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.services.impl
 
+import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.TipoDeVector
 import ar.edu.unq.eperdemic.modelo.Ubicacion
@@ -48,10 +49,30 @@ class VectorServiceImplTest {
     }
 
     @Test
-    fun `crearVector que no existe y lo recupera de la BD`() {
-        val fercho = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
-        val ferchoRecuperado = vectorService.recuperarVector(fercho.id!!)
-        assertEquals(fercho.id, ferchoRecuperado.id)
+    fun `si creo un vector este recibe un id`() {
+
+        val vector = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
+        assertNotNull(vector.id)
+
+    }
+
+    @Test
+    fun `si trato de crear un vector con una ubicacion invalida falla`() {
+
+        assertThrows(IdNotFoundException::class.java){ vectorService.crearVector(TipoDeVector.Persona,1554798541) }
+
+    }
+
+    @Test
+    fun `si creo vector lo puedo recuperar`() {
+
+        val vector = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
+        val vectorRecuperado = vectorService.recuperarVector(vector.id!!)
+
+        assertEquals(vector.id, vectorRecuperado.id)
+        assertEquals(vector.tipo, vectorRecuperado.tipo)
+        assertEquals(vector.ubicacion.id, vectorRecuperado.ubicacion.id)
+
     }
 
     @Test
