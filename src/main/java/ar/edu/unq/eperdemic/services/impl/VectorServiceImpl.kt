@@ -51,4 +51,8 @@ class VectorServiceImpl(
     override fun borrarVector(vectorId: Long) {
         TODO("Not yet implemented")
     }
+
+    override fun recuperarTodos(): List<Vector> {
+        TODO("Not yet implemented")
+    }
 }
