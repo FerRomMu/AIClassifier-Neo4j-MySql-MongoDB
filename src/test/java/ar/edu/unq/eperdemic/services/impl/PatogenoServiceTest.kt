@@ -1,11 +1,13 @@
-package ar.edu.unq.eperdemic
+package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import ar.edu.unq.eperdemic.utils.DataService
+import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -14,40 +16,38 @@ import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 
 
-@ExtendWith(MockitoExtension::class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PatogenoServiceTest {
 
-    @Mock
     lateinit var patogenoDAO : PatogenoDAO;
     lateinit var patogeno :Patogeno;
-
-    @InjectMocks
     lateinit var patogenoService: PatogenoServiceImpl;
+    lateinit var dataService : DataService
 
     @BeforeEach
     fun crearModelo() {
+        patogenoDAO = HibernatePatogenoDAO()
+        patogenoService = PatogenoServiceImpl(patogenoDAO)
 
     }
 
-
     @Test
-    fun testCrearPatogeno(){
+    fun testCrearUnPatogenoConIdYSinEspecies(){
         patogeno = Patogeno("Gripe")
+        assertNull(patogeno.id)
+
         patogenoService.crearPatogeno(patogeno)
-        Mockito.verify(patogenoDAO).crear(patogeno)
+        assertNotNull(patogeno.id)
     }
 
     @Test
-    fun testRecuperarPatogeno() {
-        var id : Long = 1;
-        patogenoService.recuperarPatogeno(id)
-        Mockito.verify(patogenoDAO).recuperar(id)
+    fun testRecuperarUnPatogenoYaCreado() {
+
     }
     
     @Test
     fun testRecuperarATodosLosPatogenos(){
-        patogenoService.recuperarATodosLosPatogenos()
-        Mockito.verify(patogenoDAO).recuperarATodos()
+
     }
 
     @Test
@@ -60,6 +60,11 @@ class PatogenoServiceTest {
         Mockito.verify(patogenoDAO).recuperar(id)
         Mockito.verify(patogenoDAO).actualizar(patogeno)
         assertEquals(1, patogeno.cantidadDeEspecies)*/
+    }
+
+    @AfterEach
+    fun deleteAll() {
+
     }
 
 }

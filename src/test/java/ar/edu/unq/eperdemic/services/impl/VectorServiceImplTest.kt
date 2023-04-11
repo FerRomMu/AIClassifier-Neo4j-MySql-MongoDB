@@ -13,8 +13,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.TestInstance
 
-internal class VectorServiceImplTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class VectorServiceImplTest {
     lateinit var vectorService: VectorServiceImpl
     lateinit var ubicacionService: UbicacionServiceImpl
     lateinit var vectorDAO: HibernateVectorDAO
