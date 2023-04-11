@@ -35,7 +35,8 @@ class VectorServiceImpl(
         return runTrx {
             val ubicacionDelVector = ubicacionDAO.recuperar(ubicacionId);
 
-            val vector = Vector(null, tipo, ubicacionDelVector)
+            val vector = Vector(tipo)
+            vector.ubicacion = ubicacionDelVector
             vectorDAO.guardar(vector)
 
             vector

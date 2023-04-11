@@ -1,9 +1,6 @@
 package ar.edu.unq.eperdemic.services.impl
 
-import ar.edu.unq.eperdemic.modelo.Patogeno
-import ar.edu.unq.eperdemic.modelo.TipoDeVector
-import ar.edu.unq.eperdemic.modelo.Ubicacion
-import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
@@ -43,6 +40,20 @@ internal class VectorServiceImplTest {
 
     @Test
     fun enfermedades() {
+
+        val fercho = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
+        val gripe = Patogeno("Gripe")
+
+        val sars = Especie(gripe,"Sars","Argentina")
+        val sars_RT = Especie(gripe,"Sars_RT","Argentina")
+        val sars_D = Especie(gripe,"Sars_D","Argentina")
+
+        fercho.agregarEspecie(sars)
+        fercho.agregarEspecie(sars_RT)
+        fercho.agregarEspecie(sars_D)
+
+        assertEquals(vectorService.enfermedades(fercho.id!!).size,3)
+
     }
 
     @Test
