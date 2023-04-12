@@ -5,6 +5,8 @@ import ar.edu.unq.eperdemic.modelo.TipoDeVector
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
+import ar.edu.unq.eperdemic.utils.DataService
+import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -12,12 +14,15 @@ class HibernateVectorDAOTest {
 
     lateinit var vectorDAO: VectorDAO
     lateinit var vector: Vector
+    lateinit var data: DataService
 
     @BeforeEach
     fun setUp() {
 
         vectorDAO = HibernateVectorDAO()
         vector = Vector(TipoDeVector.Animal)
+        data = DataServiceImpl()
+
     }
 
     @Test
@@ -68,11 +73,16 @@ class HibernateVectorDAOTest {
 
     @Test
     fun `si recupero todos los vectores recibo todos`(){
-        TODO("Va a requerir un borrar todo de la db")
+
+        data.crearSetDeDatosIniciales()
+        val recuperados = TransactionRunner.runTrx { vectorDAO.recuperarTodos() }
+        Assertions.assertEquals(21, recuperados.size)
+
     }
 
     @AfterEach
     fun tearDown() {
+        data.eliminarTodo()
     }
 
 }
