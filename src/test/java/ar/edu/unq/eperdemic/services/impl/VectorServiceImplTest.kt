@@ -1,10 +1,7 @@
 package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
-import ar.edu.unq.eperdemic.modelo.Patogeno
-import ar.edu.unq.eperdemic.modelo.TipoDeVector
-import ar.edu.unq.eperdemic.modelo.Ubicacion
-import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
@@ -42,6 +39,18 @@ class VectorServiceImplTest {
 
     @Test
     fun infectar() {
+
+        var vectorAInfectar = Vector(TipoDeVector.Persona)
+
+        var patogenoDeLaEspecie = Patogeno("Gripe")
+        var especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
+
+        assertEquals(vectorAInfectar.especiesContagiadas.size,0)
+
+        vectorService.infectar(vectorAInfectar,especieAContagiar)
+
+        assertEquals(vectorAInfectar.especiesContagiadas.size,1)
+
     }
 
     @Test
