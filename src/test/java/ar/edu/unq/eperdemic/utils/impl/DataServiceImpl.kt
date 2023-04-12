@@ -34,9 +34,7 @@ class DataServiceImpl(): DataService {
                 patogeno.tipo = "Tipo $i"
                 patogeno.cantidadDeEspecies = i
                 patogenoDao.guardar(patogeno)
-            }
 
-            for (i in 0 .. 20) {
                 var vector = Vector(
                     listOf(TipoDeVector.Insecto, TipoDeVector.Animal, TipoDeVector.Persona)[i % 3]
                 )
