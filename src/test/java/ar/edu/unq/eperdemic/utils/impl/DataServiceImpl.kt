@@ -23,7 +23,7 @@ class DataServiceImpl(): DataService {
     val dataDao: DataDAO = HibernateDataDAO()
 
     override fun eliminarTodo() {
-        dataDao.clear()
+        TransactionRunner.runTrx { dataDao.clear() }
     }
 
     override fun crearSetDeDatosIniciales() {
