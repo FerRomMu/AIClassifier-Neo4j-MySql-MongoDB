@@ -11,5 +11,5 @@ interface UbicacionDAO {
 
     fun recuperar(id: Long?): Ubicacion
 
-    //fun recuperarTodos(): List<Ubicacion>
+    fun recuperarTodos(): List<Ubicacion>
 }

@@ -24,6 +24,9 @@ class UbicacionServiceImpl(val ubicacionDAO: UbicacionDAO): UbicacionService {
     }
 
     override fun recuperarTodos(): List<Ubicacion> {
-        TODO("Not yet implemented")
+        return runTrx {
+            ubicacionDAO.recuperarTodos()
+        }
     }
+
 }

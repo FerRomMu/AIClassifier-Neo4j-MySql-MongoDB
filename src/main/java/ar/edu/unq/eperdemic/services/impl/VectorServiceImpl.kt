@@ -15,7 +15,7 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 class VectorServiceImpl(
     private val vectorDAO: VectorDAO,
     private val ubicacionDAO: UbicacionDAO,
-  ): VectorService {
+): VectorService {
 
 
 
@@ -24,18 +24,23 @@ class VectorServiceImpl(
     }
 
     override fun infectar(vector: Vector, especie: Especie) {
-        TODO("Not yet implemented")
+        runTrx {
+            vector.agregarEspecie(especie)
+            vectorDAO.guardar(vector)
+        }
+
     }
 
     override fun enfermedades(vectorId: Long): List<Especie> {
         return runTrx { vectorDAO.enfermedades(vectorId) }
     }
 
+
     override fun crearVector(tipo: TipoDeVector, ubicacionId: Long): Vector {
         return runTrx {
             val ubicacionDelVector = ubicacionDAO.recuperar(ubicacionId);
 
-            val vector = Vector(tipo)
+            val vector = Vector( tipo)
             vector.ubicacion = ubicacionDelVector
             vectorDAO.guardar(vector)
 
@@ -50,4 +55,9 @@ class VectorServiceImpl(
     override fun borrarVector(vectorId: Long) {
         TODO("Not yet implemented")
     }
+
+    override fun recuperarTodos(): List<Vector> {
+        TODO("Not yet implemented")
+    }
+
 }

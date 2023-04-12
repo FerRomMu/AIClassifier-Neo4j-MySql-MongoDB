@@ -20,10 +20,10 @@ class HibernateVectorDAO: HibernateDAO<Vector>(Vector::class.java), VectorDAO {
     override fun enfermedades(id: Long?): List<Especie> {
         val session = TransactionRunner.currentSession
 
-        val hql = "select v.especiesContagiadas from Vector v where v.id = :id"
+        val hql = "select v.especiesContagiadas from Vector v where v.id = :idDado"
 
         val query = session.createQuery(hql, Especie::class.java)
-        query.setParameter("id", id)
+        query.setParameter("idDado", id!!)
 
         return query.resultList
     }

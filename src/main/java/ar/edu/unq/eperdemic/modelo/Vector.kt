@@ -13,14 +13,14 @@ class Vector(var tipo: TipoDeVector) {
     @ManyToOne
     lateinit var ubicacion: Ubicacion
 
-    @OneToMany(mappedBy = "owner", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    var especiesContagiadas: HashSet<Especie> = HashSet()
+    @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    var especiesContagiadas: MutableSet<Especie> = HashSet()
 
     fun agregarEspecie(especie: Especie) {
         especiesContagiadas.add(especie)
     }
-
 }
+
 
 enum class TipoDeVector {
     Persona, Insecto, Animal
