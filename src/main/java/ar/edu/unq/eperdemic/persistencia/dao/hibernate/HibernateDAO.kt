@@ -17,11 +17,20 @@ open class HibernateDAO<T>(private val entityType: Class<T>) {
         return session.get(entityType, id) ?: throw IdNotFoundException("El id no fue encontrado")
     }
 
+    fun borrar(id: Long?) {
+        val session = TransactionRunner.currentSession
+
+        val entity = session.get(entityType, id) ?: throw IdNotFoundException("El id no fue encontrado")
+
+        session.delete(entity)
+    }
+
     fun recuperarTodos(): List<T> {
         val session = TransactionRunner.currentSession
         val name = entityType.simpleName
         val hql = "from $name"
         val query = session.createQuery(hql, entityType)
         return query.resultList
+
     }
 }

@@ -16,6 +16,7 @@ class HibernateVectorDAOTest {
     lateinit var vector: Vector
     lateinit var data: DataService
 
+
     @BeforeEach
     fun setUp() {
 
@@ -78,6 +79,24 @@ class HibernateVectorDAOTest {
         val recuperados = TransactionRunner.runTrx { vectorDAO.recuperarTodos() }
         Assertions.assertEquals(21, recuperados.size)
 
+    }
+
+    @Test
+    fun `si borro un vector se elimina`() {
+        Assertions.assertThrows(IdNotFoundException::class.java) {
+            TransactionRunner.runTrx {
+                vectorDAO.guardar(vector)
+                vectorDAO.borrar(vector.id)
+                vectorDAO.recuperar(vector.id)
+            }
+        }
+    }
+
+    @Test
+    fun `si borro un vector con id invalida falla`() {
+        Assertions.assertThrows(IdNotFoundException::class.java) {
+            TransactionRunner.runTrx { vectorDAO.borrar(154313) }
+        }
     }
 
     @AfterEach
