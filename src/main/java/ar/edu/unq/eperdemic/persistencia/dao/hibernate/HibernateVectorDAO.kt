@@ -16,26 +16,4 @@ class HibernateVectorDAO: HibernateDAO<Vector>(Vector::class.java), VectorDAO {
         return query.resultList
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    override fun borrar(id: Long?) {
-        val session = TransactionRunner.currentSession
-
-        val hql = "delete from Vector v where v.id = : id"
-
-        val query = session.createQuery(hql, Vector::class.java)
-        query.setParameter("id", id);
-    }
-
 }
