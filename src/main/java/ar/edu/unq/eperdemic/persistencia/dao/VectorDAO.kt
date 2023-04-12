@@ -11,4 +11,6 @@ interface VectorDAO {
 
     fun recuperarTodos(): List<Vector>
 
+    fun borrar(id: Long?)
+
 }

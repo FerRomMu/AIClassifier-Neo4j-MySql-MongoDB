@@ -52,7 +52,7 @@ class VectorServiceImpl(
     }
 
     override fun borrarVector(vectorId: Long) {
-        TODO("Not yet implemented")
+        return runTrx { vectorDAO.borrar(vectorId) }
     }
 
     override fun recuperarTodos(): List<Vector> {
