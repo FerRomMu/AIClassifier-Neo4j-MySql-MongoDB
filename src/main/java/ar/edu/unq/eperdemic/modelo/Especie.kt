@@ -1,14 +1,14 @@
 package ar.edu.unq.eperdemic.modelo
 
-import javax.persistence.Entity
-import javax.persistence.ManyToOne
+import javax.persistence.*
 
 @Entity
 class Especie(var patogeno: Patogeno,
               var nombre: String,
               var paisDeOrigen: String) {
 
-    @ManyToOne
-    var owner: Vector? = null
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id : Long? = null
 
 }

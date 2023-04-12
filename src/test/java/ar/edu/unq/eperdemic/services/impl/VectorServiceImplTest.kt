@@ -1,9 +1,7 @@
 package ar.edu.unq.eperdemic.services.impl
 
-import ar.edu.unq.eperdemic.modelo.Patogeno
-import ar.edu.unq.eperdemic.modelo.TipoDeVector
-import ar.edu.unq.eperdemic.modelo.Ubicacion
-import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
+import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
@@ -13,8 +11,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.TestInstance
 
-internal class VectorServiceImplTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class VectorServiceImplTest {
     lateinit var vectorService: VectorServiceImpl
     lateinit var ubicacionService: UbicacionServiceImpl
     lateinit var vectorDAO: HibernateVectorDAO
@@ -39,6 +39,18 @@ internal class VectorServiceImplTest {
 
     @Test
     fun infectar() {
+
+        var vectorAInfectar = Vector(TipoDeVector.Persona)
+
+        var patogenoDeLaEspecie = Patogeno("Gripe")
+        var especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
+
+        assertEquals(vectorAInfectar.especiesContagiadas.size,0)
+
+        vectorService.infectar(vectorAInfectar,especieAContagiar)
+
+        assertEquals(vectorAInfectar.especiesContagiadas.size,1)
+
     }
 
     @Test
@@ -46,10 +58,30 @@ internal class VectorServiceImplTest {
     }
 
     @Test
-    fun `crearVector que no existe y lo recupera de la BD`() {
-        val fercho = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
-        val ferchoRecuperado = vectorService.recuperarVector(fercho.id!!)
-        assertEquals(fercho.id, ferchoRecuperado.id)
+    fun `si creo un vector este recibe un id`() {
+
+        val vector = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
+        assertNotNull(vector.id)
+
+    }
+
+    @Test
+    fun `si trato de crear un vector con una ubicacion invalida falla`() {
+
+        assertThrows(IdNotFoundException::class.java){ vectorService.crearVector(TipoDeVector.Persona,1554798541) }
+
+    }
+
+    @Test
+    fun `si creo vector lo puedo recuperar`() {
+
+        val vector = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
+        val vectorRecuperado = vectorService.recuperarVector(vector.id!!)
+
+        assertEquals(vector.id, vectorRecuperado.id)
+        assertEquals(vector.tipo, vectorRecuperado.tipo)
+        assertEquals(vector.ubicacion.id, vectorRecuperado.ubicacion.id)
+
     }
 
     @Test

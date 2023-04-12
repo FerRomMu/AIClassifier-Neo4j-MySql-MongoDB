@@ -1,13 +1,11 @@
 package ar.edu.unq.eperdemic.modelo
 
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 class Ubicacion(var nombre: String) {
 
     @Id
-    @Column(name="Id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 }
