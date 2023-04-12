@@ -35,9 +35,8 @@ class VectorServiceImpl(
         return runTrx {
             val ubicacionDelVector = ubicacionDAO.recuperar(ubicacionId);
 
-            val vector = Vector(tipo)
+            val vector = Vector( tipo)
             vector.ubicacion = ubicacionDelVector
-
             vectorDAO.guardar(vector)
 
             vector
@@ -55,4 +54,5 @@ class VectorServiceImpl(
     override fun recuperarTodos(): List<Vector> {
         TODO("Not yet implemented")
     }
+
 }
