@@ -85,7 +85,17 @@ class VectorServiceImplTest {
     }
 
     @Test
-    fun borrarVector() {
+    fun `si borro un vector y lo quiero recuperar falla`() {
+
+        val vector = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
+        val vectorRecuperado = vectorService.recuperarVector(vector.id!!)
+
+        assertEquals(vector.id, vectorRecuperado.id)
+
+        vectorService.borrarVector(vector.id!!)
+
+        assertThrows(IdNotFoundException::class.java) { vectorService.recuperarVector(vector.id!!) }
+
     }
 
     @AfterEach
