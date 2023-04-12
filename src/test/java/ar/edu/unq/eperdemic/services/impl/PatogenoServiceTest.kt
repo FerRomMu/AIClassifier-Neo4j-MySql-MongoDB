@@ -6,7 +6,6 @@ import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.utils.DataService
-import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
