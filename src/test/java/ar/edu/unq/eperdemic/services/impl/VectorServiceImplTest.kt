@@ -31,6 +31,7 @@ class VectorServiceImplTest {
 
         vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO)
         ubicacionService = UbicacionServiceImpl(ubicacionDAO)
+        dataService = DataServiceImpl()
 
         bernal = ubicacionService.crearUbicacion("Bernal")
     }
@@ -105,9 +106,24 @@ class VectorServiceImplTest {
         assertThrows(IdNotFoundException::class.java) {  vectorService.borrarVector(123241) }
     }
 
+    @Test
+    fun `si trato de recuperar todos llegan todos`() {
+        dataService.crearSetDeDatosIniciales()
+        val vectores = vectorService.recuperarTodos()
+
+        assertEquals(21, vectores.size)
+    }
+
+    @Test
+    fun `si trato de recuperar todos y no hay nadie simplemente recibo 0`() {
+
+        val vectores = vectorService.recuperarTodos()
+
+        assertEquals(0, vectores.size)
+    }
+
     @AfterEach
     fun tearDown() {
-        dataService = DataServiceImpl()
         dataService.eliminarTodo()
     }
 
