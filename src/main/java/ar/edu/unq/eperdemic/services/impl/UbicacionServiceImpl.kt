@@ -23,6 +23,9 @@ class UbicacionServiceImpl(val ubicacionDAO: UbicacionDAO): UbicacionService {
         }
     }
 
+    override fun recuperar(id: Long): Ubicacion {
+        return runTrx { ubicacionDAO.recuperar(id) }
+    }
     override fun recuperarTodos(): List<Ubicacion> {
         return runTrx {
             ubicacionDAO.recuperarTodos()
