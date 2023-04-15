@@ -16,7 +16,10 @@ class EspecieServiceImpl(var especieDAO: EspecieDAO) : EspecieService {
     }
 
     override fun recuperarTodos(): List<Especie> {
-        TODO("Not yet implemented")
+        return runTrx {
+            val recuperadas = especieDAO.recuperarTodos()
+            recuperadas
+        }
     }
 
     override fun cantidadDeInfectados(especieId: Long): Int {

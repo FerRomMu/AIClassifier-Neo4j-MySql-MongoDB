@@ -40,24 +40,24 @@ class VectorServiceImplTest {
     fun contagiar() {
     }
 
-    /*
+
     @Test
     fun infectar() {
-
+        /*
         var vectorAInfectar = Vector(TipoDeVector.Persona)
 
         var patogenoDeLaEspecie = Patogeno("Gripe")
-        var especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
+        var especieAContagiar = Especie("Especie_AR2T","Francia",patogenoDeLaEspecie)
 
         assertEquals(vectorAInfectar.especiesContagiadas.size,0)
 
         vectorService.infectar(vectorAInfectar,especieAContagiar)
 
         assertEquals(vectorAInfectar.especiesContagiadas.size,1)
-
+*/
     }
 
-     */
+
 
     @Test
     fun enfermedades() {
