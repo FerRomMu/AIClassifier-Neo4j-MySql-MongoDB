@@ -44,7 +44,7 @@ class HibernatePatogenoDAOTest {
     fun `si guardo un Patogeno con id se actualiza`() {
 
         runTrx { patogenoDAO.guardar(patogeno) }
-        assertEquals(0, patogeno.cantidadDeEspecies)
+        assertEquals(0, patogeno.cantidadDeEspecies())
 
         patogeno.crearEspecie("especieA", "Japon")
         val patogenoActualizado = runTrx {
@@ -53,7 +53,7 @@ class HibernatePatogenoDAOTest {
             patogenoActualizado
         }
 
-        assertEquals(1, patogenoActualizado.cantidadDeEspecies)
+        assertEquals(1, patogenoActualizado.cantidadDeEspecies())
     }
 
     @Test
@@ -63,7 +63,7 @@ class HibernatePatogenoDAOTest {
 
         assertEquals(patogeno.id, patogenoRecuperado.id)
         assertEquals(patogeno.tipo, patogenoRecuperado.tipo)
-        assertEquals(patogeno.cantidadDeEspecies, patogenoRecuperado.cantidadDeEspecies)
+        assertEquals(patogeno.cantidadDeEspecies(), patogenoRecuperado.cantidadDeEspecies())
     }
 
     @Test

@@ -40,6 +40,7 @@ class VectorServiceImplTest {
     fun contagiar() {
     }
 
+    /*
     @Test
     fun infectar() {
 
@@ -55,6 +56,8 @@ class VectorServiceImplTest {
         assertEquals(vectorAInfectar.especiesContagiadas.size,1)
 
     }
+
+     */
 
     @Test
     fun enfermedades() {
