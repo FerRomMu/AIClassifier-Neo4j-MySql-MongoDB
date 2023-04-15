@@ -57,7 +57,7 @@ class VectorServiceImpl(
     }
 
     override fun recuperarTodos(): List<Vector> {
-        TODO("Not yet implemented")
+        return runTrx { vectorDAO.recuperarTodos() }
     }
 
 }
