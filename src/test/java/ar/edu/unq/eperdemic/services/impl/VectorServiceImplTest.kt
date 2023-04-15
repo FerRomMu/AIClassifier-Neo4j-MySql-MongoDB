@@ -6,6 +6,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
+import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -20,6 +21,7 @@ class VectorServiceImplTest {
     lateinit var vectorDAO: HibernateVectorDAO
     lateinit var ubicacionDAO: HibernateUbicacionDAO
     lateinit var bernal: Ubicacion
+    lateinit var dataService: DataServiceImpl
 
     @BeforeEach
     fun setUp() {
@@ -94,11 +96,28 @@ class VectorServiceImplTest {
     }
 
     @Test
-    fun borrarVector() {
+    fun `si borro un vector y lo quiero recuperar falla`() {
+
+        val vector = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
+        val vectorRecuperado = vectorService.recuperarVector(vector.id!!)
+
+        assertEquals(vector.id, vectorRecuperado.id)
+
+        vectorService.borrarVector(vector.id!!)
+
+        assertThrows(IdNotFoundException::class.java) { vectorService.recuperarVector(vector.id!!) }
+    }
+
+    @Test
+    fun `si trato de borrar un vector con id invalida falla`() {
+
+        assertThrows(IdNotFoundException::class.java) {  vectorService.borrarVector(123241) }
     }
 
     @AfterEach
     fun tearDown() {
+        dataService = DataServiceImpl()
+        dataService.eliminarTodo()
     }
 
 }

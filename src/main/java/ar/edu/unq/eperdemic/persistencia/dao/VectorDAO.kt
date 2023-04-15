@@ -14,4 +14,6 @@ interface VectorDAO {
 
     fun enfermedades(id: Long?): List<Especie>
 
+    fun borrar(id: Long?)
+
 }
