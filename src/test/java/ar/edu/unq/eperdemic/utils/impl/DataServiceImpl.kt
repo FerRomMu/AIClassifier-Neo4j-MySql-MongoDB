@@ -1,17 +1,8 @@
 package ar.edu.unq.eperdemic.utils.impl
 
-import ar.edu.unq.eperdemic.modelo.Patogeno
-import ar.edu.unq.eperdemic.modelo.TipoDeVector
-import ar.edu.unq.eperdemic.modelo.Ubicacion
-import ar.edu.unq.eperdemic.modelo.Vector
-import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
-import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
-import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.dao.*
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.utils.DataService
 
@@ -21,6 +12,7 @@ class DataServiceImpl(): DataService {
     val vectorDao: VectorDAO = HibernateVectorDAO()
     val ubicacionDao: UbicacionDAO = HibernateUbicacionDAO()
     val dataDao: DataDAO = HibernateDataDAO()
+    val especieDAO: EspecieDAO = HibernateEspecieDAO()
 
     override fun eliminarTodo() {
         TransactionRunner.runTrx { dataDao.clear() }
@@ -42,6 +34,9 @@ class DataServiceImpl(): DataService {
                 vector.ubicacion = ubicacion
                 ubicacionDao.guardar(ubicacion)
                 vectorDao.guardar(vector)
+
+                var especie = Especie("Especie $i", "Pais $i", patogeno)
+                especieDAO.guardar(especie)
             }
         }
 

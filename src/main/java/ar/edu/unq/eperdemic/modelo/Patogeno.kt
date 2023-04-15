@@ -18,7 +18,7 @@ class Patogeno(var tipo: String) : Serializable{
         return tipo
     }
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], mappedBy = "id")
+    @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], mappedBy = "patogeno")
     val especies: MutableList<Especie> = mutableListOf()
 
     fun crearEspecie(nombreEspecie: String, paisDeOrigen: String) : Especie {
