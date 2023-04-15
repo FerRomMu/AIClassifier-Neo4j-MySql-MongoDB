@@ -88,6 +88,11 @@ class VectorServiceImplTest {
     }
 
     @Test
+    fun `si trato de recuperar un vector inexistente falla`() {
+        assertThrows(IdNotFoundException::class.java) { vectorService.recuperarVector(1) }
+    }
+
+    @Test
     fun `si borro un vector y lo quiero recuperar falla`() {
 
         val vector = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
