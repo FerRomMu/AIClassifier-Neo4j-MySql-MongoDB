@@ -8,5 +8,6 @@ interface UbicacionService {
     fun expandir(ubicacionId: Long)
     /* Operaciones CRUD*/
     fun crearUbicacion(nombreUbicacion: String): Ubicacion
+    fun recuperar(id: Long): Ubicacion
     fun recuperarTodos(): List<Ubicacion>
 }

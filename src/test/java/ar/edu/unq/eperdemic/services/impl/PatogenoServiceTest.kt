@@ -5,6 +5,7 @@ import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.utils.DataService
+import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
@@ -20,6 +21,7 @@ class PatogenoServiceTest {
     fun crearModelo() {
         patogenoDAO = HibernatePatogenoDAO()
         patogenoService = PatogenoServiceImpl(patogenoDAO)
+        dataService = DataServiceImpl()
     }
 
     @Test
@@ -48,9 +50,25 @@ class PatogenoServiceTest {
         assertThrows(IdNotFoundException::class.java) { patogenoService.recuperarPatogeno(10000001) }
     }
 
+    @Test
+    fun `si trato de recuperar todos llegan todos`() {
+        dataService.crearSetDeDatosIniciales()
+        val patogenos = patogenoService.recuperarATodosLosPatogenos()
+
+        assertEquals(21, patogenos.size)
+    }
+
+    @Test
+    fun `si trato de recuperar todos y no hay nadie simplemente recibo 0`() {
+
+        val patogenos = patogenoService.recuperarATodosLosPatogenos()
+
+        assertEquals(0, patogenos.size)
+    }
+
     @AfterEach
     fun deleteAll() {
-
+        dataService.eliminarTodo()
     }
 
 }
