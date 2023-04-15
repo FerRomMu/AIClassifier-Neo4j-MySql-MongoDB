@@ -11,4 +11,8 @@ class Especie(var patogeno: Patogeno,
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id : Long? = null
 
+
+    fun capacidadDeContagioA(tipoVictima : TipoDeVector): Int {
+        return 0 // Ver que tipo es tipoVictima y usar su variable
+    }
 }

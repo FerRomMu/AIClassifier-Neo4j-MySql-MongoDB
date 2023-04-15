@@ -17,6 +17,19 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner
    return query.resultList
   }
 
+     override fun vectoresDeY(ubicacionId: Long?,vectorId: Long?): Collection<Vector> {
+         val session = TransactionRunner.currentSession
+
+         val hql = "from Vector v where v.id = :idVec or v.ubicacion.id = :idUbi "
+
+         val query = session.createQuery(hql, Vector::class.java)
+
+         query.setParameter("idUbi", ubicacionId!!)
+         query.setParameter("idVec", vectorId!!)
+
+         return query.resultList
+     }
+
 
  }
 
