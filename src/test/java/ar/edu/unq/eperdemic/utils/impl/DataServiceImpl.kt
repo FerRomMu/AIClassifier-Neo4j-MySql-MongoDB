@@ -24,7 +24,6 @@ class DataServiceImpl(): DataService {
             for (i in 0..20){
                 var patogeno = Patogeno("Tipo $i")
                 patogeno.tipo = "Tipo $i"
-                //patogeno.cantidadDeEspecies = i
                 patogenoDao.guardar(patogeno)
 
                 var vector = Vector(
@@ -32,11 +31,11 @@ class DataServiceImpl(): DataService {
                 )
                 var ubicacion = Ubicacion("Lugar $i")
                 vector.ubicacion = ubicacion
+                var especie = Especie("nombre $i", "pais $i", patogeno)
+                vector.especiesContagiadas.add(especie)
                 ubicacionDao.guardar(ubicacion)
                 vectorDao.guardar(vector)
 
-                var especie = Especie("Especie $i", "Pais $i", patogeno)
-                especieDAO.guardar(especie)
             }
         }
 

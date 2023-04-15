@@ -4,7 +4,7 @@ import javax.persistence.*
 
 @Entity
 class Especie(var nombre: String,
-              var paisDeOrigen: String, patogenoK: Patogeno) {
+              var paisDeOrigen: String, patogenoParam: Patogeno) {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,7 +12,7 @@ class Especie(var nombre: String,
 
     @ManyToOne
     @JoinColumn(name="id_patogeno")
-    val patogeno: Patogeno = patogenoK
+    val patogeno: Patogeno = patogenoParam
 
     @ManyToMany(mappedBy = "especiesContagiadas")
     val vectores: MutableSet<Vector> = HashSet()
