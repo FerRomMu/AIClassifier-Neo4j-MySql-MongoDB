@@ -142,7 +142,7 @@ class VectorServiceImplTest {
 
     @AfterEach
     fun tearDown() {
-        //dataService.eliminarTodo()
+        dataService.eliminarTodo()
     }
 
 }
