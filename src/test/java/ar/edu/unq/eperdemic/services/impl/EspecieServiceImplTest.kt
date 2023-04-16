@@ -8,6 +8,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.services.EspecieService
 import ar.edu.unq.eperdemic.services.PatogenoService
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.BeforeEach
@@ -38,13 +39,22 @@ class EspecieServiceImplTest {
     }
 
     @Test
-    fun `si creo una especie la recupero por su id`() {
+    fun `puedo recuperar una especie guardada con su id`() {
+
         patogeno = Patogeno("Gripe")
         especie = Especie("especie11", "ARG", patogeno)
 
-        val patogenoCreado = patogenoService.crearPatogeno(patogeno)
-       // val especieCreada = patogenoService.agregarEspecie()
+        runTrx {
+            patogenoDAO.guardar(patogeno)
+            especieDAO.guardar(especie)
+        }
 
+        val recuperado = especieService.recuperarEspecie(especie.id!!)
+
+        assertEquals(especie, recuperado.id)
+        assertEquals("especie11", recuperado.nombre)
+        assertEquals("ARG", recuperado.paisDeOrigen)
+        assertEquals(patogeno.id, recuperado.patogeno.id)
     }
 
     @Test
