@@ -12,7 +12,6 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 
 class PatogenoServiceImpl(
     var patogenoDAO: PatogenoDAO,
-    var ubicacionDAO: UbicacionDAO,
     var especieDAO: EspecieDAO,
     var vectorDAO: VectorDAO) : PatogenoService {
 
@@ -36,7 +35,7 @@ class PatogenoServiceImpl(
 
     override fun agregarEspecie(id: Long, nombre: String, ubicacionId: Long): Especie {
         return runTrx {
-            val vectorAInfectar = patogenoDAO.vectorAleatorioEn(ubicacionId)
+            val vectorAInfectar = vectorDAO.vectorAleatorioEn(ubicacionId)
             val patogeno = patogenoDAO.recuperar(id)
             val especieNueva = patogeno.crearEspecie(nombre, vectorAInfectar.ubicacion.nombre)
 

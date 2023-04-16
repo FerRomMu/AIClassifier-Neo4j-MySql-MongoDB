@@ -35,7 +35,6 @@ class PatogenoServiceTest {
     lateinit var dataService: DataService
 
     lateinit var patogeno: Patogeno
-    lateinit var ubicacion: Ubicacion
 
     @BeforeEach
     fun crearModelo() {
@@ -45,7 +44,7 @@ class PatogenoServiceTest {
         vectorDAO = HibernateVectorDAO()
 
         vectorService = VectorServiceImpl(vectorDAO, ubicacionDAO)
-        patogenoService = PatogenoServiceImpl(patogenoDAO, ubicacionDAO, especieDAO, vectorDAO)
+        patogenoService = PatogenoServiceImpl(patogenoDAO, especieDAO, vectorDAO)
         ubicacionService = UbicacionServiceImpl(ubicacionDAO)
         dataService = DataServiceImpl()
 

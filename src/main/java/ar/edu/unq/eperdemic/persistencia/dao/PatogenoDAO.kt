@@ -7,5 +7,4 @@ interface PatogenoDAO {
     fun guardar(entity: Patogeno)
     fun recuperar(id: Long?): Patogeno
     fun recuperarTodos() : List<Patogeno>
-    fun vectorAleatorioEn(ubicacionId: Long): Vector
 }
