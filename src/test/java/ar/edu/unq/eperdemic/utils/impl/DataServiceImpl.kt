@@ -24,7 +24,6 @@ class DataServiceImpl(): DataService {
             for (i in 0..20){
                 var patogeno = Patogeno("Tipo $i")
                 patogeno.tipo = "Tipo $i"
-                //patogeno.cantidadDeEspecies = i
                 patogenoDao.guardar(patogeno)
 
                 var vector = Vector(
