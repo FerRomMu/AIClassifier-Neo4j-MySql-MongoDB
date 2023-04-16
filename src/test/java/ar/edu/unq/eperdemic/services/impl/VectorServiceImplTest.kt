@@ -2,10 +2,13 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -61,10 +64,14 @@ class VectorServiceImplTest {
 
     @Test
     fun enfermedades() {
-        var vectorAInfectar = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
 
         var patogenoDeLaEspecie = Patogeno("Gripe")
-        var especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
+        val patogenoDAO = HibernatePatogenoDAO()
+        runTrx { patogenoDAO.guardar(patogenoDeLaEspecie) }
+
+        var vectorAInfectar = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
+
+        var especieAContagiar = Especie("Especie_AR2T","Francia", patogenoDeLaEspecie)
 
         vectorService.infectar(vectorAInfectar,especieAContagiar)
 
