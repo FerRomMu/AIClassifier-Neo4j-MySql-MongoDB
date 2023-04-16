@@ -64,6 +64,13 @@ enum class TipoDeVector {
         }
     }
 
+    fun esPersona(): Boolean {
+        when (this) {
+            Persona -> return true
+            Insecto -> return false
+            Animal -> return false
+        }
+    }
 
 
 }

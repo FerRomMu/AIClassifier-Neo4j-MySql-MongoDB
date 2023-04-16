@@ -13,6 +13,8 @@ class Especie(var patogeno: Patogeno,
 
 
     fun capacidadDeContagioA(tipoVictima : TipoDeVector): Int {
-        return 0 // Ver que tipo es tipoVictima y usar su variable
+        return this.patogeno.capacidadDeContagioA(tipoVictima)
     }
+
+
 }
