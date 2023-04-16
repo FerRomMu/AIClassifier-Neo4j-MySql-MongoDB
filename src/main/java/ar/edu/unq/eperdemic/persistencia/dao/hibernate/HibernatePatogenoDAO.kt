@@ -15,7 +15,6 @@ class HibernatePatogenoDAO : HibernateDAO<Patogeno>(Patogeno::class.java), Patog
             from Vector v 
             where v.ubicacion.id = :idUbi
             order by rand()
-            limit 1
             """
 
         val query = session.createQuery(hql, Vector::class.java)
