@@ -1,9 +1,13 @@
 package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
+import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
+import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.*
@@ -16,12 +20,14 @@ class PatogenoServiceTest {
     lateinit var patogeno :Patogeno;
     lateinit var patogenoService: PatogenoServiceImpl;
     lateinit var dataService : DataService
+    lateinit var especieDAO:EspecieDAO
 
     @BeforeEach
     fun crearModelo() {
         patogenoDAO = HibernatePatogenoDAO()
         patogenoService = PatogenoServiceImpl(patogenoDAO)
         dataService = DataServiceImpl()
+        especieDAO = HibernateEspecieDAO()
     }
 
     @Test
@@ -42,7 +48,7 @@ class PatogenoServiceTest {
 
         assertEquals(patogenoRecuperado.id!!, patogeno.id)
         assertEquals(patogenoRecuperado.tipo, patogeno.tipo)
-        assertEquals(patogenoRecuperado.cantidadDeEspecies, patogeno.cantidadDeEspecies)
+        assertEquals(patogenoRecuperado.cantidadDeEspecies(), patogeno.cantidadDeEspecies())
     }
 
     @Test

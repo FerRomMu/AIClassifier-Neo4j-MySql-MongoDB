@@ -23,9 +23,9 @@ class PatogenoTest {
     @Test
     fun `crearEspecie aumenta en 1 la cantidad de especies`() {
 
-        assertEquals(0, patogeno.cantidadDeEspecies)
+        assertEquals(0, patogeno.cantidadDeEspecies())
         patogeno.crearEspecie("unaEspecie", "Japon")
-        assertEquals(1, patogeno.cantidadDeEspecies)
+        assertEquals(1, patogeno.cantidadDeEspecies())
     }
 
     @Test
