@@ -2,10 +2,14 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
+import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 
 class UbicacionServiceImpl(val ubicacionDAO: UbicacionDAO): UbicacionService {
+
+    val vectorDAO : VectorDAO = HibernateVectorDAO()
 
     override fun mover(vectorId: Long, ubicacionid: Long) {
          runTrx {
@@ -17,9 +21,9 @@ class UbicacionServiceImpl(val ubicacionDAO: UbicacionDAO): UbicacionService {
 
                  for (vector in listaDeVectores){
                      vectorAMover.intentarInfectar(vector)
-                     // Guardar listaDeVectores
+                     vectorDAO.guardar(vector)
                  }
-                 // Guardar vectorAMover
+                 vectorDAO.guardar(vectorAMover)
              }
          }
 
