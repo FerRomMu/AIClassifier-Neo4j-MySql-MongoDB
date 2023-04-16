@@ -53,7 +53,6 @@ internal class UbicacionServiceImplTest {
         assertEquals(vectorAMover.especiesContagiadas.size,1)
         assertEquals(vectorVictima1.especiesContagiadas.size,1)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
-
     }
 
     @Test
