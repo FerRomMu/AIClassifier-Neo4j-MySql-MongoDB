@@ -43,7 +43,7 @@ class PatogenoServiceTest {
         ubicacionDAO = HibernateUbicacionDAO()
         vectorDAO = HibernateVectorDAO()
 
-        vectorService = VectorServiceImpl(vectorDAO, ubicacionDAO)
+        vectorService = VectorServiceImpl(vectorDAO, ubicacionDAO, especieDAO)
         patogenoService = PatogenoServiceImpl(patogenoDAO, especieDAO, vectorDAO)
         ubicacionService = UbicacionServiceImpl(ubicacionDAO)
         dataService = DataServiceImpl()
@@ -112,7 +112,7 @@ class PatogenoServiceTest {
         dataService.crearSetDeDatosIniciales()
 
         var vectorInfectado = vectorService.recuperarVector(1)
-        assertEquals(vectorInfectado.especiesContagiadas.size,0)
+        assertFalse(vectorInfectado.especiesContagiadas.map{e -> e.nombre}.contains("virusT"))
 
         val ubicacion = ubicacionService.recuperar(1)
         patogeno = Patogeno("Gripe")
@@ -121,7 +121,7 @@ class PatogenoServiceTest {
         patogenoService.agregarEspecie(patogeno.id!!, "virusT", ubicacion.id!!)
         vectorInfectado = vectorService.recuperarVector(1)
 
-        assertEquals(vectorInfectado.especiesContagiadas.size,1)
+        assertTrue(vectorInfectado.especiesContagiadas.map{e -> e.nombre}.contains("virusT"))
     }
 
     @Test

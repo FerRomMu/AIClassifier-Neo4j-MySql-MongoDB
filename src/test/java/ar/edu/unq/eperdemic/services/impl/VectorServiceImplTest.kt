@@ -2,10 +2,16 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
+import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
+import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -18,8 +24,10 @@ import org.junit.jupiter.api.TestInstance
 class VectorServiceImplTest {
     lateinit var vectorService: VectorServiceImpl
     lateinit var ubicacionService: UbicacionServiceImpl
-    lateinit var vectorDAO: HibernateVectorDAO
-    lateinit var ubicacionDAO: HibernateUbicacionDAO
+    lateinit var vectorDAO: VectorDAO
+    lateinit var ubicacionDAO: UbicacionDAO
+    lateinit var patogenoDAO: PatogenoDAO
+    lateinit var especieDAO: EspecieDAO
     lateinit var bernal: Ubicacion
     lateinit var dataService: DataServiceImpl
 
@@ -28,8 +36,10 @@ class VectorServiceImplTest {
 
         ubicacionDAO = HibernateUbicacionDAO()
         vectorDAO = HibernateVectorDAO()
+        patogenoDAO = HibernatePatogenoDAO()
+        especieDAO = HibernateEspecieDAO()
 
-        vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO)
+        vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO,especieDAO )
         ubicacionService = UbicacionServiceImpl(ubicacionDAO)
         dataService = DataServiceImpl()
 
@@ -43,10 +53,11 @@ class VectorServiceImplTest {
 
     @Test
     fun infectar() {
-        /*
         var vectorAInfectar = Vector(TipoDeVector.Persona)
 
         var patogenoDeLaEspecie = Patogeno("Gripe")
+        runTrx {patogenoDAO.guardar(patogenoDeLaEspecie)}
+
         var especieAContagiar = Especie("Especie_AR2T","Francia",patogenoDeLaEspecie)
 
         assertEquals(vectorAInfectar.especiesContagiadas.size,0)
@@ -54,13 +65,35 @@ class VectorServiceImplTest {
         vectorService.infectar(vectorAInfectar,especieAContagiar)
 
         assertEquals(vectorAInfectar.especiesContagiadas.size,1)
-*/
     }
 
 
 
     @Test
-    fun enfermedades() {
+    fun `Si miro las enfermedades de un vector las recibo`() {
+
+        var patogenoDeLaEspecie = Patogeno("Gripe")
+        val patogenoDAO = HibernatePatogenoDAO()
+        runTrx { patogenoDAO.guardar(patogenoDeLaEspecie) }
+
+        var vectorAInfectar = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
+
+        var especieAContagiar = Especie("Especie_AR2T","Francia", patogenoDeLaEspecie)
+
+        vectorService.infectar(vectorAInfectar,especieAContagiar)
+        val resultado = vectorService.enfermedades(vectorAInfectar.id!!)
+
+        assertEquals(1,resultado.size)
+        assertEquals(especieAContagiar.id, resultado[0].id)
+
+    }
+
+    @Test
+    fun `Si pido enfermedad de un vector que no esta infectado recibo 0 enfermedades`() {
+
+        val vectorSano = vectorService.crearVector(TipoDeVector.Persona, bernal.id!!)
+        assertEquals(0, vectorService.enfermedades(vectorSano.id!!).size)
+
     }
 
     @Test
