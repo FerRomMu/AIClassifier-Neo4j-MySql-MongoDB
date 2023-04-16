@@ -63,7 +63,7 @@ class VectorServiceImplTest {
 
 
     @Test
-    fun enfermedades() {
+    fun `Si miro las enfermedades de un vector las recibo`() {
 
         var patogenoDeLaEspecie = Patogeno("Gripe")
         val patogenoDAO = HibernatePatogenoDAO()
@@ -74,8 +74,18 @@ class VectorServiceImplTest {
         var especieAContagiar = Especie("Especie_AR2T","Francia", patogenoDeLaEspecie)
 
         vectorService.infectar(vectorAInfectar,especieAContagiar)
+        val resultado = vectorService.enfermedades(vectorAInfectar.id!!)
 
-        assertEquals(vectorService.enfermedades(vectorAInfectar.id!!).size,1)
+        assertEquals(1,resultado.size)
+        assertEquals(especieAContagiar.id, resultado[0].id)
+
+    }
+
+    @Test
+    fun `Si pido enfermedad de un vector que no esta infectado recibo 0 enfermedades`() {
+
+        val vectorSano = vectorService.crearVector(TipoDeVector.Persona, bernal.id!!)
+        assertEquals(0, vectorService.enfermedades(vectorSano.id!!).size)
 
     }
 

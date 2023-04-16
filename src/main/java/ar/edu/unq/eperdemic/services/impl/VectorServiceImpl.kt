@@ -17,8 +17,6 @@ class VectorServiceImpl(
     private val ubicacionDAO: UbicacionDAO,
 ): VectorService {
 
-
-
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         TODO("Not yet implemented")
     }
