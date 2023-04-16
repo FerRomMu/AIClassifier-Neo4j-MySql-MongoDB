@@ -2,8 +2,11 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
+import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
@@ -21,8 +24,10 @@ import org.junit.jupiter.api.TestInstance
 class VectorServiceImplTest {
     lateinit var vectorService: VectorServiceImpl
     lateinit var ubicacionService: UbicacionServiceImpl
-    lateinit var vectorDAO: HibernateVectorDAO
-    lateinit var ubicacionDAO: HibernateUbicacionDAO
+    lateinit var vectorDAO: VectorDAO
+    lateinit var ubicacionDAO: UbicacionDAO
+    lateinit var patogenoDAO: PatogenoDAO
+    lateinit var especieDAO: EspecieDAO
     lateinit var bernal: Ubicacion
     lateinit var dataService: DataServiceImpl
 
@@ -31,8 +36,10 @@ class VectorServiceImplTest {
 
         ubicacionDAO = HibernateUbicacionDAO()
         vectorDAO = HibernateVectorDAO()
+        patogenoDAO = HibernatePatogenoDAO()
+        especieDAO = HibernateEspecieDAO()
 
-        vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO)
+        vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO,especieDAO )
         ubicacionService = UbicacionServiceImpl(ubicacionDAO)
         dataService = DataServiceImpl()
 
@@ -46,10 +53,11 @@ class VectorServiceImplTest {
 
     @Test
     fun infectar() {
-        /*
         var vectorAInfectar = Vector(TipoDeVector.Persona)
 
         var patogenoDeLaEspecie = Patogeno("Gripe")
+        runTrx {patogenoDAO.guardar(patogenoDeLaEspecie)}
+
         var especieAContagiar = Especie("Especie_AR2T","Francia",patogenoDeLaEspecie)
 
         assertEquals(vectorAInfectar.especiesContagiadas.size,0)
@@ -57,7 +65,6 @@ class VectorServiceImplTest {
         vectorService.infectar(vectorAInfectar,especieAContagiar)
 
         assertEquals(vectorAInfectar.especiesContagiadas.size,1)
-*/
     }
 
 
