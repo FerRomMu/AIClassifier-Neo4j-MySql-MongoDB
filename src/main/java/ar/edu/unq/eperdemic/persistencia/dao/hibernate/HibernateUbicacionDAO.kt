@@ -30,6 +30,18 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner
          return query.resultList
      }
 
+     override fun traerVectoresQueEstanEn(ubicacionId : Long) : Collection<Vector> {
+         val session = TransactionRunner.currentSession
+
+         val hql = "from Vector v where v.ubicacion.id = :idUbi"
+
+         val query = session.createQuery(hql, Vector::class.java)
+
+         query.setParameter("idUbi", ubicacionId!!)
+
+         return query.resultList
+     }
+
 
  }
 

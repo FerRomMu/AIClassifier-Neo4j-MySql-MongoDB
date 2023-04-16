@@ -15,4 +15,6 @@ interface UbicacionDAO {
     fun recuperarTodos(): List<Ubicacion>
 
     fun vectoresDeY(ubicacionId: Long?,vectorId: Long?): Collection<Vector>
+
+    fun traerVectoresQueEstanEn(ubicacionId: Long) :  Collection<Vector>
 }
