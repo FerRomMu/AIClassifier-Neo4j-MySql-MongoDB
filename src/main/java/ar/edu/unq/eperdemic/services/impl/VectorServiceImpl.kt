@@ -34,8 +34,9 @@ class VectorServiceImpl(
     }
 
     override fun enfermedades(vectorId: Long): List<Especie> {
-        TODO("Not yet implemented")
+        return runTrx { vectorDAO.enfermedades(vectorId) }
     }
+
 
     override fun crearVector(tipo: TipoDeVector, ubicacionId: Long): Vector {
         return runTrx {
