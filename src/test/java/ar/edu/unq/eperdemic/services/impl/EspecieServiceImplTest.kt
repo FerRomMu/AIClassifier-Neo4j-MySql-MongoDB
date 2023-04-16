@@ -66,4 +66,8 @@ class EspecieServiceImplTest {
         assertEquals(21, especies.size)
     }
 
+    @AfterEach
+    fun deleteAll() {
+        dataService.eliminarTodo()
+    }
 }
