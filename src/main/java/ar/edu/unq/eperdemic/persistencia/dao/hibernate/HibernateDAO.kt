@@ -9,7 +9,7 @@ open class HibernateDAO<T>(private val entityType: Class<T>) {
 
     fun guardar(entity: T) {
         val session = TransactionRunner.currentSession
-        session.save(entity)
+        session.saveOrUpdate(entity)
     }
 
     fun recuperar(id: Long?): T {

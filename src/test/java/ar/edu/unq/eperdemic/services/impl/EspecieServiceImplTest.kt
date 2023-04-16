@@ -51,7 +51,7 @@ class EspecieServiceImplTest {
 
         val recuperado = especieService.recuperarEspecie(especie.id!!)
 
-        assertEquals(especie, recuperado.id)
+        assertEquals(especie.id, recuperado.id)
         assertEquals("especie11", recuperado.nombre)
         assertEquals("ARG", recuperado.paisDeOrigen)
         assertEquals(patogeno.id, recuperado.patogeno.id)
