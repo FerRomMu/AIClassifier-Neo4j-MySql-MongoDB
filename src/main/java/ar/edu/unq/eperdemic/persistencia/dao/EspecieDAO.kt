@@ -6,5 +6,5 @@ interface EspecieDAO {
 
     fun guardar(entity: Especie)
     fun recuperar(id: Long?) : Especie
-    //fun recuperarTodos(): List<Especie>
+    fun recuperarTodos(): List<Especie>
 }

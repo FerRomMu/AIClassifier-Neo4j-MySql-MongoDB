@@ -7,16 +7,6 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
  open class HibernateUbicacionDAO: HibernateDAO<Ubicacion>(Ubicacion::class.java), UbicacionDAO{
 
-  override fun recuperarTodos(): List<Ubicacion> {
-      val session = TransactionRunner.currentSession
-
-      val hql = "from Ubicacion"
-
-      val query = session.createQuery(hql, Ubicacion::class.java)
-
-   return query.resultList
-  }
-
      override fun vectoresEn(ubicacionId: Long?): Collection<Vector> {
          val session = TransactionRunner.currentSession
 

@@ -10,8 +10,9 @@ class Patogeno(var tipo: String) : Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id : Long? = null
 
-    @Column(name="CantidadDeEspecies")
-    var cantidadDeEspecies: Int = 0
+    fun cantidadDeEspecies() : Int {
+        return this.especies.size
+    }
 
     private var capacidadDeContagioHumano : Int = 0
     private var capacidadDeContagioInsecto : Int = 0
@@ -60,9 +61,14 @@ class Patogeno(var tipo: String) : Serializable{
         return tipo
     }
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], mappedBy = "patogeno")
+    val especies: MutableList<Especie> = mutableListOf()
+
     fun crearEspecie(nombreEspecie: String, paisDeOrigen: String) : Especie {
-        cantidadDeEspecies++
-        return Especie(this, nombreEspecie, paisDeOrigen)
+        val especie = Especie(this,nombreEspecie,paisDeOrigen)
+        this.especies.add(especie)
+
+        return especie
     }
 
     fun capacidadDeContagioA(tipoVictima: TipoDeVector): Int {
