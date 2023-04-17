@@ -33,7 +33,6 @@ class EspecieServiceImplTest {
         especieDAO = HibernateEspecieDAO()
         patogenoDAO = HibernatePatogenoDAO()
         especieService = EspecieServiceImpl(especieDAO)
-        patogenoService = PatogenoServiceImpl(patogenoDAO)
         dataService = DataServiceImpl()
 
     }

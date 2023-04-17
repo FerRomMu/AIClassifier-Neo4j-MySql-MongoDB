@@ -16,4 +16,6 @@ interface VectorDAO {
 
     fun borrar(id: Long?)
 
+    fun vectorAleatorioEn(ubicacionId: Long): Vector
+
 }
