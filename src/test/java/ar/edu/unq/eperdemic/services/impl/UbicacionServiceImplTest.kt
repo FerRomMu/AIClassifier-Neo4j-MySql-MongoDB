@@ -47,7 +47,7 @@ internal class UbicacionServiceImplTest {
         var vectorVictima2 = vectorService.crearVector(TipoDeVector.Animal,chaco.id!!)
 
         var patogeno = Patogeno("Patogeni_SS")
-        var especieAContagiar = Especie(patogeno,"Especie_Sl","Honduras")
+        var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
 
         vectorService.infectar(vectorAMover,especieAContagiar)
 
