@@ -8,10 +8,13 @@ import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 class HibernatePatogenoDAO : HibernateDAO<Patogeno>(Patogeno::class.java), PatogenoDAO {
-    override fun especiesDePatogeno(id: Long?): MutableList<Especie> {
+    override fun especiesDePatogeno(id: Long?): List<Especie> {
         val session = TransactionRunner.currentSession
 
-        val hql = "p.especies from Patogeno p where p.id = : idPatogeno"
+        val hql = "select es\n " +
+                "from Patogeno p " +
+                "join p.especies es\n" +
+                "where p.id = :idPatogeno"
 
         val query = session.createQuery(hql, Especie::class.java)
         query.setParameter("idPatogeno", id)
