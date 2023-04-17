@@ -23,7 +23,10 @@ class EspecieServiceImpl(var especieDAO: EspecieDAO) : EspecieService {
     }
 
     override fun cantidadDeInfectados(especieId: Long): Int {
-        TODO("Not yet implemented")
+        return runTrx {
+            val cantidad = especieDAO.cantidadDeInfectados(especieId)
+            cantidad
+        }
     }
 
 }
