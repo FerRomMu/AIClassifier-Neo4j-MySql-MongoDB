@@ -1,6 +1,8 @@
 package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import org.junit.jupiter.api.AfterEach
@@ -14,6 +16,8 @@ internal class UbicacionServiceImplTest {
     lateinit var vectorService: VectorServiceImpl
     lateinit var vectorDAO: HibernateVectorDAO
 
+    lateinit var especieDAO: EspecieDAO
+
     lateinit var ubicacionService: UbicacionServiceImpl
     lateinit var ubicacionDAO: HibernateUbicacionDAO
     lateinit var dado: Randomizador
@@ -23,14 +27,17 @@ internal class UbicacionServiceImplTest {
          ubicacionDAO = HibernateUbicacionDAO()
          ubicacionService = UbicacionServiceImpl(ubicacionDAO)
 
-         vectorDAO = HibernateVectorDAO()
-         vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO)
+        especieDAO = HibernateEspecieDAO()
 
-         dado.getInstance().estado = EstadoRandomizadorDeterminístico()
+         vectorDAO = HibernateVectorDAO()
+         vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO,especieDAO)
+
+         dado = Randomizador().getInstance()
+         dado.estado = EstadoRandomizadorDeterminístico()
     }
 
     @Test
-    fun  `mover vector a una ubicación con un humano y un animal`() {
+    fun  `mover vector a una ubicacion con un humano y un animal`() {
         var cordoba = ubicacionService.crearUbicacion("Cordoba")
         var chaco = ubicacionService.crearUbicacion("Chaco")
 

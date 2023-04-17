@@ -1,11 +1,12 @@
 package ar.edu.unq.eperdemic.modelo
 
+import java.io.Serializable
 import javax.persistence.*
 
 @Entity
 class Especie(var patogeno: Patogeno,
               var nombre: String,
-              var paisDeOrigen: String) {
+              var paisDeOrigen: String):Serializable  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

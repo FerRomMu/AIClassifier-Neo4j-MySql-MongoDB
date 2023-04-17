@@ -13,11 +13,11 @@ class UbicacionServiceImpl(val ubicacionDAO: UbicacionDAO): UbicacionService {
 
     override fun mover(vectorId: Long, ubicacionid: Long) {
          runTrx {
-            var listaDeVectores = ubicacionDAO.vectoresDeY(ubicacionid, vectorId).toList()
-            var vectorAMover = listaDeVectores.find( {it.id == vectorId} )
+            var listaDeVectores = ubicacionDAO.vectoresEn(ubicacionid).toList()
+            var vectorAMover = vectorDAO.recuperar(vectorId)
 
-             if(listaDeVectores.size > 1){
-                 vectorAMover!!.ubicacion = listaDeVectores.get(0).ubicacion
+             if(listaDeVectores.isNotEmpty()){
+                 vectorAMover.ubicacion = listaDeVectores.get(0).ubicacion
 
                  for (vector in listaDeVectores){
                      vectorAMover.intentarInfectar(vector)
@@ -26,7 +26,6 @@ class UbicacionServiceImpl(val ubicacionDAO: UbicacionDAO): UbicacionService {
                  vectorDAO.guardar(vectorAMover)
              }
          }
-
     }
 
     override fun expandir(ubicacionId: Long) {

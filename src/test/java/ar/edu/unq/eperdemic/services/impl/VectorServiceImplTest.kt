@@ -5,7 +5,9 @@ import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.TipoDeVector
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
@@ -20,8 +22,11 @@ import org.junit.jupiter.api.TestInstance
 class VectorServiceImplTest {
     lateinit var vectorService: VectorServiceImpl
     lateinit var ubicacionService: UbicacionServiceImpl
+
     lateinit var vectorDAO: HibernateVectorDAO
     lateinit var ubicacionDAO: HibernateUbicacionDAO
+    lateinit var especieDAO: EspecieDAO
+
     lateinit var bernal: Ubicacion
 
     @BeforeEach
@@ -30,7 +35,9 @@ class VectorServiceImplTest {
         ubicacionDAO = HibernateUbicacionDAO()
         vectorDAO = HibernateVectorDAO()
 
-        vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO)
+        especieDAO = HibernateEspecieDAO()
+
+        vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO,especieDAO)
         ubicacionService = UbicacionServiceImpl(ubicacionDAO)
 
         bernal = ubicacionService.crearUbicacion("Bernal")
