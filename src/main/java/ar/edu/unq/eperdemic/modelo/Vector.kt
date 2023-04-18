@@ -13,7 +13,7 @@ class Vector(var tipo: TipoDeVector) {
     @ManyToOne
     lateinit var ubicacion: Ubicacion
 
-    @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var especiesContagiadas: MutableSet<Especie> = HashSet()
 
     fun agregarEspecie(especie: Especie) {
@@ -43,6 +43,8 @@ class Vector(var tipo: TipoDeVector) {
     fun puedoSerContagiadoPor(vectorQueMeIntentaContagiar :Vector): Boolean{
         return this.tipo.puedeContagiarme(vectorQueMeIntentaContagiar.tipo)
     }
+
+
 }
 
 enum class TipoDeVector {
@@ -64,6 +66,13 @@ enum class TipoDeVector {
         }
     }
 
+    fun esPersona(): Boolean {
+        when (this) {
+            Persona -> return true
+            Insecto -> return false
+            Animal -> return false
+        }
+    }
 
 
 }
