@@ -4,9 +4,12 @@ import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
+import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.AfterEach
@@ -19,7 +22,7 @@ internal class UbicacionServiceImplTest {
 
     lateinit var vectorService: VectorServiceImpl
     lateinit var vectorDAO: HibernateVectorDAO
-
+    lateinit var patogenoDAO: PatogenoDAO
     lateinit var especieDAO: EspecieDAO
 
     lateinit var ubicacionService: UbicacionServiceImpl
@@ -34,6 +37,7 @@ internal class UbicacionServiceImplTest {
         dataService = DataServiceImpl()
          ubicacionDAO = HibernateUbicacionDAO()
          ubicacionService = UbicacionServiceImpl(ubicacionDAO)
+        patogenoDAO = HibernatePatogenoDAO()
 
         especieDAO = HibernateEspecieDAO()
 
@@ -55,6 +59,7 @@ internal class UbicacionServiceImplTest {
         var vectorVictima2 = vectorService.crearVector(TipoDeVector.Animal,chaco.id!!)
 
         var patogeno = Patogeno("Patogeni_SS")
+        runTrx {patogenoDAO.guardar(patogeno)}
         var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
 
         vectorService.infectar(vectorAMover,especieAContagiar)
