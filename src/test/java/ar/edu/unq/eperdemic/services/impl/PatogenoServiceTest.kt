@@ -97,14 +97,15 @@ class PatogenoServiceTest {
 
     @Test
     fun `si agrego una especie se persiste en el patogeno`() {
-        dataService.crearSetDeDatosIniciales()
-        patogeno = Patogeno("Gripe")
 
-        val ubicacion = ubicacionService.recuperar(1)
+        val ubicacion = ubicacionService.crearUbicacion("Ubicacion")
+        var vectorInfectado = Vector(TipoDeVector.Persona)
+        vectorInfectado.ubicacion = ubicacion
+        runTrx { vectorDAO.guardar(vectorInfectado) }
+        patogeno = Patogeno("Gripe")
 
         patogenoService.crearPatogeno(patogeno)
         patogenoService.agregarEspecie(patogeno.id!!, "virusT", ubicacion.id!!)
-
         val patogenoRecuperado = patogenoService.recuperarPatogeno(patogeno.id!!)
 
         assertTrue(patogenoRecuperado.especies.map{e -> e.nombre}.contains("virusT"))
@@ -112,17 +113,18 @@ class PatogenoServiceTest {
 
     @Test
     fun `si agrego una especie infecta a un vector de la ubicacion`() {
-        dataService.crearSetDeDatosIniciales()
 
-        var vectorInfectado = vectorService.recuperarVector(1)
+        val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion")
+        var vectorInfectado = Vector(TipoDeVector.Persona)
+        vectorInfectado.ubicacion = ubicacionPatogeno
+        runTrx { vectorDAO.guardar(vectorInfectado) }
+
         assertFalse(vectorInfectado.especiesContagiadas.map{e -> e.nombre}.contains("virusT"))
 
-        val ubicacion = ubicacionService.recuperar(1)
         patogeno = Patogeno("Gripe")
-
         patogenoService.crearPatogeno(patogeno)
-        patogenoService.agregarEspecie(patogeno.id!!, "virusT", ubicacion.id!!)
-        vectorInfectado = vectorService.recuperarVector(1)
+        patogenoService.agregarEspecie(patogeno.id!!, "virusT", ubicacionPatogeno.id!!)
+        vectorInfectado = vectorService.recuperarVector(vectorInfectado.id!!)
 
         assertTrue(vectorInfectado.especiesContagiadas.map{e -> e.nombre}.contains("virusT"))
     }
@@ -140,6 +142,7 @@ class PatogenoServiceTest {
         val especieCreada = patogenoService.agregarEspecie(patogeno.id!!, "virus", ubicacionPatogeno.id!!)
 
         val especiePersistida = especieService.recuperarEspecie(especieCreada.id!!)
+        
         assertEquals(especieCreada.id, especiePersistida.id)
         assertEquals(especieCreada.patogeno.id, especiePersistida.patogeno.id)
         assertEquals(especieCreada.nombre, especiePersistida.nombre)
