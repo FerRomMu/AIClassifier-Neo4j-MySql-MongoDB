@@ -59,7 +59,10 @@ internal class UbicacionServiceImplTest {
         var vectorVictima2 = vectorService.crearVector(TipoDeVector.Animal,chaco.id!!)
 
         var patogeno = Patogeno("Patogeni_SS")
+        patogeno.setCapacidadDeContagioHumano(100)
         runTrx {patogenoDAO.guardar(patogeno)}
+
+
         var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
 
         vectorService.infectar(vectorAMover,especieAContagiar)
@@ -68,7 +71,19 @@ internal class UbicacionServiceImplTest {
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
+        var vectoresEnChaco = runTrx { ubicacionDAO.vectoresEn(chaco.id!!) }
+
+        assertEquals(vectoresEnChaco.size,2)
+
         ubicacionService.mover(vectorAMover.id!!,chaco.id!!)
+
+        vectoresEnChaco = runTrx { ubicacionDAO.vectoresEn(chaco.id!!) }
+        assertEquals(vectoresEnChaco.size,3)
+
+        vectorAMover = vectorService.recuperarVector(vectorAMover.id!!)
+        vectorVictima1 = vectorService.recuperarVector(vectorVictima1.id!!)
+        vectorVictima2 =vectorService.recuperarVector(vectorVictima2.id!!)
+
 
         assertEquals(vectorAMover.especiesContagiadas.size,1)
         assertEquals(vectorVictima1.especiesContagiadas.size,1)
