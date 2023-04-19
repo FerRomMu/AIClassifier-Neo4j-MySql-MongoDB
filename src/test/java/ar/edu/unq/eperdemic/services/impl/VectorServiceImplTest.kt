@@ -3,9 +3,8 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
-import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
@@ -24,10 +23,12 @@ import org.junit.jupiter.api.TestInstance
 class VectorServiceImplTest {
     lateinit var vectorService: VectorServiceImpl
     lateinit var ubicacionService: UbicacionServiceImpl
-    lateinit var vectorDAO: VectorDAO
-    lateinit var ubicacionDAO: UbicacionDAO
-    lateinit var patogenoDAO: PatogenoDAO
+
+    lateinit var vectorDAO: HibernateVectorDAO
+    lateinit var ubicacionDAO: HibernateUbicacionDAO
     lateinit var especieDAO: EspecieDAO
+    lateinit var patogenoDAO: PatogenoDAO
+
     lateinit var bernal: Ubicacion
     lateinit var dataService: DataServiceImpl
 
@@ -50,7 +51,6 @@ class VectorServiceImplTest {
     fun contagiar() {
     }
 
-
     @Test
     fun infectar() {
         var vectorAInfectar = Vector(TipoDeVector.Persona)
@@ -58,7 +58,7 @@ class VectorServiceImplTest {
         var patogenoDeLaEspecie = Patogeno("Gripe")
         runTrx {patogenoDAO.guardar(patogenoDeLaEspecie)}
 
-        var especieAContagiar = Especie("Especie_AR2T","Francia",patogenoDeLaEspecie)
+        var especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
 
         assertEquals(vectorAInfectar.especiesContagiadas.size,0)
 
@@ -78,7 +78,7 @@ class VectorServiceImplTest {
 
         var vectorAInfectar = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
 
-        var especieAContagiar = Especie("Especie_AR2T","Francia", patogenoDeLaEspecie)
+        var especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
 
         vectorService.infectar(vectorAInfectar,especieAContagiar)
         val resultado = vectorService.enfermedades(vectorAInfectar.id!!)

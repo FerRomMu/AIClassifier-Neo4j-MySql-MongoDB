@@ -55,7 +55,7 @@ class EspecieServiceImplTest {
     fun `puedo recuperar una especie guardada con su id`() {
 
         patogeno = Patogeno("Gripe")
-        especie = Especie("especie11", "ARG", patogeno)
+        especie = Especie(patogeno,"especie11", "ARG")
 
         runTrx {
             patogenoDAO.guardar(patogeno)

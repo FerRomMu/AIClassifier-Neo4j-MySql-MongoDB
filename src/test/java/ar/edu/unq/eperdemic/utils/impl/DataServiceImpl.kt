@@ -31,7 +31,7 @@ class DataServiceImpl(): DataService {
                 )
                 var ubicacion = Ubicacion("Lugar $i")
                 vector.ubicacion = ubicacion
-                var especie = Especie("Especie $i", "Pais $i", patogeno)
+                var especie = patogeno.crearEspecie("Especie $i", "Pais $i")
                 vector.especiesContagiadas.add(especie)
                 ubicacionDao.guardar(ubicacion)
                 especieDAO.guardar(especie)

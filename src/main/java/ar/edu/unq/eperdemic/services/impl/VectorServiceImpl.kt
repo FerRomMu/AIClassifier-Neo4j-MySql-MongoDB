@@ -20,6 +20,7 @@ class VectorServiceImpl(
   ): VectorService {
 
 
+
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         TODO("Not yet implemented")
     }
@@ -30,13 +31,11 @@ class VectorServiceImpl(
             especieDAO.guardar(especie)
             vectorDAO.guardar(vector)
         }
-
     }
 
     override fun enfermedades(vectorId: Long): List<Especie> {
         return runTrx { vectorDAO.enfermedades(vectorId) }
     }
-
 
     override fun crearVector(tipo: TipoDeVector, ubicacionId: Long): Vector {
         return runTrx {

@@ -34,7 +34,7 @@ class HibernateEspecieDAOTest {
         data = DataServiceImpl()
 
         patogeno = Patogeno("Gripe")
-        especie = Especie("especie111", "ARG", patogeno)
+        especie =  patogeno.crearEspecie("especie111", "ARG")
     }
 
     @Test
