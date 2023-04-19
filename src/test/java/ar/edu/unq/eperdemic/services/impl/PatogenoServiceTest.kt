@@ -160,6 +160,27 @@ class PatogenoServiceTest {
         }
     }
 
+    @Test
+    fun `si trato de recuperar las especies de un patogeno las devuelve`() {
+        patogeno = Patogeno("Gripe")
+
+        patogeno.crearEspecie("virusT", "mansion spencer")
+        patogeno.crearEspecie("virusG", "raccoon city")
+        patogeno.crearEspecie("virus progenitor", "montanas arklay")
+
+        patogenoService.crearPatogeno(patogeno)
+
+        val especies = patogenoService.especiesDePatogeno(patogeno.id!!).map{e -> e.nombre}
+
+        assertEquals(3, especies.size)
+
+        assertTrue(especies.contains("virusT"))
+        assertTrue(especies.contains("virusG"))
+        assertTrue(especies.contains("virus progenitor"))
+    }
+
+
+
     @AfterEach
     fun deleteAll() {
         dataService.eliminarTodo()
