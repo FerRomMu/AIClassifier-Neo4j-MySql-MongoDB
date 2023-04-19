@@ -1,9 +1,10 @@
 package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 
-import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
+import ar.edu.unq.eperdemic.modelo.TipoDeVector
+import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
@@ -93,6 +94,42 @@ class HibernateEspecieDAOTest {
 
         assertEquals(21,recuperados.size)
 
+    }
+
+    @Test
+    fun `obtener la cantidad de infectados de una especie`() {
+        val vectorDAO = HibernateVectorDAO()
+
+        var vector1 = Vector(TipoDeVector.Animal)
+        var vector2 = Vector(TipoDeVector.Persona)
+
+        var patogenoDeLaEspecie = Patogeno("Gripe")
+        runTrx {patogenoDAO.guardar(patogenoDeLaEspecie)}
+
+        var especieAContagiar = Especie("sarasa", "ARG", patogenoDeLaEspecie)
+        var especieAContagiar2 = Especie("Especie_AR2T","Francia",patogenoDeLaEspecie)
+
+        especieAContagiar2.vectores.add(vector1)
+        vector1.especiesContagiadas.add(especieAContagiar2)
+
+        especieAContagiar2.vectores.add(vector2)
+        vector2.especiesContagiadas.add(especieAContagiar2)
+
+        especieAContagiar.vectores.add(vector1)
+        vector1.especiesContagiadas.add(especieAContagiar)
+
+        val cantidad = runTrx {
+            especieDAO.guardar(especieAContagiar)
+            especieDAO.guardar(especieAContagiar2)
+
+            vectorDAO.guardar(vector1)
+            vectorDAO.guardar(vector2)
+
+            especieDAO.cantidadDeInfectados(especieAContagiar2.id!!)
+
+        }
+
+        assertEquals(2, cantidad)
     }
 
     @AfterEach

@@ -25,7 +25,7 @@ open class HibernateDAO<T>(private val entityType: Class<T>) {
         session.delete(entity)
     }
 
-    open fun recuperarTodos(): List<T> {
+    fun recuperarTodos(): List<T> {
         val session = TransactionRunner.currentSession
         val name = entityType.simpleName
         val hql = "from $name"

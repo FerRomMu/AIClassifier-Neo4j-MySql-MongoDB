@@ -16,7 +16,6 @@ class Especie(patogenoParam: Patogeno,
     @JoinColumn(name="id_patogeno")
     val patogeno: Patogeno = patogenoParam
 
-    //@ManyToMany(mappedBy = "especiesContagiadas")
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     val vectores: MutableSet<Vector> = HashSet()
 

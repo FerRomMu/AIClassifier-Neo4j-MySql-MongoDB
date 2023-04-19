@@ -8,7 +8,7 @@ class Randomizador {
     var estado : EstadoRandomizador = EstadoRandomizadorAlatorio()
 
     fun  getInstance(): Randomizador {
-        if (instance == null)  // NOT thread safe!
+        if (instance == null)
             instance = Randomizador()
 
         return instance!!

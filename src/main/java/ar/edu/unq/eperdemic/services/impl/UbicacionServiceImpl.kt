@@ -20,7 +20,7 @@ class UbicacionServiceImpl(val ubicacionDAO: UbicacionDAO): UbicacionService {
             var vectorAMover = vectorDAO.recuperar(vectorId)
 
              if(listaDeVectores.isNotEmpty()){
-                 vectorAMover.ubicacion = listaDeVectores[0].ubicacion //get(0).ubicacion
+                 vectorAMover.ubicacion = listaDeVectores[0].ubicacion
 
                  for (vector in listaDeVectores){
                      vectorAMover.intentarInfectar(vector)
