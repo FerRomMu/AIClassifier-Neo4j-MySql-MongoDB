@@ -21,6 +21,7 @@ class HibernateVectorDAO: HibernateDAO<Vector>(Vector::class.java), VectorDAO {
         val query = session.createQuery(hql, Vector::class.java)
 
         query.setParameter("idUbi", ubicacionId)
+        query.maxResults = 1
 
         return query.singleResult ?: throw DataNotFoundException("No hay vectores en la ubicacion dada")
     }
