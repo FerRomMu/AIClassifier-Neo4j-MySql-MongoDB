@@ -87,7 +87,7 @@ class EspecieServiceImplTest {
     @Test
     fun `obtener la cantidad de infectados de una especie que no infecto a ningun vector`() {
         patogeno = Patogeno("Gripe")
-        especie = Especie("especie11", "ARG", patogeno)
+        especie = Especie(patogeno,"especie11", "ARG")
         var vector = Vector(TipoDeVector.Animal)
         var vector2 = Vector(TipoDeVector.Persona)
 
@@ -106,7 +106,7 @@ class EspecieServiceImplTest {
     @Test
     fun `obtener la cantidad de infectados de una especie`() {
         patogeno = Patogeno("Gripe")
-        especie = Especie("especie11", "ARG", patogeno)
+        especie = Especie(patogeno,"especie11", "ARG")
         var vector = Vector(TipoDeVector.Animal)
         var vector2 = Vector(TipoDeVector.Persona)
 

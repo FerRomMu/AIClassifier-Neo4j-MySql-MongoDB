@@ -106,8 +106,8 @@ class HibernateEspecieDAOTest {
         var patogenoDeLaEspecie = Patogeno("Gripe")
         runTrx {patogenoDAO.guardar(patogenoDeLaEspecie)}
 
-        var especieAContagiar = Especie("sarasa", "ARG", patogenoDeLaEspecie)
-        var especieAContagiar2 = Especie("Especie_AR2T","Francia",patogenoDeLaEspecie)
+        var especieAContagiar = Especie(patogenoDeLaEspecie, "sarasa", "ARG")
+        var especieAContagiar2 = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
 
         especieAContagiar2.vectores.add(vector1)
         vector1.especiesContagiadas.add(especieAContagiar2)

@@ -91,7 +91,37 @@ internal class UbicacionServiceImplTest {
     }
 
     @Test
-    fun expandir() {
+    fun `Expandir en una ubicacion`() {
+        var cordoba = ubicacionService.crearUbicacion("Cordoba")
+
+
+        var vectorLocal = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
+        var vectorLocal2 = vectorService.crearVector(TipoDeVector.Animal,cordoba.id!!)
+        var vectorAExpandir = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
+
+
+        var patogeno = Patogeno("Patogeni_SS")
+        patogeno.setCapacidadDeContagioHumano(100)
+        runTrx {patogenoDAO.guardar(patogeno)}
+
+
+        var especieAContagiar = Especie(patogeno,"Especie_Sl","Honduras")
+
+        vectorService.infectar(vectorAExpandir,especieAContagiar)
+
+        assertEquals(vectorAExpandir.especiesContagiadas.size,1)
+        assertEquals(vectorLocal.especiesContagiadas.size,0)
+        assertEquals(vectorLocal2.especiesContagiadas.size,0)
+
+        ubicacionService.expandir(cordoba.id!!)
+
+        vectorAExpandir = vectorService.recuperarVector(vectorAExpandir.id!!)
+        vectorLocal = vectorService.recuperarVector(vectorLocal.id!!)
+        vectorLocal2 =vectorService.recuperarVector(vectorLocal2.id!!)
+
+        assertEquals(vectorAExpandir.especiesContagiadas.size,1)
+        assertEquals(vectorLocal.especiesContagiadas.size,1)
+        assertEquals(vectorLocal2.especiesContagiadas.size,0)
     }
 
     @Test

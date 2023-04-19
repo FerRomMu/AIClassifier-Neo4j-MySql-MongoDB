@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.services.impl
 
+import ar.edu.unq.eperdemic.modelo.Randomizador
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
@@ -35,8 +36,19 @@ class UbicacionServiceImpl(val ubicacionDAO: UbicacionDAO): UbicacionService {
     }
 
     override fun expandir(ubicacionId: Long) {
-        TODO("Not yet implemented")
-    }
+        runTrx {
+            val vectores = ubicacionDAO.vectoresEn(ubicacionId).toList()
+            if (vectores.isNotEmpty()) {
+                val dado = Randomizador().getInstance()
+                val numeroAleatorio = dado.valor(0, vectores.size-1)
+                val vectorContagioso = vectores[numeroAleatorio]
+                for(vector in vectores){
+                    vectorContagioso.intentarInfectar(vector)
+                }
+            }
+        }
+
+}
 
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
         val ubicacion = Ubicacion(nombreUbicacion)
