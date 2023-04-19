@@ -61,4 +61,8 @@ class PatogenoServiceImpl(
         TODO("Not yet implemented")
     }
 
+    override fun especiesDePatogeno(id: Long): List<Especie> {
+        return runTrx { patogenoDAO.especiesDePatogeno(id) }
+    }
+
 }
