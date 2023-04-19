@@ -17,4 +17,8 @@ class Especie(var nombre: String,
     @ManyToMany(mappedBy = "especiesContagiadas")
     val vectores: MutableSet<Vector> = HashSet()
 
+    fun agregarVector(vector:Vector){
+        vectores.add(vector)
+    }
+
 }
