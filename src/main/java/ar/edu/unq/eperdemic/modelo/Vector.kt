@@ -51,28 +51,19 @@ enum class TipoDeVector {
     Persona, Insecto, Animal;
 
     fun puedeContagiarme(tipo: TipoDeVector) : Boolean {
-        when(this){
-            Persona -> return true
-            Insecto -> return tipo.esInsecto().not()
-            Animal -> return tipo.esInsecto()
+        return when(this){
+            Persona -> true
+            Insecto -> tipo.esInsecto().not()
+            Animal -> tipo.esInsecto()
         }
     }
 
     fun esInsecto(): Boolean {
-        when (this) {
-            Persona -> return false
-            Insecto -> return true
-            Animal -> return false
-        }
+        return this == Insecto
     }
 
     fun esPersona(): Boolean {
-        when (this) {
-            Persona -> return true
-            Insecto -> return false
-            Animal -> return false
-        }
+        return this == Persona
     }
-
 
 }
