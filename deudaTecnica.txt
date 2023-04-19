@@ -3,3 +3,4 @@ un set propio de la variable.
 -En Patogeno refactorizar capacidadDeContagioA
 -En Vector cambiar nombre haySuerte a algo mas representativo.
 -En UbicacionServiceImpl hay que agregar los casos de idNotFound con tests.
+-En general: Falta hacer tests a nivel de modelo.
