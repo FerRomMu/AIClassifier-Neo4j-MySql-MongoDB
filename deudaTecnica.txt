@@ -1,0 +1,5 @@
+-En Patogeno y en los correspondientes usos de metodo set, refactorizarlos para
+un set propio de la variable.
+-En Patogeno refactorizar capacidadDeContagioA
+-En Vector cambiar nombre haySuerte a algo mas representativo.
+-En UbicacionServiceImpl hay que agregar los casos de idNotFound con tests.
