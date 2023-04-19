@@ -44,7 +44,7 @@ class DataServiceImpl(): DataService {
         return TransactionRunner.runTrx {
             var patogeno = Patogeno("Gripe")
             patogenoDao.guardar(patogeno)
-            var especie1 = Especie("virusT", "raccoon city", patogeno)
+            var especie1 = Especie(patogeno, "virusT", "raccoon city")
             especieDAO.guardar(especie1)
 
             for (i in 0..20){

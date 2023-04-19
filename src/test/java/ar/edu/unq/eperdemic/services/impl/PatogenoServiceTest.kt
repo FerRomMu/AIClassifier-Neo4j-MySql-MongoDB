@@ -188,7 +188,7 @@ class PatogenoServiceTest {
         dataService.crearSetDeDatosIniciales()
 
         var patogeno = Patogeno("Gripe")
-        var especie = Especie("21","BR", patogeno)
+        var especie = Especie(patogeno,"21","BR")
         var ubicacion = ubicacionService.crearUbicacion("Lugar 21")
 
         patogenoService.crearPatogeno(patogeno)
