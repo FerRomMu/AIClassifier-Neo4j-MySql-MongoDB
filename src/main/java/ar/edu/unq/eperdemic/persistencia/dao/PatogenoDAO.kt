@@ -8,4 +8,5 @@ interface PatogenoDAO {
     fun recuperar(id: Long?): Patogeno
     fun recuperarTodos() : List<Patogeno>
     fun especiesDePatogeno(id: Long?): List<Especie>
+    fun esPandemia(especieId: Long): Boolean
 }
