@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.services.impl
 
+import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.TipoDeVector
@@ -68,6 +69,11 @@ class EspecieServiceImplTest {
         assertEquals("especie11", recuperado.nombre)
         assertEquals("ARG", recuperado.paisDeOrigen)
         assertEquals(patogeno.id, recuperado.patogeno.id)
+    }
+
+    @Test
+    fun `si intento recuperar una especie con un id inexistente falla`() {
+        assertThrows(IdNotFoundException::class.java) { especieService.recuperarEspecie(100000) }
     }
 
     @Test
