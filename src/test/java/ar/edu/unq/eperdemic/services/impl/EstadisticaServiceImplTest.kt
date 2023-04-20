@@ -51,7 +51,6 @@ internal class EstadisticaServiceImplTest {
     @Test
     fun especieLider() {
 
-        dataService.eliminarTodo()
         val ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
 
         var patogenoDeLaEspecie1 = Patogeno("Gripe")
@@ -80,7 +79,7 @@ internal class EstadisticaServiceImplTest {
 
     @AfterEach
     fun tearDown() {
-       //dataService.eliminarTodo()
+       dataService.eliminarTodo()
     }
 
 }
