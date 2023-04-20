@@ -10,11 +10,14 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
     override fun especieLider():Especie {
         val session = TransactionRunner.currentSession
 
-        val hql = "SELECT e FROM Vector v JOIN Especie e ON v.especiesContagiadas.id = e.id WHERE  v.TipoDeVector = TipoDeVector.Persona GROUP BY e.id ORDER BY count(e.id) desc"
-        // Cambiar --> Query sql =
-        // select e. * from (Vector v JOIN Especie_vector es ON v.id = es.vectores_id) JOIN Especie e ON es.Especie_id = e.id where v.tipo = 0 GROUP BY e.id ORDER BY count(e.id) desc limit 1 ;
-
-
+        val hql =
+            "select es \n" +
+            "from Vector v \n" +
+            "join v.especiesContagiadas es \n" +
+            "where v.tipo = 0\n"
+            "group by es.id \n" +
+            "order by count(es.id) \n" +
+            "desc"
 
         val query = session.createQuery(hql, Especie::class.java)
         query.maxResults = 1
