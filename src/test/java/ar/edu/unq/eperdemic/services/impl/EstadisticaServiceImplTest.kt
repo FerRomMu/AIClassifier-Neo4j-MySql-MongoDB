@@ -77,6 +77,82 @@ internal class EstadisticaServiceImplTest {
         assertEquals(especie1.id,estadisticaService.especieLider().id)
     }
 
+    @Test
+    fun lideres(){
+        var patogenoDeLaEspecie1 = Patogeno("Gripe")
+        runTrx { patogenoDAO.guardar(patogenoDeLaEspecie1)}
+
+        var especie1 = patogenoDeLaEspecie1.crearEspecie("Especie1","Rusia")
+        var especie2 = patogenoDeLaEspecie1.crearEspecie("Especie2","Rusia")
+        var especie3 = patogenoDeLaEspecie1.crearEspecie("Especie3","Rusia")
+        var especie4 = patogenoDeLaEspecie1.crearEspecie("Especie4","Rusia")
+        var especie5 = patogenoDeLaEspecie1.crearEspecie("Especie5","Rusia")
+        var especie6 = patogenoDeLaEspecie1.crearEspecie("Especie6","Rusia")
+        var especie7 = patogenoDeLaEspecie1.crearEspecie("Especie7","Rusia")
+        var especie8 = patogenoDeLaEspecie1.crearEspecie("Especie8","Rusia")
+        var especie9 = patogenoDeLaEspecie1.crearEspecie("Especie9","Rusia")
+        var especie10 = patogenoDeLaEspecie1.crearEspecie("Especie10","Rusia")
+
+        var vectorHumano1 = Vector(TipoDeVector.Persona)
+        var vectorHumano2 = Vector(TipoDeVector.Persona)
+        var vectorHumano3 = Vector(TipoDeVector.Persona)
+        var vectorHumano4 = Vector(TipoDeVector.Persona)
+        var vectorHumano5 = Vector(TipoDeVector.Persona)
+        var vectorHumano6 = Vector(TipoDeVector.Persona)
+        var vectorHumano7 = Vector(TipoDeVector.Persona)
+        var vectorHumano8 = Vector(TipoDeVector.Persona)
+        var vectorHumano9 = Vector(TipoDeVector.Persona)
+
+        var vectorAnimal1 = Vector(TipoDeVector.Animal)
+        var vectorAnimal2 = Vector(TipoDeVector.Animal)
+        var vectorAnimal3 = Vector(TipoDeVector.Animal)
+        var vectorAnimal4 = Vector(TipoDeVector.Animal)
+
+        var vectorInsecto = Vector(TipoDeVector.Insecto)
+
+        vectorService.infectar(vectorHumano1,especie1)
+        vectorService.infectar(vectorHumano2,especie1)
+
+        vectorService.infectar(vectorHumano3,especie2)
+        vectorService.infectar(vectorAnimal1,especie2)
+        vectorService.infectar(vectorInsecto,especie2)
+
+        vectorService.infectar(vectorHumano4,especie3)
+
+        vectorService.infectar(vectorHumano5,especie4)
+
+        vectorService.infectar(vectorHumano6,especie5)
+
+        vectorService.infectar(vectorAnimal2,especie6)
+
+        vectorService.infectar(vectorHumano7,especie7)
+        vectorService.infectar(vectorAnimal4,especie7)
+
+        vectorService.infectar(vectorHumano8,especie8)
+
+        vectorService.infectar(vectorHumano9,especie9)
+
+        vectorService.infectar(vectorAnimal3,especie10)
+
+
+        assertEquals(10,estadisticaService.lideres().size)
+
+        val especiesLideresIds = estadisticaService.lideres().map { especie -> especie.id }
+
+        assertTrue(especiesLideresIds.contains(especie1.id))
+        assertTrue(especiesLideresIds.contains(especie2.id))
+        assertTrue(especiesLideresIds.contains(especie3.id))
+        assertTrue(especiesLideresIds.contains(especie4.id))
+        assertTrue(especiesLideresIds.contains(especie5.id))
+        assertTrue(especiesLideresIds.contains(especie6.id))
+        assertTrue(especiesLideresIds.contains(especie7.id))
+        assertTrue(especiesLideresIds.contains(especie8.id))
+        assertTrue(especiesLideresIds.contains(especie9.id))
+        assertTrue(especiesLideresIds.contains(especie10.id))
+
+
+    }
+
     @AfterEach
     fun tearDown() {
        dataService.eliminarTodo()

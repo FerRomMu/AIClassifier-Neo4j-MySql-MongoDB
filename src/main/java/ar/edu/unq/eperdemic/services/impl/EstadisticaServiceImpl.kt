@@ -11,5 +11,8 @@ class EstadisticaServiceImpl(var estadisticaDAO: EstadisticaDAO) : EstadisticaSe
         return runTrx { estadisticaDAO.especieLider()}
     }
 
+    override fun lideres(): List<Especie>{
+        return runTrx { estadisticaDAO.lideres()}
+    }
 
 }

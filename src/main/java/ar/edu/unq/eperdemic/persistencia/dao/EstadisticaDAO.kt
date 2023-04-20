@@ -4,4 +4,5 @@ import ar.edu.unq.eperdemic.modelo.Especie
 
 interface EstadisticaDAO {
     fun especieLider(): Especie
+    fun lideres(): List<Especie>
 }
