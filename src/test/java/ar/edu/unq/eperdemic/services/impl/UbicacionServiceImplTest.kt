@@ -91,6 +91,71 @@ internal class UbicacionServiceImplTest {
     }
 
     @Test
+    fun  `mover vector insecto a una ubicacion con solo insectos`() {
+        var cordoba = ubicacionService.crearUbicacion("Cordoba")
+        var chaco = ubicacionService.crearUbicacion("Chaco")
+
+        var vectorAMover = vectorService.crearVector(TipoDeVector.Insecto,cordoba.id!!)
+
+        var vectorVictima1 = vectorService.crearVector(TipoDeVector.Insecto,chaco.id!!)
+        var vectorVictima2 = vectorService.crearVector(TipoDeVector.Insecto,chaco.id!!)
+
+        var patogeno = Patogeno("Patogeni_SS")
+        patogeno.setCapacidadDeContagioInsecto(100)
+        runTrx {patogenoDAO.guardar(patogeno)}
+
+        var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+
+        vectorService.infectar(vectorAMover,especieAContagiar)
+
+        assertEquals(vectorAMover.especiesContagiadas.size,1)
+        assertEquals(vectorVictima1.especiesContagiadas.size,0)
+        assertEquals(vectorVictima2.especiesContagiadas.size,0)
+
+        var vectoresEnChaco = runTrx { ubicacionDAO.vectoresEn(chaco.id!!) }
+
+        assertEquals(vectoresEnChaco.size,2)
+
+        ubicacionService.mover(vectorAMover.id!!,chaco.id!!)
+
+        vectoresEnChaco = runTrx { ubicacionDAO.vectoresEn(chaco.id!!) }
+        assertEquals(vectoresEnChaco.size,3)
+
+        vectorAMover = vectorService.recuperarVector(vectorAMover.id!!)
+        vectorVictima1 = vectorService.recuperarVector(vectorVictima1.id!!)
+        vectorVictima2 =vectorService.recuperarVector(vectorVictima2.id!!)
+
+        assertEquals(vectorAMover.especiesContagiadas.size,1)
+        assertEquals(vectorVictima1.especiesContagiadas.size,0)
+        assertEquals(vectorVictima2.especiesContagiadas.size,0)
+    }
+
+    @Test
+    fun  `mover vector a ubicacion vacia`() {
+        var cordoba = ubicacionService.crearUbicacion("Cordoba")
+        var chaco = ubicacionService.crearUbicacion("Chaco")
+
+        var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
+
+        var patogeno = Patogeno("Patogeni_SS")
+        patogeno.setCapacidadDeContagioInsecto(100)
+        runTrx {patogenoDAO.guardar(patogeno)}
+
+        var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+
+        vectorService.infectar(vectorAMover,especieAContagiar)
+        assertEquals(vectorAMover.especiesContagiadas.size,1)
+
+        var vectoresEnChaco = runTrx { ubicacionDAO.vectoresEn(chaco.id!!) }
+        assertEquals(vectoresEnChaco.size,0)
+
+        ubicacionService.mover(vectorAMover.id!!,chaco.id!!)
+
+        vectorAMover = vectorService.recuperarVector(vectorAMover.id!!)
+        assertEquals(vectorAMover.ubicacion.id,chaco.id)
+    }
+
+    @Test
     fun `Expandir en una ubicacion`() {
         var cordoba = ubicacionService.crearUbicacion("Cordoba")
 
@@ -123,6 +188,14 @@ internal class UbicacionServiceImplTest {
         assertEquals(vectorLocal.especiesContagiadas.size,1)
         assertEquals(vectorLocal2.especiesContagiadas.size,0)
     }
+
+    @Test
+    fun `Expandir en una ubicacion vacia`() {
+        var cordoba = ubicacionService.crearUbicacion("Cordoba")
+
+        ubicacionService.expandir(cordoba.id!!)
+    }
+
 
     @Test
     fun `si creo una ubicacion esta recibe un id`() {
