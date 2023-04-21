@@ -18,17 +18,14 @@ class HibernateEstadisticaDAOTest {
 
     lateinit var data: DataService
     lateinit var estadisticaDAO: EstadisticaDAO
+    lateinit var ubicacion1: Ubicacion
 
     @BeforeEach
     fun setUp() {
         estadisticaDAO = HibernateEstadisticaDAO()
         data = DataServiceImpl()
 
-    }
-
-    @Test
-    fun `cantidad de vectores presentes total`() {
-        val ubicacion1 = Ubicacion("ubicacion 1")
+        ubicacion1 = Ubicacion("ubicacion 1")
         val patogeno = Patogeno("patogenoSSS")
 
         val vector1 = Vector(TipoDeVector.Insecto) ; vector1.ubicacion = ubicacion1
@@ -45,14 +42,34 @@ class HibernateEstadisticaDAOTest {
         vector4.agregarEspecie(especie2)
 
         data.persistir(listOf(ubicacion1, patogeno, especie1, especie2, especie3, vector1, vector2, vector3, vector4, vector5))
+    }
 
+    @Test
+    fun `cantidad de vectores presentes en una ubicacion`() {
         val cantidadVectoresTotal = runTrx { estadisticaDAO.cantidadVectoresPresentes(ubicacion1.nombre) }
-        val cantidadVectoresInfectados = runTrx { estadisticaDAO.cantidadVectoresInfectados(ubicacion1.nombre) }
-        val nombreVectorInfectado = runTrx { estadisticaDAO.nombreEspecieQueMasInfectaVectores(ubicacion1.nombre) }
 
         assertEquals(5, cantidadVectoresTotal)
+    }
+
+    @Test
+    fun `cantidad de vectores que no estan presentes en una ubicacion`() {
+        val cantidadVectoresTotal = runTrx { estadisticaDAO.cantidadVectoresPresentes("ubicacion 222") }
+
+        assertEquals(0, cantidadVectoresTotal)
+    }
+
+    @Test
+    fun `cantidad de vectores infectados en una ubicacion`() {
+        val cantidadVectoresInfectados = runTrx { estadisticaDAO.cantidadVectoresInfectados(ubicacion1.nombre) }
+
         assertEquals(4, cantidadVectoresInfectados)
-        assertEquals("especie111", nombreVectorInfectado)
+    }
+
+    @Test
+    fun `nombre de la especie que esta infectando a mas vectores`() {
+        val nombreEspecieQueMasInfecta = runTrx { estadisticaDAO.nombreEspecieQueMasInfectaVectores(ubicacion1.nombre) }
+
+        assertEquals("especie111", nombreEspecieQueMasInfecta)
 
     }
 

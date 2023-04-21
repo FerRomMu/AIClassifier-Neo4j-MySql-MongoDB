@@ -57,11 +57,6 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
     override fun nombreEspecieQueMasInfectaVectores(nombreDeLaUbicacion: String) : String {
         val session = TransactionRunner.currentSession
 
-        /*val hql = "select es.nombre " +
-                "from Vector v " +
-                "join v.especiesContagiadas es " +
-                "group by v.especiesContagiadas.id " +
-                "order by count(es.vectores) desc"*/
         val hql = "select es.nombre " +
                 "from Vector v " +
                 "join v.especiesContagiadas es " +
@@ -72,16 +67,6 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
         val query = session.createQuery(hql, String::class.java)
         query.setParameter("nombreUbicacion", nombreDeLaUbicacion)
         query.maxResults = 1
-
-        return query.singleResult
-    }
-
-    override fun reporteDeContagios(nombreDeLaUbicacion: String): ReporteDeContagios {
-        val session = TransactionRunner.currentSession
-
-        val hql = ""
-
-        val query = session.createQuery(hql, ReporteDeContagios::class.java)
 
         return query.singleResult
     }

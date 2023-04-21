@@ -5,7 +5,6 @@ import ar.edu.unq.eperdemic.modelo.ReporteDeContagios
 
 interface EstadisticaDAO {
     fun especieLider(): Especie
-    fun reporteDeContagios(nombreDeLaUbicacion: String): ReporteDeContagios
     fun lideres(): List<Especie>
     fun cantidadVectoresPresentes(nombreDeLaUbicacion: String) : Long
     fun cantidadVectoresInfectados(nombreDeLaUbicacion: String) : Long
