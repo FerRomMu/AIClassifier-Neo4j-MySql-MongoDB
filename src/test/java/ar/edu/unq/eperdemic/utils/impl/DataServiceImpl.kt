@@ -18,6 +18,20 @@ class DataServiceImpl(): DataService {
         TransactionRunner.runTrx { dataDao.clear() }
     }
 
+    override fun persistir(entidades: List<Any>): List<Any> {
+        return TransactionRunner.runTrx {
+            entidades.forEach { entidad ->
+                when (entidad) {
+                    is Patogeno -> patogenoDao.guardar(entidad)
+                    is Vector -> vectorDao.guardar(entidad)
+                    is Especie -> especieDAO.guardar(entidad)
+                    is Ubicacion -> ubicacionDao.guardar(entidad)
+                }
+            }
+            entidades
+        }
+    }
+
     override fun crearSetDeDatosIniciales() {
 
         TransactionRunner.runTrx {
