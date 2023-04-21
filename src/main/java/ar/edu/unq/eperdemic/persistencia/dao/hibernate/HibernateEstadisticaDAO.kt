@@ -14,7 +14,7 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
             "select es \n" +
             "from Vector v \n" +
             "join v.especiesContagiadas es \n" +
-            "where v.tipo = 0\n"
+            "where v.tipo = 0\n" +
             "group by es.id \n" +
             "order by count(es.id) \n" +
             "desc"
@@ -32,7 +32,7 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
             "select es \n" +
             "from Vector v \n" +
             "join v.especiesContagiadas es \n" +
-            "where v.tipo = 0 or v.tipo = 2\n"
+            "where v.tipo = 0 or v.tipo = 2\n" +
             "group by es.id \n" +
             "order by count(es.id) \n" +
             "desc"
