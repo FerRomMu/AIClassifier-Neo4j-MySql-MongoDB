@@ -44,7 +44,7 @@ internal class UbicacionServiceImplTest {
          vectorDAO = HibernateVectorDAO()
          vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO,especieDAO)
 
-         dado = Randomizador().getInstance()
+         dado = Randomizador.getInstance()
          dado.estado = EstadoRandomizadorDeterminístico()
     }
 
