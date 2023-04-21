@@ -13,7 +13,13 @@ class EstadisticaServiceImpl(var estadisticaDAO: EstadisticaDAO) : EstadisticaSe
     }
 
     override fun reporteDeContagios(nombreDeLaUbicacion: String): ReporteDeContagios {
-        TODO("Not yet implemented")
+        return runTrx {
+            ReporteDeContagios(
+                estadisticaDAO.cantidadVectoresPresentes(nombreDeLaUbicacion).toInt(),
+                estadisticaDAO.cantidadVectoresInfectados(nombreDeLaUbicacion).toInt(),
+                estadisticaDAO.nombreEspecieQueMasInfectaVectores(nombreDeLaUbicacion)
+            )
+        }
     }
 
     override fun lideres(): List<Especie>{
