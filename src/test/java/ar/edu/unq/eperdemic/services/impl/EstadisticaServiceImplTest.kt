@@ -1,6 +1,5 @@
 package ar.edu.unq.eperdemic.services.impl
 
-import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.TipoDeVector
 import ar.edu.unq.eperdemic.modelo.Vector
@@ -9,7 +8,6 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.services.EstadisticaService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.AfterEach
@@ -57,10 +55,10 @@ internal class EstadisticaServiceImplTest {
     @Test
     fun especieLider() {
 
-        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
+        ubicacionService.crearUbicacion("ubicacionTest")
 
         var patogenoDeLaEspecie1 = Patogeno("Gripe")
-        runTrx { patogenoDAO.guardar(patogenoDeLaEspecie1)}
+        dataService.persistir(patogenoDeLaEspecie1)
 
         var especie1 = patogenoDeLaEspecie1.crearEspecie("Especie1","Rusia")
         var especie2 = patogenoDeLaEspecie1.crearEspecie("Especie2","Rusia")
@@ -85,39 +83,39 @@ internal class EstadisticaServiceImplTest {
 
     @Test
     fun `si devuelvo los lideres obtengo las 10 especies con mayores infectados en orden descendente`(){
-        var patogenoDeLaEspecie1 = Patogeno("Gripe")
-        runTrx { patogenoDAO.guardar(patogenoDeLaEspecie1)}
+        val patogenoDeLaEspecie1 = Patogeno("Gripe")
+        dataService.persistir(patogenoDeLaEspecie1)
 
-        var especie1 = patogenoDeLaEspecie1.crearEspecie("Especie1","Rusia")
-        var especie2 = patogenoDeLaEspecie1.crearEspecie("Especie2","Rusia")
-        var especie3 = patogenoDeLaEspecie1.crearEspecie("Especie3","Rusia")
-        var especie4 = patogenoDeLaEspecie1.crearEspecie("Especie4","Rusia")
-        var especie5 = patogenoDeLaEspecie1.crearEspecie("Especie5","Rusia")
-        var especie6 = patogenoDeLaEspecie1.crearEspecie("Especie6","Rusia")
-        var especie7 = patogenoDeLaEspecie1.crearEspecie("Especie7","Rusia")
-        var especie8 = patogenoDeLaEspecie1.crearEspecie("Especie8","Rusia")
-        var especie9 = patogenoDeLaEspecie1.crearEspecie("Especie9","Rusia")
-        var especie10 = patogenoDeLaEspecie1.crearEspecie("Especie10","Rusia")
-        var especie11 = patogenoDeLaEspecie1.crearEspecie("Especie11","Rusia")
-        var especie12 = patogenoDeLaEspecie1.crearEspecie("Especie12","Rusia")
+        val especie1 = patogenoDeLaEspecie1.crearEspecie("Especie1","Rusia")
+        val especie2 = patogenoDeLaEspecie1.crearEspecie("Especie2","Rusia")
+        val especie3 = patogenoDeLaEspecie1.crearEspecie("Especie3","Rusia")
+        val especie4 = patogenoDeLaEspecie1.crearEspecie("Especie4","Rusia")
+        val especie5 = patogenoDeLaEspecie1.crearEspecie("Especie5","Rusia")
+        val especie6 = patogenoDeLaEspecie1.crearEspecie("Especie6","Rusia")
+        val especie7 = patogenoDeLaEspecie1.crearEspecie("Especie7","Rusia")
+        val especie8 = patogenoDeLaEspecie1.crearEspecie("Especie8","Rusia")
+        val especie9 = patogenoDeLaEspecie1.crearEspecie("Especie9","Rusia")
+        val especie10 = patogenoDeLaEspecie1.crearEspecie("Especie10","Rusia")
+        patogenoDeLaEspecie1.crearEspecie("Especie11","Rusia")
+        patogenoDeLaEspecie1.crearEspecie("Especie12","Rusia")
 
-        var vectorHumano1 = Vector(TipoDeVector.Persona)
-        var vectorHumano2 = Vector(TipoDeVector.Persona)
-        var vectorHumano3 = Vector(TipoDeVector.Persona)
-        var vectorHumano4 = Vector(TipoDeVector.Persona)
-        var vectorHumano5 = Vector(TipoDeVector.Persona)
-        var vectorHumano6 = Vector(TipoDeVector.Persona)
-        var vectorHumano7 = Vector(TipoDeVector.Persona)
-        var vectorHumano8 = Vector(TipoDeVector.Persona)
-        var vectorHumano9 = Vector(TipoDeVector.Persona)
+        val vectorHumano1 = Vector(TipoDeVector.Persona)
+        val vectorHumano2 = Vector(TipoDeVector.Persona)
+        val vectorHumano3 = Vector(TipoDeVector.Persona)
+        val vectorHumano4 = Vector(TipoDeVector.Persona)
+        val vectorHumano5 = Vector(TipoDeVector.Persona)
+        val vectorHumano6 = Vector(TipoDeVector.Persona)
+        val vectorHumano7 = Vector(TipoDeVector.Persona)
+        val vectorHumano8 = Vector(TipoDeVector.Persona)
+        val vectorHumano9 = Vector(TipoDeVector.Persona)
 
-        var vectorAnimal1 = Vector(TipoDeVector.Animal)
-        var vectorAnimal2 = Vector(TipoDeVector.Animal)
-        var vectorAnimal3 = Vector(TipoDeVector.Animal)
-        var vectorAnimal4 = Vector(TipoDeVector.Animal)
+        val vectorAnimal1 = Vector(TipoDeVector.Animal)
+        val vectorAnimal2 = Vector(TipoDeVector.Animal)
+        val vectorAnimal3 = Vector(TipoDeVector.Animal)
+        val vectorAnimal4 = Vector(TipoDeVector.Animal)
 
-        var vectorInsecto1 = Vector(TipoDeVector.Insecto)
-        var vectorInsecto2 = Vector(TipoDeVector.Insecto)
+        val vectorInsecto1 = Vector(TipoDeVector.Insecto)
+        val vectorInsecto2 = Vector(TipoDeVector.Insecto)
 
         vectorService.infectar(vectorHumano1,especie9)
         vectorService.infectar(vectorHumano2,especie9)
@@ -208,21 +206,21 @@ internal class EstadisticaServiceImplTest {
 
     @Test
     fun `si devuelvo los lideres y no hay 10 especies obtengo las especies con mayores infectados en orden descendente que haya`(){
-        var patogenoDeLaEspecie1 = Patogeno("Gripe")
-        runTrx { patogenoDAO.guardar(patogenoDeLaEspecie1)}
+        val patogenoDeLaEspecie1 = Patogeno("Gripe")
+        dataService.persistir(patogenoDeLaEspecie1)
 
-        var especie1 = patogenoDeLaEspecie1.crearEspecie("Especie1","Rusia")
-        var especie2 = patogenoDeLaEspecie1.crearEspecie("Especie2","Rusia")
-        var especie3 = patogenoDeLaEspecie1.crearEspecie("Especie3","Rusia")
-        var especie4 = patogenoDeLaEspecie1.crearEspecie("Especie4","Rusia")
+        val especie1 = patogenoDeLaEspecie1.crearEspecie("Especie1","Rusia")
+        val especie2 = patogenoDeLaEspecie1.crearEspecie("Especie2","Rusia")
+        val especie3 = patogenoDeLaEspecie1.crearEspecie("Especie3","Rusia")
+        val especie4 = patogenoDeLaEspecie1.crearEspecie("Especie4","Rusia")
 
-        var vectorHumano1 = Vector(TipoDeVector.Persona)
-        var vectorHumano2 = Vector(TipoDeVector.Persona)
+        val vectorHumano1 = Vector(TipoDeVector.Persona)
+        val vectorHumano2 = Vector(TipoDeVector.Persona)
 
-        var vectorAnimal1 = Vector(TipoDeVector.Animal)
-        var vectorAnimal2 = Vector(TipoDeVector.Animal)
+        val vectorAnimal1 = Vector(TipoDeVector.Animal)
+        val vectorAnimal2 = Vector(TipoDeVector.Animal)
 
-        var vectorInsecto1 = Vector(TipoDeVector.Insecto)
+        val vectorInsecto1 = Vector(TipoDeVector.Insecto)
 
         vectorService.infectar(vectorHumano1,especie1)
 
@@ -252,10 +250,11 @@ internal class EstadisticaServiceImplTest {
         assertEquals(4, especiesLideresIds.size)
     }
 
+    @Test
     fun `no hay especieLider`(){
 
-        var vectorHumano1 = Vector(TipoDeVector.Persona)
-        runTrx { vectorDAO.guardar(vectorHumano1) }
+        val vectorHumano1 = Vector(TipoDeVector.Persona)
+        dataService.persistir(vectorHumano1)
 
         assertThrows(NoResultException::class.java) {
             estadisticaService.especieLider()
