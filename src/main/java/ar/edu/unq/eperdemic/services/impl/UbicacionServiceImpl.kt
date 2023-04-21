@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.modelo.Randomizador
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.modelo.Ubicacion
+import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
@@ -69,6 +70,12 @@ class UbicacionServiceImpl(val ubicacionDAO: UbicacionDAO): UbicacionService {
     override fun recuperarTodos(): List<Ubicacion> {
         return runTrx {
             ubicacionDAO.recuperarTodos()
+        }
+    }
+
+    override fun vectoresEn(id: Long): List<Vector> {
+        return runTrx {
+            ubicacionDAO.vectoresEn(id).toList()
         }
     }
 
