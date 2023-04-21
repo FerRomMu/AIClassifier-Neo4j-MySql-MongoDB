@@ -21,4 +21,20 @@ class HibernatePatogenoDAO : HibernateDAO<Patogeno>(Patogeno::class.java), Patog
 
         return query.resultList
     }
+
+    override fun esPandemia(especieId: Long): Boolean {
+        val session = TransactionRunner.currentSession
+
+        val hql =
+            "select \n" +
+                    "(count(distinct v.ubicacion.id) * 2) >= (select count(*) from Ubicacion) as cantidad_ubicaciones_mayor_a_la_mitad \n" +
+                    "from Vector v \n" +
+                    "join v.especiesContagiadas es \n" +
+                    "where es.id = :idEsp \n"
+
+        val query = session.createQuery(hql, Boolean::class.javaObjectType)
+        query.setParameter("idEsp", especieId)
+
+        return query.singleResult
+    }
 }

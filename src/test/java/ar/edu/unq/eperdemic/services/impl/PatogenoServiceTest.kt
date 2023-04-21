@@ -2,10 +2,7 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
-import ar.edu.unq.eperdemic.modelo.Patogeno
-import ar.edu.unq.eperdemic.modelo.TipoDeVector
-import ar.edu.unq.eperdemic.modelo.Ubicacion
-import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
@@ -179,7 +176,28 @@ class PatogenoServiceTest {
         assertTrue(especies.contains("virus progenitor"))
     }
 
+    @Test
+    fun `si ejecuto esPandemia devuelve verdadero para una especie en mas de la mitad de ubicaciones`(){
+        val especie = dataService.crearPandemiaPositiva()
 
+        assertTrue(patogenoService.esPandemia(especie.id!!))
+    }
+
+    @Test
+    fun `si ejecuto esPandemia devuelve falso para una especie en menos de la mitad de ubicaciones`(){
+        dataService.crearSetDeDatosIniciales()
+
+        var patogeno = Patogeno("Gripe")
+        var especie = Especie(patogeno,"21","BR")
+        var ubicacion = ubicacionService.crearUbicacion("Lugar 21")
+
+        patogenoService.crearPatogeno(patogeno)
+
+        var vector = vectorService.crearVector(TipoDeVector.Persona, ubicacion.id!!)
+        vectorService.infectar(vector,especie)
+
+        assertFalse(patogenoService.esPandemia(especie.id!!))
+    }
 
     @AfterEach
     fun deleteAll() {

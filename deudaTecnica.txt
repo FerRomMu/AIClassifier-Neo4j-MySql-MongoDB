@@ -6,3 +6,6 @@ un set propio de la variable.
 hay que agregar casos negativos de mover.
 -En general: Falta hacer tests a nivel de modelo.
 -Refactorizar tests para quitar runTrx
+-test a nivel dao de esPandemia (caso positivo y negativo)
+
+

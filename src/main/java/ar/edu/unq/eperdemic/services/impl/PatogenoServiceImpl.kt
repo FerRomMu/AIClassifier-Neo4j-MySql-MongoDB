@@ -54,7 +54,7 @@ class PatogenoServiceImpl(
     }
 
     override fun esPandemia(especieId: Long): Boolean {
-        TODO("Not yet implemented")
+        return runTrx { patogenoDAO.esPandemia(especieId) }
     }
 
     override fun recuperarEspecie(id: Long): Especie {
