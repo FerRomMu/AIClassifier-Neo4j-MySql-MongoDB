@@ -8,8 +8,6 @@ import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.AfterEach
@@ -60,7 +58,7 @@ internal class UbicacionServiceImplTest {
 
         var patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioHumano(100)
-        runTrx {patogenoDAO.guardar(patogeno)}
+        dataService.persistir(patogeno)
 
 
         var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
@@ -71,13 +69,13 @@ internal class UbicacionServiceImplTest {
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
-        var vectoresEnChaco = runTrx { ubicacionDAO.vectoresEn(chaco.id!!) }
+        var vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
 
         assertEquals(vectoresEnChaco.size,2)
 
         ubicacionService.mover(vectorAMover.id!!,chaco.id!!)
 
-        vectoresEnChaco = runTrx { ubicacionDAO.vectoresEn(chaco.id!!) }
+        vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
         assertEquals(vectoresEnChaco.size,3)
 
         vectorAMover = vectorService.recuperarVector(vectorAMover.id!!)
@@ -102,7 +100,7 @@ internal class UbicacionServiceImplTest {
 
         var patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioInsecto(100)
-        runTrx {patogenoDAO.guardar(patogeno)}
+        dataService.persistir(patogeno)
 
         var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
 
@@ -112,13 +110,13 @@ internal class UbicacionServiceImplTest {
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
-        var vectoresEnChaco = runTrx { ubicacionDAO.vectoresEn(chaco.id!!) }
+        var vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
 
         assertEquals(vectoresEnChaco.size,2)
 
         ubicacionService.mover(vectorAMover.id!!,chaco.id!!)
 
-        vectoresEnChaco = runTrx { ubicacionDAO.vectoresEn(chaco.id!!) }
+        vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
         assertEquals(vectoresEnChaco.size,3)
 
         vectorAMover = vectorService.recuperarVector(vectorAMover.id!!)
@@ -139,14 +137,14 @@ internal class UbicacionServiceImplTest {
 
         var patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioInsecto(100)
-        runTrx {patogenoDAO.guardar(patogeno)}
+        dataService.persistir(patogeno)
 
         var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
 
         vectorService.infectar(vectorAMover,especieAContagiar)
         assertEquals(vectorAMover.especiesContagiadas.size,1)
 
-        var vectoresEnChaco = runTrx { ubicacionDAO.vectoresEn(chaco.id!!) }
+        var vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
         assertEquals(vectoresEnChaco.size,0)
 
         ubicacionService.mover(vectorAMover.id!!,chaco.id!!)
@@ -167,8 +165,7 @@ internal class UbicacionServiceImplTest {
 
         var patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioHumano(100)
-        runTrx {patogenoDAO.guardar(patogeno)}
-
+        dataService.persistir(patogeno)
 
         var especieAContagiar = Especie(patogeno,"Especie_Sl","Honduras")
 

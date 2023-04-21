@@ -10,7 +10,6 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -56,7 +55,7 @@ class VectorServiceImplTest {
         var vectorAInfectar = Vector(TipoDeVector.Persona)
 
         var patogenoDeLaEspecie = Patogeno("Gripe")
-        runTrx {patogenoDAO.guardar(patogenoDeLaEspecie)}
+        dataService.persistir(patogenoDeLaEspecie)
 
         var especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
 
@@ -74,7 +73,7 @@ class VectorServiceImplTest {
 
         var patogenoDeLaEspecie = Patogeno("Gripe")
         val patogenoDAO = HibernatePatogenoDAO()
-        runTrx { patogenoDAO.guardar(patogenoDeLaEspecie) }
+        dataService.persistir(patogenoDeLaEspecie)
 
         var vectorAInfectar = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
 
