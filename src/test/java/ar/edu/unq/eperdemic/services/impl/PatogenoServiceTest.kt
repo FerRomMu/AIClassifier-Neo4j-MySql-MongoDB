@@ -14,7 +14,6 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.*
@@ -98,7 +97,7 @@ class PatogenoServiceTest {
         val ubicacion = ubicacionService.crearUbicacion("Ubicacion")
         var vectorInfectado = Vector(TipoDeVector.Persona)
         vectorInfectado.ubicacion = ubicacion
-        runTrx { vectorDAO.guardar(vectorInfectado) }
+        dataService.persistir(vectorInfectado)
         patogeno = Patogeno("Gripe")
 
         patogenoService.crearPatogeno(patogeno)
@@ -114,7 +113,7 @@ class PatogenoServiceTest {
         val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion")
         var vectorInfectado = Vector(TipoDeVector.Persona)
         vectorInfectado.ubicacion = ubicacionPatogeno
-        runTrx { vectorDAO.guardar(vectorInfectado) }
+        dataService.persistir(vectorInfectado)
 
         assertFalse(vectorInfectado.especiesContagiadas.map{e -> e.nombre}.contains("virusT"))
 
@@ -133,7 +132,7 @@ class PatogenoServiceTest {
         val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion")
         val vector = Vector(TipoDeVector.Persona)
         vector.ubicacion = ubicacionPatogeno
-        runTrx { vectorDAO.guardar(vector) }
+        dataService.persistir(vector)
         patogeno = Patogeno("Gripe")
         patogenoService.crearPatogeno(patogeno)
         val especieCreada = patogenoService.agregarEspecie(patogeno.id!!, "virus", ubicacionPatogeno.id!!)

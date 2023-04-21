@@ -60,7 +60,7 @@ internal class UbicacionServiceImplTest {
 
         var patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioHumano(100)
-        runTrx {patogenoDAO.guardar(patogeno)}
+        dataService.persistir(patogeno)
 
 
         var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
@@ -102,7 +102,7 @@ internal class UbicacionServiceImplTest {
 
         var patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioInsecto(100)
-        runTrx {patogenoDAO.guardar(patogeno)}
+        dataService.persistir(patogeno)
 
         var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
 
@@ -139,7 +139,7 @@ internal class UbicacionServiceImplTest {
 
         var patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioInsecto(100)
-        runTrx {patogenoDAO.guardar(patogeno)}
+        dataService.persistir(patogeno)
 
         var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
 
@@ -167,8 +167,7 @@ internal class UbicacionServiceImplTest {
 
         var patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioHumano(100)
-        runTrx {patogenoDAO.guardar(patogeno)}
-
+        dataService.persistir(patogeno)
 
         var especieAContagiar = Especie(patogeno,"Especie_Sl","Honduras")
 
