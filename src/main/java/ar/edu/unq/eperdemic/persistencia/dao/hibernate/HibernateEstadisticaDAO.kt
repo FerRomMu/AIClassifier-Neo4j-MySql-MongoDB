@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 
+import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.ReporteDeContagios
 import ar.edu.unq.eperdemic.modelo.Vector
@@ -55,20 +56,24 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
     }
 
     override fun nombreEspecieQueMasInfectaVectores(nombreDeLaUbicacion: String) : String {
-        val session = TransactionRunner.currentSession
+        try {
+            val session = TransactionRunner.currentSession
 
-        val hql = "select es.nombre " +
-                "from Vector v " +
-                "join v.especiesContagiadas es " +
-                "where v.ubicacion.nombre = :nombreUbicacion " +
-                "group by es.nombre " +
-                "order by count(v) desc"
+            val hql = "select es.nombre " +
+                    "from Vector v " +
+                    "join v.especiesContagiadas es " +
+                    "where v.ubicacion.nombre = :nombreUbicacion " +
+                    "group by es.nombre " +
+                    "order by count(v) desc"
 
-        val query = session.createQuery(hql, String::class.java)
-        query.setParameter("nombreUbicacion", nombreDeLaUbicacion)
-        query.maxResults = 1
+            val query = session.createQuery(hql, String::class.java)
+            query.setParameter("nombreUbicacion", nombreDeLaUbicacion)
+            query.maxResults = 1
 
-        return query.singleResult
+            return query.singleResult
+        } catch (e: Exception) {
+            throw DataNotFoundException("No existe un dato válido a devolver.")
+        }
     }
 
     override fun lideres(): List<Especie>{

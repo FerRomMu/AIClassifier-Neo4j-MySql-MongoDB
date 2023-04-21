@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 
+import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.persistencia.dao.EstadisticaDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
@@ -63,6 +64,11 @@ class HibernateEstadisticaDAOTest {
         val cantidadVectoresInfectados = runTrx { estadisticaDAO.cantidadVectoresInfectados(ubicacion1.nombre) }
 
         assertEquals(4, cantidadVectoresInfectados)
+    }
+
+    @Test
+    fun `intento obtener el nombre de una ubicacion que no existe` () {
+        assertThrows(DataNotFoundException::class.java) { runTrx { estadisticaDAO.nombreEspecieQueMasInfectaVectores("pepe") } }
     }
 
     @Test
