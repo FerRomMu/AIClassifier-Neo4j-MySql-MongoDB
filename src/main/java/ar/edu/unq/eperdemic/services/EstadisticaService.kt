@@ -7,5 +7,6 @@ interface EstadisticaService {
 
     fun especieLider(): Especie
     fun reporteDeContagios(nombreDeLaUbicacion: String): ReporteDeContagios
+    fun lideres(): List<Especie>
 
 }

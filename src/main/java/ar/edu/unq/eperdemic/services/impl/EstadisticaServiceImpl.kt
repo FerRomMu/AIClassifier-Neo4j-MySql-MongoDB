@@ -16,5 +16,8 @@ class EstadisticaServiceImpl(var estadisticaDAO: EstadisticaDAO) : EstadisticaSe
         TODO("Not yet implemented")
     }
 
+    override fun lideres(): List<Especie>{
+        return runTrx { estadisticaDAO.lideres()}
+    }
 
 }

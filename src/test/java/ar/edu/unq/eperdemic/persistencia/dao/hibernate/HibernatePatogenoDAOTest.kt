@@ -34,6 +34,7 @@ class HibernatePatogenoDAOTest {
     fun `si creo un Patogeno al guardarlo se le asigna un id`() {
 
         assertNull(patogeno.id)
+
         runTrx { patogenoDAO.guardar(patogeno) }
 
         assertNotNull(patogeno.id)
@@ -43,10 +44,11 @@ class HibernatePatogenoDAOTest {
     @Test
     fun `si guardo un Patogeno con id se actualiza`() {
 
-        runTrx { patogenoDAO.guardar(patogeno) }
+        data.persistir(patogeno)
         assertEquals(0, patogeno.cantidadDeEspecies())
 
         patogeno.crearEspecie("especieA", "Japon")
+
         val patogenoActualizado = runTrx {
             patogenoDAO.guardar(patogeno)
             val patogenoActualizado = patogenoDAO.recuperar(patogeno.id!!)
@@ -58,7 +60,7 @@ class HibernatePatogenoDAOTest {
 
     @Test
     fun `si guardo un Patogeno lo puedo recuperar con su id`() {
-        runTrx { patogenoDAO.guardar(patogeno) }
+        data.persistir(patogeno)
         val patogenoRecuperado = runTrx { patogenoDAO.recuperar(patogeno.id!!) }
 
         assertEquals(patogeno.id, patogenoRecuperado.id)
@@ -87,12 +89,10 @@ class HibernatePatogenoDAOTest {
         patogeno.crearEspecie("virusT", "mansion spencer")
         patogeno.crearEspecie("virusG", "raccoon city")
         patogeno.crearEspecie("virus progenitor", "montanas arklay")
+        data.persistir(patogeno)
 
-        var especies: List<String> = mutableListOf()
-
-        runTrx {
-            patogenoDAO.guardar(patogeno)
-            especies = patogenoDAO.especiesDePatogeno(patogeno.id!!).map{e -> e.nombre}
+        var especies: List<String> = runTrx {
+            patogenoDAO.especiesDePatogeno(patogeno.id!!).map{e -> e.nombre}
         }
 
         assertEquals(3, especies.size)

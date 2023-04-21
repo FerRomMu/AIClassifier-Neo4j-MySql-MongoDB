@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Assertions.*
 class HibernateEspecieDAOTest {
 
     lateinit var especieDAO: EspecieDAO
-    lateinit var patogenoDAO: PatogenoDAO
     lateinit var especie: Especie
     lateinit var patogeno: Patogeno
     lateinit var data: DataService
@@ -29,7 +28,6 @@ class HibernateEspecieDAOTest {
     @BeforeEach
     fun setUp() {
         especieDAO = HibernateEspecieDAO()
-        patogenoDAO = HibernatePatogenoDAO()
 
         data = DataServiceImpl()
 
@@ -41,40 +39,33 @@ class HibernateEspecieDAOTest {
     fun `creo una Especie y se le asigna un id`() {
         assertNull(especie.id)
 
-        runTrx { patogenoDAO.guardar(patogeno) }
+        data.persistir(listOf(patogeno))
 
         runTrx { especieDAO.guardar(especie) }
-        assertNotNull(especie.id)
 
+        assertNotNull(especie.id)
     }
 
     @Test
     fun `guardo una especie con id en la db este se actualiza` () {
-        runTrx { patogenoDAO.guardar(patogeno) }
-        runTrx { especieDAO.guardar(especie) }
+        data.persistir(listOf(patogeno, especie))
 
         assertEquals("especie111", especie.nombre)
-
         especie.nombre = "especie222"
-        val especieActualizada = runTrx {
-            especieDAO.guardar(especie)
-            val especie = especieDAO.recuperar(especie.id)
+        data.persistir(especie)
 
-            especie
-        }
+        val especieActualizada = runTrx { especieDAO.recuperar(especie.id) }
         assertEquals("especie222", especieActualizada.nombre)
     }
 
     @Test
     fun `guardo una especie y la recupero con su id`() {
-        runTrx { patogenoDAO.guardar(patogeno) }
-        runTrx { especieDAO.guardar(especie) }
+
+        data.persistir(listOf(patogeno, especie))
 
         val especieRecuperada = runTrx {
-            val especie = especieDAO.recuperar(especie.id)
-            especie
+            especieDAO.recuperar(especie.id)
         }
-
         assertEquals(especie.id, especieRecuperada.id)
         assertEquals(especie.nombre, especieRecuperada.nombre)
         assertEquals(especie.paisDeOrigen, especieRecuperada.paisDeOrigen)
@@ -86,6 +77,7 @@ class HibernateEspecieDAOTest {
     fun `intento recuperar una especie que no existe en la db y falla`() {
         assertThrows(IdNotFoundException::class.java) { runTrx { especieDAO.recuperar(100000) } }
     }
+
     @Test
     fun `recuperar todas las especies`() {
         data.crearSetDeDatosIniciales()
@@ -98,16 +90,12 @@ class HibernateEspecieDAOTest {
 
     @Test
     fun `obtener la cantidad de infectados de una especie`() {
-        val vectorDAO = HibernateVectorDAO()
+        val vector1 = Vector(TipoDeVector.Animal)
+        val vector2 = Vector(TipoDeVector.Persona)
+        val patogenoDeLaEspecie = Patogeno("Gripe")
 
-        var vector1 = Vector(TipoDeVector.Animal)
-        var vector2 = Vector(TipoDeVector.Persona)
-
-        var patogenoDeLaEspecie = Patogeno("Gripe")
-        runTrx {patogenoDAO.guardar(patogenoDeLaEspecie)}
-
-        var especieAContagiar = Especie(patogenoDeLaEspecie, "sarasa", "ARG")
-        var especieAContagiar2 = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
+        val especieAContagiar = Especie(patogenoDeLaEspecie, "sarasa", "ARG")
+        val especieAContagiar2 = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
 
         especieAContagiar2.vectores.add(vector1)
         vector1.especiesContagiadas.add(especieAContagiar2)
@@ -118,15 +106,9 @@ class HibernateEspecieDAOTest {
         especieAContagiar.vectores.add(vector1)
         vector1.especiesContagiadas.add(especieAContagiar)
 
+        data.persistir(listOf(patogenoDeLaEspecie, especieAContagiar, especieAContagiar2, vector1, vector2))
         val cantidad = runTrx {
-            especieDAO.guardar(especieAContagiar)
-            especieDAO.guardar(especieAContagiar2)
-
-            vectorDAO.guardar(vector1)
-            vectorDAO.guardar(vector2)
-
             especieDAO.cantidadDeInfectados(especieAContagiar2.id!!)
-
         }
 
         assertEquals(2, cantidad)

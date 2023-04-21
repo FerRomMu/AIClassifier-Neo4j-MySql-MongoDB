@@ -16,7 +16,6 @@ class HibernateVectorDAOTest {
     lateinit var vector: Vector
     lateinit var data: DataService
 
-
     @BeforeEach
     fun setUp() {
 
@@ -30,6 +29,7 @@ class HibernateVectorDAOTest {
     fun `si creo un vector al guardarlo se le asigna un id`() {
 
         Assertions.assertNull(vector.id)
+
         TransactionRunner.runTrx { vectorDAO.guardar(vector) }
 
         Assertions.assertNotNull(vector.id)
@@ -39,10 +39,11 @@ class HibernateVectorDAOTest {
     @Test
     fun `si guardo un vector con id se actualiza`() {
 
-        TransactionRunner.runTrx { vectorDAO.guardar(vector) }
-        Assertions.assertEquals(TipoDeVector.Animal, vector.tipo)
+        data.persistir(vector)
 
+        Assertions.assertEquals(TipoDeVector.Animal, vector.tipo)
         vector.tipo = TipoDeVector.Insecto
+
         val vectorActualizado = TransactionRunner.runTrx {
             vectorDAO.guardar(vector)
             val vectorActualizado = vectorDAO.recuperar(vector.id!!)
@@ -54,7 +55,8 @@ class HibernateVectorDAOTest {
 
     @Test
     fun `si guardo un vector lo puedo recuperar con su id`() {
-        TransactionRunner.runTrx { vectorDAO.guardar(vector) }
+        data.persistir(vector)
+
         val vectorRecuperado = TransactionRunner.runTrx { vectorDAO.recuperar(vector.id!!) }
 
         Assertions.assertEquals(vector.id, vectorRecuperado.id)
@@ -83,9 +85,9 @@ class HibernateVectorDAOTest {
 
     @Test
     fun `si borro un vector se elimina`() {
+        data.persistir(vector)
         Assertions.assertThrows(IdNotFoundException::class.java) {
             TransactionRunner.runTrx {
-                vectorDAO.guardar(vector)
                 vectorDAO.borrar(vector.id)
                 vectorDAO.recuperar(vector.id)
             }
