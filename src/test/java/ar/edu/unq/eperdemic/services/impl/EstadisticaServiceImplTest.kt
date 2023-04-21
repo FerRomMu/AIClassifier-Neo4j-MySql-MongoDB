@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
+import javax.persistence.NoResultException
 
 internal class EstadisticaServiceImplTest {
 
@@ -75,6 +76,18 @@ internal class EstadisticaServiceImplTest {
         especie1 = runTrx {especieDAO.recuperar(especie1.id!!) }
 
         assertEquals(especie1.id,estadisticaService.especieLider().id)
+    }
+
+    @Test
+    fun `no hay especieLider`(){
+
+        var vectorHumano1 = Vector(TipoDeVector.Persona)
+        runTrx { vectorDAO.guardar(vectorHumano1) }
+
+        assertThrows(NoResultException::class.java) {
+            estadisticaService.especieLider()
+        }
+
     }
 
     @AfterEach
