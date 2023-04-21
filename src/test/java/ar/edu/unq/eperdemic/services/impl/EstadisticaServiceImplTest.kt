@@ -205,6 +205,53 @@ internal class EstadisticaServiceImplTest {
         assertEquals(especie1.id, especiesLideresIds[9].id)
     }
 
+    @Test
+    fun `si devuelvo los lideres y no hay 10 especies obtengo las especies con mayores infectados en orden descendente que haya`(){
+        var patogenoDeLaEspecie1 = Patogeno("Gripe")
+        runTrx { patogenoDAO.guardar(patogenoDeLaEspecie1)}
+
+        var especie1 = patogenoDeLaEspecie1.crearEspecie("Especie1","Rusia")
+        var especie2 = patogenoDeLaEspecie1.crearEspecie("Especie2","Rusia")
+        var especie3 = patogenoDeLaEspecie1.crearEspecie("Especie3","Rusia")
+        var especie4 = patogenoDeLaEspecie1.crearEspecie("Especie4","Rusia")
+
+        var vectorHumano1 = Vector(TipoDeVector.Persona)
+        var vectorHumano2 = Vector(TipoDeVector.Persona)
+
+        var vectorAnimal1 = Vector(TipoDeVector.Animal)
+        var vectorAnimal2 = Vector(TipoDeVector.Animal)
+
+        var vectorInsecto1 = Vector(TipoDeVector.Insecto)
+
+        vectorService.infectar(vectorHumano1,especie1)
+
+        vectorService.infectar(vectorHumano1,especie2)
+        vectorService.infectar(vectorAnimal1,especie2)
+
+        vectorService.infectar(vectorHumano1,especie3)
+        vectorService.infectar(vectorHumano2,especie3)
+        vectorService.infectar(vectorAnimal1,especie3)
+
+        vectorService.infectar(vectorHumano1,especie4)
+        vectorService.infectar(vectorHumano2,especie4)
+        vectorService.infectar(vectorAnimal1,especie4)
+        vectorService.infectar(vectorAnimal2,especie4)
+
+        vectorService.infectar(vectorInsecto1,especie2)
+
+        assertEquals(4,estadisticaService.lideres().size)
+
+        val especiesLideresIds = estadisticaService.lideres()
+
+        assertEquals(especie4.id, especiesLideresIds[0].id)
+        assertEquals(especie3.id, especiesLideresIds[1].id)
+        assertEquals(especie2.id, especiesLideresIds[2].id)
+        assertEquals(especie1.id, especiesLideresIds[3].id)
+
+        assertEquals(4, especiesLideresIds.size)
+    }
+
+
     @AfterEach
     fun tearDown() {
        dataService.eliminarTodo()
