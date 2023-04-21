@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.TestInstance
+import javax.persistence.NoResultException
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class EstadisticaServiceImplTest {
@@ -251,6 +252,16 @@ internal class EstadisticaServiceImplTest {
         assertEquals(4, especiesLideresIds.size)
     }
 
+    fun `no hay especieLider`(){
+
+        var vectorHumano1 = Vector(TipoDeVector.Persona)
+        runTrx { vectorDAO.guardar(vectorHumano1) }
+
+        assertThrows(NoResultException::class.java) {
+            estadisticaService.especieLider()
+        }
+
+    }
 
     @AfterEach
     fun tearDown() {

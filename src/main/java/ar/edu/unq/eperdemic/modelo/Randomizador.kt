@@ -3,15 +3,19 @@ package ar.edu.unq.eperdemic.modelo
 import kotlin.random.Random
 
 
-class Randomizador {
-    private var instance : Randomizador? = null
+class Randomizador private constructor() {
     var estado : EstadoRandomizador = EstadoRandomizadorAlatorio()
 
-    fun  getInstance(): Randomizador {
-        if (instance == null)
-            instance = Randomizador()
+    companion object {
+        private var instance: Randomizador? = null
 
-        return instance!!
+        fun  getInstance(): Randomizador {
+
+            if (instance == null)
+                instance = Randomizador()
+
+            return instance!!
+        }
     }
 
     fun  valor(valorMin:Int, valorMax:Int ): Int {
