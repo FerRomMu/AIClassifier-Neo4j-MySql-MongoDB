@@ -42,16 +42,16 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
 
     override fun cantidadVectoresInfectados(nombreDeLaUbicacion: String) : Long {
         val session = TransactionRunner.currentSession
+        
+        val hql = "select count(distinct v.id) " +
+                "from Vector v " +
+                "join v.especiesContagiadas es " +
+                "where v.ubicacion.nombre = :nombreUbicacion"
 
-        val hql = "select count(es.vectores.id) \n" +
-                "from Vector v \n" +
-                "join v.especiesContagiadas es\n" +
-                "where v.ubicacion.id = (SELECT id FROM Ubicacion WHERE nombre = :nombreUbicacion)"
-
-        val query = session.createQuery(hql, Long::class.java)
+        val query = session.createQuery(hql, java.lang.Long::class.java)
         query.setParameter("nombreUbicacion", nombreDeLaUbicacion)
 
-        return query.singleResult
+        return query.singleResult.toLong()
     }
 
     override fun nombreEspecieQueMasInfectaVectores(nombreDeLaUbicacion: String) : String {
