@@ -31,6 +31,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-rest")
     implementation("org.springframework.boot:spring-boot-starter-aop")
 
+    implementation(group = "org.hibernate", name = "hibernate-core", version = "5.4.12.Final")
+    implementation(group = "mysql", name = "mysql-connector-java", version = "8.0.19")
+
     implementation("mysql:mysql-connector-java")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

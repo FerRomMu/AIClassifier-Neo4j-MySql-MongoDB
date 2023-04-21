@@ -5,7 +5,7 @@ import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.spring.controllers.dto.EspecieDTO
 import ar.edu.unq.eperdemic.spring.controllers.dto.PatogenoDTO
 import org.springframework.web.bind.annotation.*
-
+/*
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @CrossOrigin
 @ServiceREST
@@ -31,4 +31,4 @@ class PatogenoControllerREST(private val patogenoService: PatogenoService) {
   fun getAll() = patogenoService.recuperarATodosLosPatogenos().map{ PatogenoDTO.from(it)}
 
 
-}
+}*/

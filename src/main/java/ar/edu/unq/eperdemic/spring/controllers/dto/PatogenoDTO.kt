@@ -6,6 +6,6 @@ class PatogenoDTO (val id:Long?, val tipo : String, val cantidadDeEspecies:Int?)
 
     companion object {
         fun from(patogeno: Patogeno) =
-            PatogenoDTO(patogeno.id, patogeno.tipo, patogeno.cantidadDeEspecies)
+            PatogenoDTO(patogeno.id, patogeno.tipo, patogeno.cantidadDeEspecies())
     }
 }
