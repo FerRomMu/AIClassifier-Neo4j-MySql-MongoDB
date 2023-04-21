@@ -16,13 +16,15 @@ class Especie(patogenoParam: Patogeno,
     @JoinColumn(name="id_patogeno")
     val patogeno: Patogeno = patogenoParam
 
-    @ManyToMany(mappedBy = "especiesContagiadas", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     val vectores: MutableSet<Vector> = HashSet()
 
 
     fun capacidadDeContagioA(tipoVictima : TipoDeVector): Int {
         return this.patogeno.capacidadDeContagioA(tipoVictima)
     }
-
+    fun agregarVector(vector:Vector){
+        vectores.add(vector)
+    }
 
 }

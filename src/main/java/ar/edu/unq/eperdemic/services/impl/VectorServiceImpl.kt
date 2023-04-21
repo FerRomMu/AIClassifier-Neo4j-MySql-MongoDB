@@ -28,6 +28,7 @@ class VectorServiceImpl(
     override fun infectar(vector: Vector, especie: Especie) {
         runTrx {
             vector.agregarEspecie(especie)
+            especie.agregarVector(vector)
             especieDAO.guardar(especie)
             vectorDAO.guardar(vector)
         }
