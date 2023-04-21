@@ -27,11 +27,25 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
     }
 
 
-    fun cantidadVectoresPresentes(nombreDeLaUbicacion: String) : Long {
+    override fun cantidadVectoresPresentes(nombreDeLaUbicacion: String) : Long {
         val session = TransactionRunner.currentSession
 
-        val hql = "select count(*) " +
+        val hql = "select count(*)\n" +
                 "from Vector v\n" +
+                "where v.ubicacion.id = (SELECT id FROM Ubicacion WHERE nombre = :nombreUbicacion)"
+
+        val query = session.createQuery(hql, java.lang.Long::class.java)
+        query.setParameter("nombreUbicacion", nombreDeLaUbicacion)
+
+        return query.singleResult.toLong()
+    }
+
+    override fun cantidadVectoresInfectados(nombreDeLaUbicacion: String) : Long {
+        val session = TransactionRunner.currentSession
+
+        val hql = "select count(es.vectores.id) \n" +
+                "from Especie es \n" +
+                "join Vector v on v.especiesContagiadas.id = es.id" +
                 "where v.ubicacion.id = (SELECT id FROM UBICACION WHERE nombre = :nombreUbicacion)"
 
         val query = session.createQuery(hql, Long::class.java)
@@ -40,15 +54,18 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
         return query.singleResult
     }
 
-    fun cantidadVectoresInfectados(nombreDeLaUbicacion: String) : Long {
+    override fun nombreEspecieQueMasInfectaVectores(nombreDeLaUbicacion: String) : String {
         val session = TransactionRunner.currentSession
 
-        val hql = "select * \n" +
-                "from Especie es \n" +
-                "join es.vectores v on "
+        val hql = "select es.nombre " +
+                "from Especie es " +
+                "join Vector v ON v.especiesContagiadas.id = es.id" +
+                "group by v.especiesContagiadas.id " +
+                "order by count(es.vectores.id) desc"
 
-        val query = session.createQuery(hql, Long::class.java)
+        val query = session.createQuery(hql, String::class.java)
         query.setParameter("nombreUbicacion", nombreDeLaUbicacion)
+        query.maxResults = 1
 
         return query.singleResult
     }
