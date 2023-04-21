@@ -27,20 +27,20 @@ class Vector(var tipo: TipoDeVector) {
         }
     }
 
-    fun intentarContagiarA(vectorAContagiar: Vector,especieAContagiar: Especie){
+    private fun intentarContagiarA(vectorAContagiar: Vector,especieAContagiar: Especie){
         if (vectorAContagiar.puedoSerContagiadoPor(this) && this.haySuerte(especieAContagiar,vectorAContagiar.tipo) ){
             vectorAContagiar.agregarEspecie(especieAContagiar)
         }
     }
 
-    fun haySuerte (especieAContagiar: Especie,tipoVictima : TipoDeVector): Boolean{
+    private fun haySuerte (especieAContagiar: Especie,tipoVictima : TipoDeVector): Boolean{
         val dado = Randomizador.getInstance()
         var numeroContagio = dado.valor(1,10) + especieAContagiar.capacidadDeContagioA(tipoVictima)
         var numeroRuleta = dado.valor(1,100)
         return numeroContagio >= numeroRuleta
     }
 
-    fun puedoSerContagiadoPor(vectorQueMeIntentaContagiar :Vector): Boolean{
+    private fun puedoSerContagiadoPor(vectorQueMeIntentaContagiar :Vector): Boolean{
         return this.tipo.puedeContagiarme(vectorQueMeIntentaContagiar.tipo)
     }
 
