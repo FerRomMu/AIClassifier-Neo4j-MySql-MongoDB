@@ -48,9 +48,11 @@ class HibernateEstadisticaDAOTest {
 
         val cantidadVectoresTotal = runTrx { estadisticaDAO.cantidadVectoresPresentes(ubicacion1.nombre) }
         val cantidadVectoresInfectados = runTrx { estadisticaDAO.cantidadVectoresInfectados(ubicacion1.nombre) }
+        val nombreVectorInfectado = runTrx { estadisticaDAO.nombreEspecieQueMasInfectaVectores(ubicacion1.nombre) }
 
         assertEquals(5, cantidadVectoresTotal)
         assertEquals(4, cantidadVectoresInfectados)
+        assertEquals("especie111", nombreVectorInfectado)
 
     }
 
