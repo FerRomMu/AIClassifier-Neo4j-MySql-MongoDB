@@ -6,4 +6,6 @@ interface EstadisticaService {
 
     fun especieLider(): Especie
 
+    fun lideres(): List<Especie>
+
 }
