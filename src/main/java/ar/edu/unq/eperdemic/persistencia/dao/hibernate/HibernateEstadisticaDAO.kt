@@ -26,6 +26,32 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
         return query.singleResult
     }
 
+    fun cantidadVectoresPresentes(nombreDeLaUbicacion: String) : Long {
+        val session = TransactionRunner.currentSession
+
+        val hql = "select count(*) " +
+                "from Vector v\n" +
+                "where v.ubicacion.id = (SELECT id FROM UBICACION WHERE nombre = :nombreUbicacion)"
+
+        val query = session.createQuery(hql, Long::class.java)
+        query.setParameter("nombreUbicacion", nombreDeLaUbicacion)
+
+        return query.singleResult
+    }
+
+    fun cantidadVectoresInfectados(nombreDeLaUbicacion: String) : Long {
+        val session = TransactionRunner.currentSession
+
+        val hql = "select * \n" +
+                "from Especie es \n" +
+                "join es.vectores v on "
+
+        val query = session.createQuery(hql, Long::class.java)
+        query.setParameter("nombreUbicacion", nombreDeLaUbicacion)
+
+        return query.singleResult
+    }
+
     override fun reporteDeContagios(nombreDeLaUbicacion: String): ReporteDeContagios {
         val session = TransactionRunner.currentSession
 
