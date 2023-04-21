@@ -40,4 +40,25 @@ class DataServiceImpl(): DataService {
         }
 
     }
+    override fun crearPandemiaPositiva(): Especie {
+        return TransactionRunner.runTrx {
+            var patogeno = Patogeno("Gripe")
+            patogenoDao.guardar(patogeno)
+            var especie1 = Especie(patogeno, "virusT", "raccoon city")
+            especieDAO.guardar(especie1)
+
+            for (i in 0..20){
+                var vector = Vector(
+                    listOf(TipoDeVector.Insecto, TipoDeVector.Animal, TipoDeVector.Persona)[i % 3]
+                )
+                var ubicacion = Ubicacion("Lugar $i")
+                vector.ubicacion = ubicacion
+
+                vector.especiesContagiadas.add(especie1)
+                ubicacionDao.guardar(ubicacion)
+                vectorDao.guardar(vector)
+            }
+            especie1
+        }
+    }
 }
