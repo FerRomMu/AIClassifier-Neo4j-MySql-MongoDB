@@ -1,6 +1,7 @@
 package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 
 import ar.edu.unq.eperdemic.modelo.Especie
+import ar.edu.unq.eperdemic.modelo.ReporteDeContagios
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.dao.EstadisticaDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
@@ -25,5 +26,14 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
         return query.singleResult
     }
 
+    override fun reporteDeContagios(nombreDeLaUbicacion: String): ReporteDeContagios {
+        val session = TransactionRunner.currentSession
+
+        val hql = ""
+
+        val query = session.createQuery(hql, ReporteDeContagios::class.java)
+
+        return query.singleResult
+    }
 }
 
