@@ -23,4 +23,5 @@ interface DataService {
      * Persiste todas las entidades y las devuelve.
      */
     fun persistir(entidades: List<Any>): List<Any>
+    fun persistir(entidad: Any): Any
 }

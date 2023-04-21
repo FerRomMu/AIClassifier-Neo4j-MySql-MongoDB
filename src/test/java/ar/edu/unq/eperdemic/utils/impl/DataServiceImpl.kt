@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.utils.impl
 
+import ar.edu.unq.eperdemic.exceptions.InvalidDataTypeException
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.persistencia.dao.*
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
@@ -26,10 +27,15 @@ class DataServiceImpl(): DataService {
                     is Vector -> vectorDao.guardar(entidad)
                     is Especie -> especieDAO.guardar(entidad)
                     is Ubicacion -> ubicacionDao.guardar(entidad)
+                    else -> throw InvalidDataTypeException("El dato no es persistible.")
                 }
             }
             entidades
         }
+    }
+
+    override fun persistir(entidad: Any): Any {
+        return this.persistir(listOf(entidad)).first()
     }
 
     override fun crearSetDeDatosIniciales() {
