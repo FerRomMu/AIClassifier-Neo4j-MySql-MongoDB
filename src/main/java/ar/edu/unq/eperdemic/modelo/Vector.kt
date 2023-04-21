@@ -34,7 +34,7 @@ class Vector(var tipo: TipoDeVector) {
     }
 
     fun haySuerte (especieAContagiar: Especie,tipoVictima : TipoDeVector): Boolean{
-        val dado = Randomizador().getInstance()
+        val dado = Randomizador.getInstance()
         var numeroContagio = dado.valor(1,10) + especieAContagiar.capacidadDeContagioA(tipoVictima)
         var numeroRuleta = dado.valor(1,100)
         return numeroContagio >= numeroRuleta

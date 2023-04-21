@@ -39,7 +39,7 @@ class UbicacionServiceImpl(val ubicacionDAO: UbicacionDAO): UbicacionService {
         runTrx {
             val vectores = ubicacionDAO.vectoresEn(ubicacionId).toList()
             if (vectores.isNotEmpty()) {
-                val dado = Randomizador().getInstance()
+                val dado = Randomizador.getInstance()
                 val numeroAleatorio = dado.valor(0, vectores.size-1)
                 val vectorContagioso = vectores[numeroAleatorio]
                 for(vector in vectores){
