@@ -47,8 +47,10 @@ class HibernateEstadisticaDAOTest {
         data.persistir(listOf(ubicacion1, patogeno, especie1, especie2, especie3, vector1, vector2, vector3, vector4, vector5))
 
         val cantidadVectoresTotal = runTrx { estadisticaDAO.cantidadVectoresPresentes(ubicacion1.nombre) }
+        val cantidadVectoresInfectados = runTrx { estadisticaDAO.cantidadVectoresInfectados(ubicacion1.nombre) }
 
         assertEquals(5, cantidadVectoresTotal)
+        assertEquals(4, cantidadVectoresInfectados)
 
     }
 

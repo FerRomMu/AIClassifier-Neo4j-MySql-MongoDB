@@ -44,9 +44,9 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
         val session = TransactionRunner.currentSession
 
         val hql = "select count(es.vectores.id) \n" +
-                "from Especie es \n" +
-                "join Vector v on v.especiesContagiadas.id = es.id" +
-                "where v.ubicacion.id = (SELECT id FROM UBICACION WHERE nombre = :nombreUbicacion)"
+                "from Vector v \n" +
+                "join v.especiesContagiadas es\n" +
+                "where v.ubicacion.id = (SELECT id FROM Ubicacion WHERE nombre = :nombreUbicacion)"
 
         val query = session.createQuery(hql, Long::class.java)
         query.setParameter("nombreUbicacion", nombreDeLaUbicacion)
