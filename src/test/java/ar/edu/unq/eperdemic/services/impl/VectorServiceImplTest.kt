@@ -47,10 +47,6 @@ class VectorServiceImplTest {
     }
 
     @Test
-    fun contagiar() {
-    }
-
-    @Test
     fun infectar() {
         var vectorAInfectar = Vector(TipoDeVector.Persona)
 
@@ -65,8 +61,6 @@ class VectorServiceImplTest {
 
         assertEquals(vectorAInfectar.especiesContagiadas.size,1)
     }
-
-
 
     @Test
     fun `Si miro las enfermedades de un vector las recibo`() {
