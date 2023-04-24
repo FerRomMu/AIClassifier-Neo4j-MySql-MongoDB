@@ -33,7 +33,7 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
 
         val hql = "select count(*)\n" +
                 "from Vector v\n" +
-                "where v.ubicacion.id = (SELECT id FROM Ubicacion WHERE nombre = :nombreUbicacion)"
+                "where v.ubicacion.nombre = :nombreUbicacion"
 
         val query = session.createQuery(hql, java.lang.Long::class.java)
         query.setParameter("nombreUbicacion", nombreDeLaUbicacion)
