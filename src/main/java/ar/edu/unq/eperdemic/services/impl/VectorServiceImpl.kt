@@ -19,12 +19,6 @@ class VectorServiceImpl(
     private val especieDAO: EspecieDAO
   ): VectorService {
 
-
-
-    override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
-        TODO("Not yet implemented")
-    }
-
     override fun infectar(vector: Vector, especie: Especie) {
         runTrx {
             vector.agregarEspecie(especie)
