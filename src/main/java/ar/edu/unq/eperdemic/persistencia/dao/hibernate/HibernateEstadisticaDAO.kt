@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.ReporteDeContagios
+import ar.edu.unq.eperdemic.modelo.TipoDeVector
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.dao.EstadisticaDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
@@ -16,12 +17,13 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
             "select es \n" +
             "from Vector v \n" +
             "join v.especiesContagiadas es \n" +
-            "where v.tipo = 0\n" +
+            "where v.tipo = :tipoPersona\n" +
             "group by es.id \n" +
             "order by count(es.id) \n" +
             "desc"
 
         val query = session.createQuery(hql, Especie::class.java)
+        query.setParameter("tipoPersona", TipoDeVector.Persona)
         query.maxResults = 1
 
         return query.singleResult
@@ -33,7 +35,7 @@ class HibernateEstadisticaDAO  : HibernateDAO<EstadisticaDAO>(EstadisticaDAO::cl
 
         val hql = "select count(*)\n" +
                 "from Vector v\n" +
-                "where v.ubicacion.id = (SELECT id FROM Ubicacion WHERE nombre = :nombreUbicacion)"
+                "where v.ubicacion.nombre = :nombreUbicacion"
 
         val query = session.createQuery(hql, java.lang.Long::class.java)
         query.setParameter("nombreUbicacion", nombreDeLaUbicacion)
