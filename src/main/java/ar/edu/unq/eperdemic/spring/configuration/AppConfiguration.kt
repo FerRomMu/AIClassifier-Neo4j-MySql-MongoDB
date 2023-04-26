@@ -1,7 +1,6 @@
 package ar.edu.unq.eperdemic.spring.configuration
 
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCPatogenoDAO
 import ar.edu.unq.eperdemic.services.*
 import ar.edu.unq.eperdemic.services.impl.*
 import org.springframework.context.annotation.Bean
