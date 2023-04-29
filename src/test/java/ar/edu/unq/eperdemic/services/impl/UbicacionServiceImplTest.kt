@@ -187,10 +187,18 @@ internal class UbicacionServiceImplTest {
     }
 
     @Test
-    fun `Expandir en una ubicacion vacia`() {
-        var cordoba = ubicacionService.crearUbicacion("Cordoba")
+    fun `Expandir en una ubicacion sin contagios no hace nada`() {
+        val cordoba = ubicacionService.crearUbicacion("Cordoba")
+
+        val vectorSinContagiar = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
+        val vectorSinContagiar2 = vectorService.crearVector(TipoDeVector.Animal,cordoba.id!!)
+        val vectorSinContagiar3 = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
         ubicacionService.expandir(cordoba.id!!)
+
+        assertEquals(vectorSinContagiar.especiesContagiadas.size,0)
+        assertEquals(vectorSinContagiar2.especiesContagiadas.size,0)
+        assertEquals(vectorSinContagiar3.especiesContagiadas.size,0)
     }
 
 
