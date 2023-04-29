@@ -48,36 +48,40 @@ class VectorServiceImplTest {
 
     @Test
     fun infectar() {
-        var vectorAInfectar = Vector(TipoDeVector.Persona)
+        val vectorAInfectar = Vector(TipoDeVector.Persona)
 
-        var patogenoDeLaEspecie = Patogeno("Gripe")
+        val patogenoDeLaEspecie = Patogeno("Gripe")
         dataService.persistir(patogenoDeLaEspecie)
 
-        var especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
+        val especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
 
         assertEquals(vectorAInfectar.especiesContagiadas.size,0)
 
         vectorService.infectar(vectorAInfectar,especieAContagiar)
 
         assertEquals(vectorAInfectar.especiesContagiadas.size,1)
+        assertEquals(vectorAInfectar.especiesContagiadas.first().id, especieAContagiar.id)
+        assertEquals(vectorAInfectar.especiesContagiadas.first().nombre, especieAContagiar.nombre)
+        assertEquals(vectorAInfectar.especiesContagiadas.first().paisDeOrigen, especieAContagiar.paisDeOrigen)
     }
 
     @Test
     fun `Si miro las enfermedades de un vector las recibo`() {
 
-        var patogenoDeLaEspecie = Patogeno("Gripe")
-        val patogenoDAO = HibernatePatogenoDAO()
+        val patogenoDeLaEspecie = Patogeno("Gripe")
         dataService.persistir(patogenoDeLaEspecie)
 
-        var vectorAInfectar = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
+        val vectorAInfectar = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
 
-        var especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
+        val especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
 
         vectorService.infectar(vectorAInfectar,especieAContagiar)
         val resultado = vectorService.enfermedades(vectorAInfectar.id!!)
 
         assertEquals(1,resultado.size)
         assertEquals(especieAContagiar.id, resultado[0].id)
+        assertEquals(especieAContagiar.nombre, resultado[0].nombre)
+        assertEquals(especieAContagiar.paisDeOrigen, resultado[0].paisDeOrigen)
 
     }
 
@@ -142,10 +146,20 @@ class VectorServiceImplTest {
 
     @Test
     fun `si trato de recuperar todos llegan todos`() {
-        dataService.crearSetDeDatosIniciales()
+        val vectoresPersistidos = dataService.crearSetDeDatosIniciales().filterIsInstance<Vector>()
         val vectores = vectorService.recuperarTodos()
 
-        assertEquals(21, vectores.size)
+        assertEquals(vectoresPersistidos.size, vectores.size)
+        assertTrue(
+            vectores.all { vector ->
+                vectoresPersistidos.any {
+                    it.id == vector.id &&
+                    it.tipo == vector.tipo &&
+                    it.especiesContagiadas.size == vector.especiesContagiadas.size &&
+                    it.ubicacion.id == it.ubicacion.id
+                }
+            }
+        )
     }
 
     @Test
