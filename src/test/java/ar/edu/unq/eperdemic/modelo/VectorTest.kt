@@ -48,9 +48,11 @@ class VectorTest {
         assertEquals(0, vectorHumano1.especiesContagiadas.size)
 
         vectorHumano1.agregarEspecie(especie)
-        val nombreDeEspecies = vectorHumano1.especiesContagiadas.map { e -> e.nombre }
+        val especie = vectorHumano1.especiesContagiadas.toList()[0] //map { e -> e.nombre }
 
-        assertTrue(nombreDeEspecies.contains("virusT"))
+        assertEquals("virusT",especie.nombre)
+        assertEquals("raccoon city", especie.paisDeOrigen)
+
     }
 
     @Test
@@ -59,9 +61,16 @@ class VectorTest {
 
         vectorHumano1.agregarEspecie(especie)
         vectorHumano1.intentarInfectar(vectorHumano2)
-        val nombreDeEspecies = vectorHumano2.especiesContagiadas.map { e -> e.nombre }
 
-        assertTrue(nombreDeEspecies.contains("virusT"))
+        assertEquals(1, vectorHumano2.especiesContagiadas.size)
+
+        val nombreDeEspecieVector2 = vectorHumano2.especiesContagiadas.toList()[0]
+        val nombreDeEspecieVector1 = vectorHumano1.especiesContagiadas.toList()[0]
+
+        assertEquals(nombreDeEspecieVector1.id,nombreDeEspecieVector2.id)
+        assertEquals(nombreDeEspecieVector1.nombre,nombreDeEspecieVector2.nombre)
+        assertEquals(nombreDeEspecieVector1.paisDeOrigen,nombreDeEspecieVector2.paisDeOrigen)
+
     }
 
     @Test
@@ -70,9 +79,15 @@ class VectorTest {
 
         vectorHumano1.agregarEspecie(especie)
         vectorHumano1.intentarInfectar(vectorInsecto1)
-        val nombreDeEspecies = vectorInsecto1.especiesContagiadas.map { e -> e.nombre }
 
-        assertTrue(nombreDeEspecies.contains("virusT"))
+        assertEquals(1, vectorInsecto1.especiesContagiadas.size)
+
+        val nombreDeEspecieVectorInsecto = vectorInsecto1.especiesContagiadas.toList()[0]
+        val nombreDeEspecieVector1 = vectorHumano1.especiesContagiadas.toList()[0]
+
+        assertEquals(nombreDeEspecieVector1.id,nombreDeEspecieVectorInsecto.id)
+        assertEquals(nombreDeEspecieVector1.nombre,nombreDeEspecieVectorInsecto.nombre)
+        assertEquals(nombreDeEspecieVector1.paisDeOrigen,nombreDeEspecieVectorInsecto.paisDeOrigen)
     }
 
     @Test
@@ -91,9 +106,15 @@ class VectorTest {
 
         vectorInsecto1.agregarEspecie(especie)
         vectorInsecto1.intentarInfectar(vectorAnimal1)
-        val nombreDeEspecies = vectorAnimal1.especiesContagiadas.map { e -> e.nombre }
 
-        assertTrue(nombreDeEspecies.contains("virusT"))
+        assertEquals(1, vectorAnimal1.especiesContagiadas.size)
+
+        val nombreDeEspecieVectorAnimal = vectorAnimal1.especiesContagiadas.toList()[0]
+        val nombreDeEspecieVectorInsecto = vectorInsecto1.especiesContagiadas.toList()[0]
+
+        assertEquals(nombreDeEspecieVectorInsecto.id,nombreDeEspecieVectorAnimal.id)
+        assertEquals(nombreDeEspecieVectorInsecto.nombre,nombreDeEspecieVectorAnimal.nombre)
+        assertEquals(nombreDeEspecieVectorInsecto.paisDeOrigen,nombreDeEspecieVectorAnimal.paisDeOrigen)
     }
 
     @Test
@@ -102,9 +123,16 @@ class VectorTest {
 
         vectorInsecto1.agregarEspecie(especie)
         vectorInsecto1.intentarInfectar(vectorHumano1)
-        val nombreDeEspecies = vectorHumano1.especiesContagiadas.map { e -> e.nombre }
 
-        assertTrue(nombreDeEspecies.contains("virusT"))
+        assertEquals(1, vectorHumano1.especiesContagiadas.size)
+
+        val nombreDeEspecieVectorHumano = vectorHumano1.especiesContagiadas.toList()[0]
+        val nombreDeEspecieVectorInsecto = vectorInsecto1.especiesContagiadas.toList()[0]
+
+        assertEquals(nombreDeEspecieVectorInsecto.id,nombreDeEspecieVectorHumano.id)
+        assertEquals(nombreDeEspecieVectorInsecto.nombre,nombreDeEspecieVectorHumano.nombre)
+        assertEquals(nombreDeEspecieVectorInsecto.paisDeOrigen,nombreDeEspecieVectorHumano.paisDeOrigen)
+
     }
 
     @Test
@@ -123,9 +151,15 @@ class VectorTest {
 
         vectorAnimal1.agregarEspecie(especie)
         vectorAnimal1.intentarInfectar(vectorHumano1)
-        val nombreDeEspecies = vectorHumano1.especiesContagiadas.map { e -> e.nombre }
 
-        assertTrue(nombreDeEspecies.contains("virusT"))
+        assertEquals(1, vectorHumano1.especiesContagiadas.size)
+
+        val nombreDeEspecieVectorHumano = vectorHumano1.especiesContagiadas.toList()[0]
+        val nombreDeEspecieVectorAnimal = vectorAnimal1.especiesContagiadas.toList()[0]
+
+        assertEquals(nombreDeEspecieVectorAnimal.id,nombreDeEspecieVectorHumano.id)
+        assertEquals(nombreDeEspecieVectorAnimal.nombre,nombreDeEspecieVectorHumano.nombre)
+        assertEquals(nombreDeEspecieVectorAnimal.paisDeOrigen,nombreDeEspecieVectorHumano.paisDeOrigen)
     }
 
     @Test
@@ -134,9 +168,16 @@ class VectorTest {
 
         vectorAnimal1.agregarEspecie(especie)
         vectorAnimal1.intentarInfectar(vectorInsecto1)
-        val nombreDeEspecies = vectorInsecto1.especiesContagiadas.map { e -> e.nombre }
 
-        assertTrue(nombreDeEspecies.contains("virusT"))
+        assertEquals(1, vectorInsecto1.especiesContagiadas.size)
+
+        val nombreDeEspecieVectorInsecto = vectorInsecto1.especiesContagiadas.toList()[0]
+        val nombreDeEspecieVectorAnimal = vectorAnimal1.especiesContagiadas.toList()[0]
+
+
+        assertEquals(nombreDeEspecieVectorAnimal.id,nombreDeEspecieVectorInsecto.id)
+        assertEquals(nombreDeEspecieVectorAnimal.nombre,nombreDeEspecieVectorInsecto.nombre)
+        assertEquals(nombreDeEspecieVectorAnimal.paisDeOrigen,nombreDeEspecieVectorInsecto.paisDeOrigen)
     }
 
     @Test
