@@ -77,7 +77,6 @@ class PatogenoRepositoryTest {
 
     @Test
     fun `si trato de recuperar las especies de un patogeno las devuelve`() {
-/*
         patogeno = Patogeno("Gripe")
 
         patogeno.crearEspecie("virusT", "mansion spencer")
@@ -90,7 +89,7 @@ class PatogenoRepositoryTest {
         assertEquals(3, especies.size)
         assertTrue(especies.contains("virusT"))
         assertTrue(especies.contains("virusG"))
-        assertTrue(especies.contains("virus progenitor"))*/
+        assertTrue(especies.contains("virus progenitor"))
 
     }
 

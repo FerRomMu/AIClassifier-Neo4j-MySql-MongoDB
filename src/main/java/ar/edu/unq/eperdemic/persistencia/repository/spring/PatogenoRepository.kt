@@ -7,16 +7,15 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
+
 @Repository
 interface PatogenoRepository : CrudRepository<Patogeno,Long> {
 
-    /*
-    @Query(
-        "SELECT ES FROM PATOGENO P" +
-                "JOIN P.ESPECIES ES" +
-                "WHERE P.ID = 1? "
-    )
-    fun especiesDePatogeno(id: Long?): List<Especie>*/
+    @Query("SELECT es " +
+            "FROM Patogeno p " +
+            "JOIN p.especies es " +
+            "WHERE p.id = :idPatogeno")
+    fun especiesDePatogeno(@Param("idPatogeno") id: Long?): List<Especie>
 
 
     @Query("select \n" +
