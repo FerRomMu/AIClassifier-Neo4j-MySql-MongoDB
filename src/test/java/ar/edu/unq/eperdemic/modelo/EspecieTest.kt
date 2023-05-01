@@ -25,10 +25,8 @@ class EspecieTest {
         especie.agregarVector(vector)
 
         assertEquals(1, especie.vectores.size)
-
-        assertEquals("virusT",especie.nombre)
-        assertEquals("raccoon city",especie.paisDeOrigen)
-
+        val vectorAgregado = especie.vectores.first()
+        assertEquals(vector, vectorAgregado)
     }
 
     @Test
