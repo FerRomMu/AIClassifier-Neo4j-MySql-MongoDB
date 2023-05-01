@@ -4,6 +4,7 @@ import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
+import ar.edu.unq.eperdemic.utils.impl.DataServiceSpring
 import org.junit.jupiter.api.*
 
 import org.junit.jupiter.api.Assertions.*
@@ -24,7 +25,7 @@ class PatogenoRepositoryTest {
     @BeforeEach
     fun setUp() {
         patogeno = Patogeno("Gripe")
-        data = DataServiceImpl()
+        data = DataServiceSpring()
     }
 
     @Test
@@ -104,7 +105,7 @@ class PatogenoRepositoryTest {
     }
     @AfterEach
     fun tearDown() {
-        //data.eliminarTodo()
+        data.eliminarTodo()
     }
 
 }
