@@ -47,23 +47,23 @@ class DataServiceSpring: DataService {
     override fun crearSetDeDatosIniciales() {
 
         for (i in 0..20) {
-            var patogeno = Patogeno("Tipo $i")
+            val patogeno = Patogeno("Tipo $i")
             patogeno.tipo = "Tipo $i"
             patogenoRepository.save(patogeno)
         }
 
     }
     override fun crearPandemiaPositiva(): Especie {
-        var patogeno = Patogeno("Gripe")
+        val patogeno = Patogeno("Gripe")
         patogenoRepository.save(patogeno)
-        var especiePandemica = Especie(patogeno, "virusT", "raccoon city")
+        val especiePandemica = Especie(patogeno, "virusT", "raccoon city")
         especieRepository.save(especiePandemica)
 
         for (i in 0..20){
-            var vector = Vector(
+            val vector = Vector(
                 listOf(TipoDeVector.Insecto, TipoDeVector.Animal, TipoDeVector.Persona)[i % 3]
             )
-            var ubicacion = Ubicacion("Lugar $i")
+            val ubicacion = Ubicacion("Lugar $i")
             vector.ubicacion = ubicacion
 
             vector.especiesContagiadas.add(especiePandemica)
