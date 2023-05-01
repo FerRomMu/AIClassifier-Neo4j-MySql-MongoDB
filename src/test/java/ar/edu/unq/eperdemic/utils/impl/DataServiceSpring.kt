@@ -4,7 +4,10 @@ import ar.edu.unq.eperdemic.exceptions.InvalidDataTypeException
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.persistencia.dao.*
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
+import ar.edu.unq.eperdemic.persistencia.repository.spring.EspecieRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.PatogenoRepository
+import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
+import ar.edu.unq.eperdemic.persistencia.repository.spring.VectorRepository
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.utils.DataService
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional
 class DataServiceSpring: DataService {
 
     @Autowired lateinit var patogenoRepository: PatogenoRepository
+    @Autowired lateinit var ubicacionRepository: UbicacionRepository
+    @Autowired lateinit var vectorRepository: VectorRepository
+    @Autowired lateinit var especieRepository: EspecieRepository
 
     override fun eliminarTodo() {
         patogenoRepository.deleteAll()
@@ -45,6 +51,22 @@ class DataServiceSpring: DataService {
 
     }
     override fun crearPandemiaPositiva(): Especie {
-        return TODO()
+        var patogeno = Patogeno("Gripe")
+        patogenoRepository.save(patogeno)
+        var especiePandemica = Especie(patogeno, "virusT", "raccoon city")
+        especieRepository.save(especiePandemica)
+
+        for (i in 0..20){
+            var vector = Vector(
+                listOf(TipoDeVector.Insecto, TipoDeVector.Animal, TipoDeVector.Persona)[i % 3]
+            )
+            var ubicacion = Ubicacion("Lugar $i")
+            vector.ubicacion = ubicacion
+
+            vector.especiesContagiadas.add(especiePandemica)
+            ubicacionRepository.save(ubicacion)
+            vectorRepository.save(vector)
+        }
+        return especiePandemica
     }
 }
