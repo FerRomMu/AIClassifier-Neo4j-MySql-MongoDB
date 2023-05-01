@@ -189,18 +189,57 @@ internal class EstadisticaServiceImplTest {
 
         assertEquals(10,estadisticaService.lideres().size)
 
-        val especiesLideresIds = estadisticaService.lideres()
+        val especiesLideres = estadisticaService.lideres()
 
-        assertEquals(especie10.id, especiesLideresIds[0].id)
-        assertEquals(especie9.id, especiesLideresIds[1].id)
-        assertEquals(especie8.id, especiesLideresIds[2].id)
-        assertEquals(especie7.id, especiesLideresIds[3].id)
-        assertEquals(especie6.id, especiesLideresIds[4].id)
-        assertEquals(especie5.id, especiesLideresIds[5].id)
-        assertEquals(especie4.id, especiesLideresIds[6].id)
-        assertEquals(especie3.id, especiesLideresIds[7].id)
-        assertEquals(especie2.id, especiesLideresIds[8].id)
-        assertEquals(especie1.id, especiesLideresIds[9].id)
+        assertEquals(especie10.id, especiesLideres[0].id)
+        assertEquals(especie10.patogeno.id, especiesLideres[0].patogeno.id)
+        assertEquals(especie10.nombre, especiesLideres[0].nombre)
+        assertEquals(especie10.paisDeOrigen, especiesLideres[0].paisDeOrigen)
+
+        assertEquals(especie9.id, especiesLideres[1].id)
+        assertEquals(especie9.patogeno.id, especiesLideres[1].patogeno.id)
+        assertEquals(especie9.nombre, especiesLideres[1].nombre)
+        assertEquals(especie9.paisDeOrigen, especiesLideres[1].paisDeOrigen)
+
+        assertEquals(especie8.id, especiesLideres[2].id)
+        assertEquals(especie8.patogeno.id, especiesLideres[2].patogeno.id)
+        assertEquals(especie8.nombre, especiesLideres[2].nombre)
+        assertEquals(especie8.paisDeOrigen, especiesLideres[2].paisDeOrigen)
+
+        assertEquals(especie7.id, especiesLideres[3].id)
+        assertEquals(especie7.patogeno.id, especiesLideres[3].patogeno.id)
+        assertEquals(especie7.nombre, especiesLideres[3].nombre)
+        assertEquals(especie7.paisDeOrigen, especiesLideres[3].paisDeOrigen)
+
+        assertEquals(especie6.id, especiesLideres[4].id)
+        assertEquals(especie6.patogeno.id, especiesLideres[4].patogeno.id)
+        assertEquals(especie6.nombre, especiesLideres[4].nombre)
+        assertEquals(especie6.paisDeOrigen, especiesLideres[4].paisDeOrigen)
+
+        assertEquals(especie5.id, especiesLideres[5].id)
+        assertEquals(especie5.patogeno.id, especiesLideres[5].patogeno.id)
+        assertEquals(especie5.nombre, especiesLideres[5].nombre)
+        assertEquals(especie5.paisDeOrigen, especiesLideres[5].paisDeOrigen)
+
+        assertEquals(especie4.id, especiesLideres[6].id)
+        assertEquals(especie4.patogeno.id, especiesLideres[6].patogeno.id)
+        assertEquals(especie4.nombre, especiesLideres[6].nombre)
+        assertEquals(especie4.paisDeOrigen, especiesLideres[6].paisDeOrigen)
+
+        assertEquals(especie3.id, especiesLideres[7].id)
+        assertEquals(especie3.patogeno.id, especiesLideres[7].patogeno.id)
+        assertEquals(especie3.nombre, especiesLideres[7].nombre)
+        assertEquals(especie3.paisDeOrigen, especiesLideres[7].paisDeOrigen)
+
+        assertEquals(especie2.id, especiesLideres[8].id)
+        assertEquals(especie2.patogeno.id, especiesLideres[8].patogeno.id)
+        assertEquals(especie2.nombre, especiesLideres[8].nombre)
+        assertEquals(especie2.paisDeOrigen, especiesLideres[8].paisDeOrigen)
+
+        assertEquals(especie1.id, especiesLideres[9].id)
+        assertEquals(especie1.patogeno.id, especiesLideres[9].patogeno.id)
+        assertEquals(especie1.nombre, especiesLideres[9].nombre)
+        assertEquals(especie1.paisDeOrigen, especiesLideres[9].paisDeOrigen)
     }
 
     @Test
@@ -239,14 +278,29 @@ internal class EstadisticaServiceImplTest {
 
         assertEquals(4,estadisticaService.lideres().size)
 
-        val especiesLideresIds = estadisticaService.lideres()
+        val especiesLideres = estadisticaService.lideres()
 
-        assertEquals(especie4.id, especiesLideresIds[0].id)
-        assertEquals(especie3.id, especiesLideresIds[1].id)
-        assertEquals(especie2.id, especiesLideresIds[2].id)
-        assertEquals(especie1.id, especiesLideresIds[3].id)
+        assertEquals(especie4.id, especiesLideres[0].id)
+        assertEquals(especie4.patogeno.id, especiesLideres[0].patogeno.id)
+        assertEquals(especie4.nombre, especiesLideres[0].nombre)
+        assertEquals(especie4.paisDeOrigen, especiesLideres[0].paisDeOrigen)
 
-        assertEquals(4, especiesLideresIds.size)
+        assertEquals(especie3.id, especiesLideres[1].id)
+        assertEquals(especie3.patogeno.id, especiesLideres[1].patogeno.id)
+        assertEquals(especie3.nombre, especiesLideres[1].nombre)
+        assertEquals(especie3.paisDeOrigen, especiesLideres[1].paisDeOrigen)
+
+        assertEquals(especie2.id, especiesLideres[2].id)
+        assertEquals(especie2.patogeno.id, especiesLideres[2].patogeno.id)
+        assertEquals(especie2.nombre, especiesLideres[2].nombre)
+        assertEquals(especie2.paisDeOrigen, especiesLideres[2].paisDeOrigen)
+
+        assertEquals(especie1.id, especiesLideres[3].id)
+        assertEquals(especie1.patogeno.id, especiesLideres[3].patogeno.id)
+        assertEquals(especie1.nombre, especiesLideres[3].nombre)
+        assertEquals(especie1.paisDeOrigen, especiesLideres[3].paisDeOrigen)
+
+        assertEquals(4, especiesLideres.size)
     }
 
     @Test

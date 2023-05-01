@@ -6,7 +6,7 @@ interface DataService {
     /**
      * Crea un set de datos iniciales.
      */
-    fun crearSetDeDatosIniciales()
+    fun crearSetDeDatosIniciales(): List<Any>
 
     /***
      * Crea un set de datos donde hay una pandemia

@@ -38,14 +38,15 @@ class DataServiceImpl(): DataService {
         return this.persistir(listOf(entidad)).first()
     }
 
-    override fun crearSetDeDatosIniciales() {
+    override fun crearSetDeDatosIniciales(): List<Any> {
 
+        val list: MutableList<Any> = mutableListOf()
         TransactionRunner.runTrx {
             for (i in 0..20){
                 var patogeno = Patogeno("Tipo $i")
                 patogeno.tipo = "Tipo $i"
                 patogenoDao.guardar(patogeno)
-
+                list.add(patogeno)
                 var vector = Vector(
                     listOf(TipoDeVector.Insecto, TipoDeVector.Animal, TipoDeVector.Persona)[i % 3]
                 )
@@ -56,8 +57,10 @@ class DataServiceImpl(): DataService {
                 ubicacionDao.guardar(ubicacion)
                 especieDAO.guardar(especie)
                 vectorDao.guardar(vector)
+                list.addAll(listOf(ubicacion, especie, vector))
             }
         }
+        return list.toList()
 
     }
     override fun crearPandemiaPositiva(): Especie {

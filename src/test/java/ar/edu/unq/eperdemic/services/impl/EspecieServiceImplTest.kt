@@ -67,11 +67,21 @@ class EspecieServiceImplTest {
 
     @Test
     fun `recuperar todas las especies`() {
-        data.crearSetDeDatosIniciales()
+        val especiesPersistidas = data.crearSetDeDatosIniciales().filterIsInstance<Especie>()
 
         val especies = especieService.recuperarTodos()
 
-        assertEquals(21, especies.size)
+        assertEquals(especiesPersistidas.size, especies.size)
+        assertTrue(
+            especies.all { especie ->
+                especiesPersistidas.any{
+                    it.id == especie.id &&
+                    it.nombre == especie.nombre &&
+                    it.paisDeOrigen == especie.paisDeOrigen &&
+                    it.patogeno.id == especie.patogeno.id
+                }
+            }
+        )
     }
 
     @Test

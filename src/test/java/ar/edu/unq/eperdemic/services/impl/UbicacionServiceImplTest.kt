@@ -66,6 +66,7 @@ internal class UbicacionServiceImplTest {
         vectorService.infectar(vectorAMover,especieAContagiar)
 
         assertEquals(vectorAMover.especiesContagiadas.size,1)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
@@ -84,7 +85,9 @@ internal class UbicacionServiceImplTest {
 
 
         assertEquals(vectorAMover.especiesContagiadas.size,1)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,1)
+        assertEquals(vectorVictima1.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
     }
 
@@ -107,6 +110,7 @@ internal class UbicacionServiceImplTest {
         vectorService.infectar(vectorAMover,especieAContagiar)
 
         assertEquals(vectorAMover.especiesContagiadas.size,1)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
@@ -124,6 +128,7 @@ internal class UbicacionServiceImplTest {
         vectorVictima2 =vectorService.recuperarVector(vectorVictima2.id!!)
 
         assertEquals(vectorAMover.especiesContagiadas.size,1)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
     }
@@ -172,6 +177,7 @@ internal class UbicacionServiceImplTest {
         vectorService.infectar(vectorAExpandir,especieAContagiar)
 
         assertEquals(vectorAExpandir.especiesContagiadas.size,1)
+        assertEquals(vectorAExpandir.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorLocal.especiesContagiadas.size,0)
         assertEquals(vectorLocal2.especiesContagiadas.size,0)
 
@@ -182,7 +188,9 @@ internal class UbicacionServiceImplTest {
         vectorLocal2 =vectorService.recuperarVector(vectorLocal2.id!!)
 
         assertEquals(vectorAExpandir.especiesContagiadas.size,1)
+        assertEquals(vectorAExpandir.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorLocal.especiesContagiadas.size,1)
+        assertEquals(vectorLocal.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorLocal2.especiesContagiadas.size,0)
     }
 
@@ -226,10 +234,18 @@ internal class UbicacionServiceImplTest {
 
     @Test
     fun `si trato de recuperar todos llegan todos`() {
-        dataService.crearSetDeDatosIniciales()
+        val ubicacionesPersistidas = dataService.crearSetDeDatosIniciales().filterIsInstance<Ubicacion>()
         val ubicaciones = ubicacionService.recuperarTodos()
 
-        assertEquals(21, ubicaciones.size)
+        assertEquals(ubicacionesPersistidas.size, ubicaciones.size)
+        assertTrue(
+            ubicaciones.all { ubicacion ->
+                ubicacionesPersistidas.any{
+                    it.id == ubicacion.id &&
+                    it.nombre == ubicacion.nombre
+                }
+            }
+        )
     }
 
     @Test
