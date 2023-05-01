@@ -8,8 +8,11 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PatogenoRepository : CrudRepository<Patogeno,Long> {
-    @Query()
+    /*@Query()
     fun especiesDePatogeno(id: Long?): List<Especie>
+
     @Query()
     fun esPandemia(especieId: Long): Boolean
+     */
 }
+//TODO esPandemia y especieDePatogeno
