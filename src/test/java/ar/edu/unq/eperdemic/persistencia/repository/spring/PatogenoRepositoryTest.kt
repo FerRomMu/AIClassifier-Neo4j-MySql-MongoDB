@@ -96,8 +96,8 @@ class PatogenoRepositoryTest {
 
     @Test
     fun `esPandemia`() {
-        //val especiePandemica = data.crearPandemiaPositiva()
-        //assertTrue(patogenoRepository.esPandemia(especiePandemica.id!!))
+        val especiePandemica = data.crearPandemiaPositiva()
+        assertTrue(patogenoRepository.esPandemia(especiePandemica.id!!))
     }
 
     @AfterEach
