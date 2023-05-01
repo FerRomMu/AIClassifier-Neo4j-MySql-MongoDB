@@ -21,7 +21,6 @@ class PatogenoRepositoryTest {
 
     @BeforeEach
     fun setUp() {
-        data.eliminarTodo()
         patogeno = Patogeno("Gripe")
     }
 
