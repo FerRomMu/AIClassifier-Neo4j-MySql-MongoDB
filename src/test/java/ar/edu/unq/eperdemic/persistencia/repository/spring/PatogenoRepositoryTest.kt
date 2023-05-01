@@ -1,10 +1,7 @@
 package ar.edu.unq.eperdemic.persistencia.repository.spring
 
-import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.utils.DataService
-import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
-import ar.edu.unq.eperdemic.utils.impl.DataServiceSpring
 import org.junit.jupiter.api.*
 
 import org.junit.jupiter.api.Assertions.*
@@ -20,12 +17,11 @@ class PatogenoRepositoryTest {
 
     @Autowired lateinit var patogenoRepository: PatogenoRepository
     lateinit var patogeno: Patogeno
-    lateinit var data: DataService
+    @Autowired lateinit var data: DataService
 
     @BeforeEach
     fun setUp() {
         patogeno = Patogeno("Gripe")
-        data = DataServiceSpring()
     }
 
     @Test
