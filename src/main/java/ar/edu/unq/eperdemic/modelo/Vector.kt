@@ -4,6 +4,7 @@ import org.aspectj.weaver.GeneratedReferenceTypeDelegate
 import javax.persistence.*
 
 @Entity
+@Table(name = "vector")
 class Vector(var tipo: TipoDeVector) {
 
     @Id

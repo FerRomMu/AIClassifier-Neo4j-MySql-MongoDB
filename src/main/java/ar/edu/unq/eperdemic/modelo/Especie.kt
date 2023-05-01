@@ -4,6 +4,7 @@ import java.io.Serializable
 import javax.persistence.*
 
 @Entity
+@Table(name = "especie")
 class Especie(patogenoParam: Patogeno,
               var nombre: String,
               var paisDeOrigen: String):Serializable  {
