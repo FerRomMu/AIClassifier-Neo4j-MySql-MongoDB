@@ -44,14 +44,15 @@ class DataServiceSpring: DataService {
         return this.persistir(listOf(entidad)).first()
     }
 
-    override fun crearSetDeDatosIniciales() {
-
+    override fun crearSetDeDatosIniciales(): List<Any> {
+        val todos: MutableList<Any> = mutableListOf()
         for (i in 0..20) {
             val patogeno = Patogeno("Tipo $i")
             patogeno.tipo = "Tipo $i"
             patogenoRepository.save(patogeno)
+            todos.add(patogeno)
         }
-
+        return todos.toList()
     }
     override fun crearPandemiaPositiva(): Especie {
         val patogeno = Patogeno("Gripe")
