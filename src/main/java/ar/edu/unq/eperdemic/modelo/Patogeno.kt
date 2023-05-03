@@ -4,6 +4,7 @@ import java.io.Serializable
 import javax.persistence.*
 
 @Entity
+@Table(name = "patogeno")
 class Patogeno(var tipo: String) : Serializable{
 
     @Id
