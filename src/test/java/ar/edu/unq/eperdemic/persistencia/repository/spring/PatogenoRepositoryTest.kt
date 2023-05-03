@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.persistencia.repository.spring
 
+import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.utils.DataService
 import org.junit.jupiter.api.*
@@ -68,10 +69,26 @@ class PatogenoRepositoryTest {
     fun `si recupero todos los vectores recibo todos`(){
 
         data.crearSetDeDatosIniciales()
-        val recuperadosi = patogenoRepository.findAll()
-        val recuperados = recuperadosi.toList()
+        val recuperados = patogenoRepository.findAll().toList()
         assertEquals(21, recuperados.size)
 
+    }
+
+    @Test
+    fun `si borro un patogeno este deja de estar persistido y el resto sigue estando`(){
+
+        val patogenos = data.crearSetDeDatosIniciales().filterIsInstance<Patogeno>()
+        val patogenoABorrar = patogenos.first()
+
+        patogenoRepository.deleteById(patogenoABorrar.id!!)
+
+        assertTrue(
+            patogenos.all { patogeno ->
+                patogeno.id != patogenoABorrar.id && patogenoRepository.findById(patogeno.id!!).isPresent
+                        ||
+                        patogeno.id == patogenoABorrar.id && patogenoRepository.findById(patogeno.id!!).isEmpty
+            }
+        )
     }
 
     @Test
@@ -93,9 +110,15 @@ class PatogenoRepositoryTest {
     }
 
     @Test
-    fun `esPandemia`() {
+    fun `si hay pandemia por la especie dada recibo verdadero en esPandemia`() {
         val especiePandemica = data.crearPandemiaPositiva()
         assertTrue(patogenoRepository.esPandemia(especiePandemica.id!!))
+    }
+
+    @Test
+    fun `si no hay pandemia por la especie dada recibo falso en esPandemia`() {
+        val especieNoPandemica = data.crearSetDeDatosIniciales().filterIsInstance<Especie>().first()
+        assertTrue(patogenoRepository.esPandemia(especieNoPandemica.id!!))
     }
 
     @AfterEach

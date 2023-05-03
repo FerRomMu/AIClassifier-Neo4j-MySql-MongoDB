@@ -47,10 +47,16 @@ class DataServiceSpring: DataService {
     override fun crearSetDeDatosIniciales(): List<Any> {
         val todos: MutableList<Any> = mutableListOf()
         for (i in 0..20) {
+
             val patogeno = Patogeno("Tipo $i")
             patogeno.tipo = "Tipo $i"
+            val especie = patogeno.crearEspecie("Especie $i", "Pais $i")
+
             patogenoRepository.save(patogeno)
+            especieRepository.save(especie)
+
             todos.add(patogeno)
+            todos.add(especie)
         }
         return todos.toList()
     }
