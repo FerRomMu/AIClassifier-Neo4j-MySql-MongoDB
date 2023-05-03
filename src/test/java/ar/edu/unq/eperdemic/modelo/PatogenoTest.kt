@@ -26,6 +26,11 @@ class PatogenoTest {
         assertEquals(0, patogeno.cantidadDeEspecies())
         patogeno.crearEspecie("unaEspecie", "Japon")
         assertEquals(1, patogeno.cantidadDeEspecies())
+
+        var especieAVer = patogeno.especies[0]
+
+        assertEquals("unaEspecie",especieAVer.nombre)
+        assertEquals("Japon",especieAVer.paisDeOrigen)
     }
 
     @Test
