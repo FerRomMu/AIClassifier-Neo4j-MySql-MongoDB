@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface UbicacionRepository : CrudRepository<Ubicacion, Long> {
-    
+
     @Query("FROM Vector v " +
             "WHERE v.ubicacion.id = :idUbicacion")
-    fun vectoresEn(@Param("idUbicacion") ubicacionId: Long?): Collection<Vector>
+    fun vectoresEn(@Param("idUbicacion") ubicacionId: Long?): List<Vector>
 }

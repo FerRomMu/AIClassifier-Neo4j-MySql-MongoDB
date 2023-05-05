@@ -1,6 +1,8 @@
 package ar.edu.unq.eperdemic.persistencia.repository.spring
 
+import ar.edu.unq.eperdemic.modelo.TipoDeVector
 import ar.edu.unq.eperdemic.modelo.Ubicacion
+import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.utils.DataService
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -85,6 +87,26 @@ class UbicacionRepositoryTest {
                         ubicacion.id == ubicacionABorrar.id && ubicacionRepository.findById(ubicacion.id!!).isEmpty
             }
         )
+    }
+
+    @Test
+    fun `Si pido los vectores de un lugar recibo esos vectores`(){
+
+        val vector = Vector(TipoDeVector.Persona)
+        val vector2 = Vector(TipoDeVector.Persona)
+        val vectorEnOtroLado = Vector(TipoDeVector.Animal)
+        vector.ubicacion = ubicacion
+        vector2.ubicacion = ubicacion
+        val unLugar = Ubicacion("unLugar")
+        vectorEnOtroLado.ubicacion = unLugar
+
+        data.persistir(listOf(ubicacion, unLugar, vector, vector2, vectorEnOtroLado))
+
+        val vectoresDelLugar = ubicacionRepository.vectoresEn(ubicacion.id)
+
+        assertEquals(2, vectoresDelLugar.size)
+        assertEquals(vector.id, vectoresDelLugar[0].id)
+        assertEquals(vector2.id, vectoresDelLugar[1].id)
     }
 
     @AfterEach
