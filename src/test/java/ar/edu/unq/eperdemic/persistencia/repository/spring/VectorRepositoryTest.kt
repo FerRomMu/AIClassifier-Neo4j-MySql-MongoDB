@@ -97,7 +97,7 @@ class VectorRepositoryTest {
     @Test
     fun `si borro un vector con id invalida falla`() {
 
-        Assertions.assertThrows(NullPointerException::class.java) { vectorRepository.deleteById(vector.id!!) }
+        assertThrows(NullPointerException::class.java) { vectorRepository.deleteById(vector.id!!) }
     }
 
     @Test
@@ -120,16 +120,19 @@ class VectorRepositoryTest {
     }
 
     @Test
-    fun `devolver un vector aleatorio en una ubicacion`() {
+    fun `devolver un vector aleatorio en una ubicacion devuelve un vector aleatorio de esa ubicacion`() {
         val vector2 = Vector(TipoDeVector.Insecto)
         val vector3 = Vector(TipoDeVector.Persona)
         val ubicacion = Ubicacion("ubicacion 1")
+        val vectorOtroLado = Vector(TipoDeVector.Persona)
+        val otroLugar = Ubicacion("Otro lado")
 
         vector.ubicacion = ubicacion
         vector2.ubicacion = ubicacion
         vector3.ubicacion = ubicacion
+        vectorOtroLado.ubicacion = otroLugar
 
-        data.persistir(listOf(ubicacion, vector, vector2, vector3))
+        data.persistir(listOf(ubicacion, otroLugar, vector, vector2, vector3, vectorOtroLado))
 
         val vectorAleatorio = vectorRepository.vectorAleatorioEn(ubicacion.id!!)
 
