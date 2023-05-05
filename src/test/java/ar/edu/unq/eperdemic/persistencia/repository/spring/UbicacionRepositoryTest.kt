@@ -42,7 +42,7 @@ class UbicacionRepositoryTest {
     }
 
     @Test
-    fun `Puedo recuperar una ubicacion persistida con su id`() {
+    fun `si trato de recuperar una ubicacion existente con su id la obtengo`() {
         data.persistir(ubicacion)
         val ubicacionRecuperada =  ubicacionRepository.findById(ubicacion.id!!).get()
 
@@ -73,24 +73,24 @@ class UbicacionRepositoryTest {
     }
 
     @Test
-    fun `si borro un ubicacion este deja de estar persistido y el resto sigue estando`(){
+    fun `si borro una ubicacion esta deja de estar persistida`(){
 
         val ubicacions = data.crearSetDeDatosIniciales().filterIsInstance<Ubicacion>()
         val ubicacionABorrar = ubicacions.first()
 
         ubicacionRepository.deleteById(ubicacionABorrar.id!!)
 
-        assertTrue(
-            ubicacions.all { ubicacion ->
-                ubicacion.id != ubicacionABorrar.id && ubicacionRepository.findById(ubicacion.id!!).isPresent
-                        ||
-                        ubicacion.id == ubicacionABorrar.id && ubicacionRepository.findById(ubicacion.id!!).isEmpty
-            }
-        )
+        assertTrue(ubicacionRepository.findById(ubicacionABorrar.id!!).isEmpty)
     }
 
     @Test
-    fun `Si pido los vectores de un lugar recibo esos vectores`(){
+    fun `si borro una ubicacion con id invalida no devuelve nada`() {
+
+        assertThrows(NullPointerException::class.java) { ubicacionRepository.deleteById(ubicacion.id!!) }
+    }
+
+    @Test
+    fun `si pido los vectores de un lugar recibo esos vectores`(){
 
         val vector = Vector(TipoDeVector.Persona)
         val vector2 = Vector(TipoDeVector.Persona)
