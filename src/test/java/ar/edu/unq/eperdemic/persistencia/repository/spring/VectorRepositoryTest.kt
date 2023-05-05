@@ -63,7 +63,7 @@ class VectorRepositoryTest {
     }
 
     @Test
-    fun `si trato de recuperar un vector devuelve vacio`() {
+    fun `si trato de recuperar un vector que no existe devuelve vacio`() {
         assertTrue(vectorRepository.findById(10000001).isEmpty)
     }
 
