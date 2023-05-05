@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Repository
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
@@ -137,6 +138,14 @@ class VectorRepositoryTest {
         val vectorAleatorio = vectorRepository.vectorAleatorioEn(ubicacion.id!!)
 
         assertTrue(vectorAleatorio.id == vector.id || vectorAleatorio.id == vector2.id || vectorAleatorio.id == vector3.id)
+    }
+
+    @Test
+    fun `devolver un vector aleatorio en una ubicacion sin vectores da null` () {
+        val ubicacion = Ubicacion("desierto")
+        data.persistir(ubicacion)
+
+        assertThrows(NullPointerException::class.java) { vectorRepository.vectorAleatorioEn(vector.id!!) }
     }
 
     @AfterEach
