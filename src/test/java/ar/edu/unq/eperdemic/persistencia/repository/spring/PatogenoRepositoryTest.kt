@@ -125,7 +125,7 @@ class PatogenoRepositoryTest {
     @Test
     fun `si no hay pandemia por la especie dada recibo falso en esPandemia`() {
         val especieNoPandemica = data.crearSetDeDatosIniciales().filterIsInstance<Especie>().first()
-        assertTrue(patogenoRepository.esPandemia(especieNoPandemica.id!!))
+        assertFalse(patogenoRepository.esPandemia(especieNoPandemica.id!!))
     }
 
     @AfterEach

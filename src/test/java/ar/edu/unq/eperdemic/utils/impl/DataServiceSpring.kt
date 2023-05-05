@@ -52,12 +52,13 @@ class DataServiceSpring: DataService {
             val patogeno = Patogeno("Tipo $i")
             patogeno.tipo = "Tipo $i"
             val especie = patogeno.crearEspecie("Especie $i", "Pais $i")
+            val ubicacion = Ubicacion ("Ubicacion $i")
 
+            ubicacionRepository.save(ubicacion)
             patogenoRepository.save(patogeno)
             especieRepository.save(especie)
 
-            todos.add(patogeno)
-            todos.add(especie)
+            todos.addAll(listOf(ubicacion, patogeno, especie))
         }
         return todos.toList()
     }

@@ -61,7 +61,7 @@ class UbicacionRepositoryTest {
 
         assertEquals(21, recuperados.size)
         assertTrue(
-            recuperados.all {ubicacion ->
+            recuperados.all { ubicacion ->
                 ubicacionPersistidos.any {
                     it.id == ubicacion.id &&
                             it.nombre == ubicacion.nombre
