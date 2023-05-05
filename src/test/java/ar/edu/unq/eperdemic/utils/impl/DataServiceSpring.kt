@@ -54,22 +54,17 @@ class DataServiceSpring: DataService {
             val patogeno = Patogeno("Tipo $i")
             patogeno.tipo = "Tipo $i"
             val especie = patogeno.crearEspecie("Especie $i", "Pais $i")
-
-            patogenoRepository.save(patogeno)
-
+            val ubicacion = Ubicacion ("Ubicacion $i")
             val vector = Vector(listOf(TipoDeVector.Insecto, TipoDeVector.Animal, TipoDeVector.Persona)[i % 3])
-            val ubicacion = Ubicacion("Lugar $i")
             vector.ubicacion = ubicacion
-            val especie = patogeno.crearEspecie("Especie $i", "Pais $i")
             vector.especiesContagiadas.add(especie)
 
             ubicacionRepository.save(ubicacion)
             especieRepository.save(especie)
+            patogenoRepository.save(patogeno)
             vectorRepository.save(vector)
-            especieRepository.save(especie)
 
-            todos.add(patogeno)
-            todos.add(especie)
+            todos.addAll(listOf(ubicacion, patogeno, especie, vector))
         }
         return todos.toList()
     }
