@@ -68,10 +68,17 @@ class PatogenoRepositoryTest {
     @Test
     fun `si recupero todos los patogenos recibo todos`(){
 
-        data.crearSetDeDatosIniciales()
+        val patogenosPersistidos = data.crearSetDeDatosIniciales().filterIsInstance<Patogeno>()
         val recuperados = patogenoRepository.findAll().toList()
-        assertEquals(21, recuperados.size)
-
+        assertEquals(patogenosPersistidos.size, recuperados.size)
+        assertTrue(
+            recuperados.all {patogeno ->
+                patogenosPersistidos.any {
+                    it.id == patogeno.id &&
+                            it.tipo == patogeno.tipo
+                }
+            }
+        )
     }
 
     @Test
