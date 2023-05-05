@@ -34,6 +34,7 @@ class DataServiceSpring: DataService {
         entidades.forEach { entidad ->
             when (entidad) {
                 is Patogeno -> patogenoRepository.save(entidad)
+                is Ubicacion -> ubicacionRepository.save(entidad)
                 else -> throw InvalidDataTypeException("El dato no es persistible.")
             }
         }
