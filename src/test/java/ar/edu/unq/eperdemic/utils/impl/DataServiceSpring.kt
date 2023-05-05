@@ -84,6 +84,7 @@ class DataServiceSpring: DataService {
             vector.ubicacion = ubicacion
 
             vector.especiesContagiadas.add(especiePandemica)
+            especiePandemica.vectores.add(vector)
             ubicacionRepository.save(ubicacion)
             vectorRepository.save(vector)
         }

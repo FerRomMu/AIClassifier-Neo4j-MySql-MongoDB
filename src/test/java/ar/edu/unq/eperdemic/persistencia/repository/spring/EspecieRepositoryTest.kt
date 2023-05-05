@@ -100,6 +100,13 @@ class EspecieRepositoryTest {
         assertThrows(NullPointerException::class.java) { especieRepository.deleteById(especie.id!!) }
     }
 
+    @Test
+    fun `si pido la cantidad de infectados de una especie me la da`() {
+        val especieContagiada = data.crearPandemiaPositiva()
+
+        assertEquals(21, especieRepository.cantidadDeInfectados(especieContagiada.id!!))
+    }
+
     @AfterEach
     fun tearDown() {
         data.eliminarTodo()
