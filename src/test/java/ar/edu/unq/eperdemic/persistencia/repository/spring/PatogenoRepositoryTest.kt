@@ -85,7 +85,7 @@ class PatogenoRepositoryTest {
     @Test
     fun `si borro un patogeno este deja de estar persistido`(){
 
-        val patogenos = data.crearSetDeDatosIniciales().filterIsInstance<Ubicacion>()
+        val patogenos = data.crearSetDeDatosIniciales().filterIsInstance<Patogeno>()
         val patogenoABorrar = patogenos.first()
 
         patogenoRepository.deleteById(patogenoABorrar.id!!)
