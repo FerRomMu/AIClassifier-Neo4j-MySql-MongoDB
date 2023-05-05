@@ -6,6 +6,7 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -29,11 +30,11 @@ class VectorRepositoryTest {
     @Test
     fun `si creo un vector al guardarlo se le asigna un id`() {
 
-        Assertions.assertNull(vector.id)
+        assertNull(vector.id)
 
         vectorRepository.save(vector)
 
-        Assertions.assertNotNull(vector.id)
+        assertNotNull(vector.id)
 
     }
 
@@ -41,37 +42,47 @@ class VectorRepositoryTest {
     fun `si guardo un vector con id se actualiza`() {
         data.persistir(vector)
 
-        Assertions.assertEquals(TipoDeVector.Animal, vector.tipo)
+        assertEquals(TipoDeVector.Animal, vector.tipo)
         vector.tipo = TipoDeVector.Insecto
 
         vectorRepository.save(vector)
         val vectorActualizado = vectorRepository.findById(vector.id!!).get()
 
-        Assertions.assertEquals(TipoDeVector.Insecto, vectorActualizado.tipo)
+        assertEquals(TipoDeVector.Insecto, vectorActualizado.tipo)
     }
 
     @Test
-    fun `si guardo un vector lo puedo recuperar con su id`() {
+    fun `si trato de recuperar un vector existente con su id lo obtengo`() {
         data.persistir(vector)
 
         val vectorRecuperado = vectorRepository.findById(vector.id!!).get()
 
-        Assertions.assertEquals(vector.id, vectorRecuperado.id)
-        Assertions.assertEquals(vector.tipo, vectorRecuperado.tipo)
+        assertEquals(vector.id, vectorRecuperado.id)
+        assertEquals(vector.tipo, vectorRecuperado.tipo)
     }
 
     @Test
-    fun `si trato de recuperar un vector inexistente falla`() {
-        Assertions.assertTrue(vectorRepository.findById(10000001).isEmpty)
+    fun `si trato de recuperar un vector devuelve vacio`() {
+        assertTrue(vectorRepository.findById(10000001).isEmpty)
     }
 
     @Test
     fun `si recupero todos los vectores recibo todos`(){
-        data.crearSetDeDatosIniciales()
+        val vectoresPersistidos = data.crearSetDeDatosIniciales().filterIsInstance<Vector>()
 
         val recuperados =  vectorRepository.findAll().toList()
 
-        Assertions.assertEquals(21, recuperados.size)
+        assertEquals(21, recuperados.size)
+        assertTrue(
+            recuperados.all { vector ->
+                vectoresPersistidos.any {
+                    it.id == vector.id &&
+                            it.tipo == vector.tipo &&
+                            it.ubicacion.id == vector.ubicacion.id &&
+                            it.especiesContagiadas.size == vector.especiesContagiadas.size
+                }
+            }
+        )
 
     }
 
@@ -80,7 +91,7 @@ class VectorRepositoryTest {
         data.persistir(vector)
         vectorRepository.delete(vector)
 
-        Assertions.assertTrue(vectorRepository.findById(vector.id!!).isEmpty)
+        assertTrue(vectorRepository.findById(vector.id!!).isEmpty)
     }
 
     @Test
@@ -100,12 +111,12 @@ class VectorRepositoryTest {
 
         val enfermedades = vectorRepository.enfermedades(vector.id)
 
-        Assertions.assertEquals(enfermedades[0].id, especie.id)
-        Assertions.assertEquals(enfermedades[0].nombre, especie.nombre)
-        Assertions.assertEquals(enfermedades[0].paisDeOrigen, especie.paisDeOrigen)
-        Assertions.assertEquals(enfermedades[1].id, especie2.id)
-        Assertions.assertEquals(enfermedades[1].nombre, especie2.nombre)
-        Assertions.assertEquals(enfermedades[1].paisDeOrigen, especie2.paisDeOrigen)
+        assertEquals(enfermedades[0].id, especie.id)
+        assertEquals(enfermedades[0].nombre, especie.nombre)
+        assertEquals(enfermedades[0].paisDeOrigen, especie.paisDeOrigen)
+        assertEquals(enfermedades[1].id, especie2.id)
+        assertEquals(enfermedades[1].nombre, especie2.nombre)
+        assertEquals(enfermedades[1].paisDeOrigen, especie2.paisDeOrigen)
     }
 
     @Test
@@ -122,7 +133,7 @@ class VectorRepositoryTest {
 
         val vectorAleatorio = vectorRepository.vectorAleatorioEn(ubicacion.id!!)
 
-        Assertions.assertTrue(vectorAleatorio.id == vector.id || vectorAleatorio.id == vector2.id || vectorAleatorio.id == vector3.id)
+        assertTrue(vectorAleatorio.id == vector.id || vectorAleatorio.id == vector2.id || vectorAleatorio.id == vector3.id)
     }
 
     @AfterEach

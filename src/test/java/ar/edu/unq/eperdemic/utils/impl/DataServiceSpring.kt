@@ -59,6 +59,7 @@ class DataServiceSpring: DataService {
             vector.ubicacion = ubicacion
             vector.especiesContagiadas.add(especie)
 
+            patogenoRepository.save(patogeno)
             ubicacionRepository.save(ubicacion)
             especieRepository.save(especie)
             patogenoRepository.save(patogeno)
@@ -68,6 +69,7 @@ class DataServiceSpring: DataService {
         }
         return todos.toList()
     }
+
     override fun crearPandemiaPositiva(): Especie {
         val patogeno = Patogeno("Gripe")
         patogenoRepository.save(patogeno)
