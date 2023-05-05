@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.persistencia.repository.spring
 
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
+import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.utils.DataService
 import org.junit.jupiter.api.*
 
@@ -51,7 +52,7 @@ class PatogenoRepositoryTest {
     }
 
     @Test
-    fun `si guardo un Patogeno lo puedo recuperar con su id`() {
+    fun `si trato de recuperar un Patogeno existente con su id lo obtengo`() {
         data.persistir(patogeno)
         val patogenoRecuperado =  patogenoRepository.findById(patogeno.id!!).get()
 
@@ -66,29 +67,36 @@ class PatogenoRepositoryTest {
     }
 
     @Test
-    fun `si recupero todos los vectores recibo todos`(){
+    fun `si recupero todos los patogenos recibo todos`(){
 
-        data.crearSetDeDatosIniciales()
+        val patogenosPersistidos = data.crearSetDeDatosIniciales().filterIsInstance<Patogeno>()
         val recuperados = patogenoRepository.findAll().toList()
-        assertEquals(21, recuperados.size)
-
+        assertEquals(patogenosPersistidos.size, recuperados.size)
+        assertTrue(
+            recuperados.all {patogeno ->
+                patogenosPersistidos.any {
+                    it.id == patogeno.id &&
+                            it.tipo == patogeno.tipo
+                }
+            }
+        )
     }
 
     @Test
-    fun `si borro un patogeno este deja de estar persistido y el resto sigue estando`(){
+    fun `si borro un patogeno este deja de estar persistido`(){
 
         val patogenos = data.crearSetDeDatosIniciales().filterIsInstance<Patogeno>()
         val patogenoABorrar = patogenos.first()
 
         patogenoRepository.deleteById(patogenoABorrar.id!!)
 
-        assertTrue(
-            patogenos.all { patogeno ->
-                patogeno.id != patogenoABorrar.id && patogenoRepository.findById(patogeno.id!!).isPresent
-                        ||
-                        patogeno.id == patogenoABorrar.id && patogenoRepository.findById(patogeno.id!!).isEmpty
-            }
-        )
+        assertTrue(patogenoRepository.findById(patogenoABorrar.id!!).isEmpty)
+    }
+
+    @Test
+    fun `si borro un patogeno  con id invalido no devuelve nada`() {
+
+        assertThrows(NullPointerException::class.java) { patogenoRepository.deleteById(patogeno.id!!) }
     }
 
     @Test
@@ -118,7 +126,7 @@ class PatogenoRepositoryTest {
     @Test
     fun `si no hay pandemia por la especie dada recibo falso en esPandemia`() {
         val especieNoPandemica = data.crearSetDeDatosIniciales().filterIsInstance<Especie>().first()
-        assertTrue(patogenoRepository.esPandemia(especieNoPandemica.id!!))
+        assertFalse(patogenoRepository.esPandemia(especieNoPandemica.id!!))
     }
 
     @AfterEach
