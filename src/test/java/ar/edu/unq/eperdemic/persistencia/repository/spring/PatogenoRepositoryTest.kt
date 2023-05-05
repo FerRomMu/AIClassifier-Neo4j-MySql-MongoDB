@@ -51,7 +51,7 @@ class PatogenoRepositoryTest {
     }
 
     @Test
-    fun `si guardo un Patogeno lo puedo recuperar con su id`() {
+    fun `Puedo recuperar un patogeno persistido con su id`() {
         data.persistir(patogeno)
         val patogenoRecuperado =  patogenoRepository.findById(patogeno.id!!).get()
 
@@ -66,7 +66,7 @@ class PatogenoRepositoryTest {
     }
 
     @Test
-    fun `si recupero todos los vectores recibo todos`(){
+    fun `si recupero todos los patogenos recibo todos`(){
 
         data.crearSetDeDatosIniciales()
         val recuperados = patogenoRepository.findAll().toList()

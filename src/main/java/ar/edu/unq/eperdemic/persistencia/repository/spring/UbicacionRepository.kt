@@ -5,4 +5,7 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UbicacionRepository : CrudRepository<Ubicacion, Long>
+interface UbicacionRepository : CrudRepository<Ubicacion, Long> {
+
+    //fun vectoresEn(ubicacionId: Long?): Collection<Vector>
+}
