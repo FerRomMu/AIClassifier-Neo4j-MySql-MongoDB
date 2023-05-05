@@ -23,7 +23,10 @@ class EspecieTest {
     fun `se agrego un vector al set se agrega`(){
         assertEquals(0, especie.vectores.size)
         especie.agregarVector(vector)
+
         assertEquals(1, especie.vectores.size)
+        val vectorAgregado = especie.vectores.first()
+        assertEquals(vector, vectorAgregado)
     }
 
     @Test

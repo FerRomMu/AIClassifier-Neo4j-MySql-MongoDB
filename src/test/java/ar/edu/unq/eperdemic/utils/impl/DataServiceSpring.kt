@@ -47,11 +47,14 @@ class DataServiceSpring: DataService {
         return this.persistir(listOf(entidad)).first()
     }
 
-    override fun crearSetDeDatosIniciales() {
-
+    override fun crearSetDeDatosIniciales(): List<Any> {
+        val todos: MutableList<Any> = mutableListOf()
         for (i in 0..20) {
+
             val patogeno = Patogeno("Tipo $i")
             patogeno.tipo = "Tipo $i"
+            val especie = patogeno.crearEspecie("Especie $i", "Pais $i")
+
             patogenoRepository.save(patogeno)
 
             val vector = Vector(listOf(TipoDeVector.Insecto, TipoDeVector.Animal, TipoDeVector.Persona)[i % 3])
@@ -63,8 +66,12 @@ class DataServiceSpring: DataService {
             ubicacionRepository.save(ubicacion)
             especieRepository.save(especie)
             vectorRepository.save(vector)
-        }
+            especieRepository.save(especie)
 
+            todos.add(patogeno)
+            todos.add(especie)
+        }
+        return todos.toList()
     }
     override fun crearPandemiaPositiva(): Especie {
         val patogeno = Patogeno("Gripe")
