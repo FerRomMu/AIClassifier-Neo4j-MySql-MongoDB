@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
@@ -73,14 +74,21 @@ class UbicacionRepositoryTest {
     }
 
     @Test
-    fun `si borro una ubicacion esta deja de estar persistida`(){
+    fun `si borro una ubicacion esta deja de estar`(){
+        data.persistir(ubicacion)
+
+        ubicacionRepository.deleteById(ubicacion.id)
+
+        assertTrue(ubicacionRepository.findById(ubicacion.id!!).isEmpty)
+    }
+
+    @Test
+    fun `si borro una ubicacion que es referenciada por uno o mas vectores falla`(){
 
         val ubicacions = data.crearSetDeDatosIniciales().filterIsInstance<Ubicacion>()
         val ubicacionABorrar = ubicacions.first()
 
-        ubicacionRepository.deleteById(ubicacionABorrar.id!!)
-
-        assertTrue(ubicacionRepository.findById(ubicacionABorrar.id!!).isEmpty)
+        assertThrows(DataIntegrityViolationException::class.java) { ubicacionRepository.deleteById(ubicacionABorrar.id!!) }
     }
 
     @Test
