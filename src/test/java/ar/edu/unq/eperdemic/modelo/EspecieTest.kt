@@ -55,52 +55,52 @@ class EspecieTest {
 
     @Test
     fun `agrega mutaciones correctamente`(){
-        assertEquals(0,especie.mutacionesPosibles)
+        assertEquals(0,especie.mutacionesPosibles.size)
 
         especie.agregarMutacion(suprecion1)
 
-        assertEquals(1,especie.mutacionesPosibles)
+        assertEquals(1,especie.mutacionesPosibles.size)
 
-        assertTrue(suprecion1.equals(especie.mutacionesPosibles[0]))
+        assertTrue(suprecion1.equals(especie.mutacionesPosibles.first()))
     }
 
     @Test
     fun `agrega mutacion que no esta ya que esta es la primera `(){
-        assertEquals(0,especie.mutacionesPosibles)
+        assertEquals(0,especie.mutacionesPosibles.size)
 
         especie.intentarAgregarMutacion(suprecion1)
 
-        assertEquals(1,especie.mutacionesPosibles)
+        assertEquals(1,especie.mutacionesPosibles.size)
 
 
-        assertTrue(suprecion1.equals(especie.mutacionesPosibles[0]))
+        assertTrue(suprecion1.equals(especie.mutacionesPosibles.first()))
     }
 
     @Test
     fun `agrega mutacion que no esta`(){
-        assertEquals(0,especie.mutacionesPosibles)
+        assertEquals(0,especie.mutacionesPosibles.size)
 
         especie.intentarAgregarMutacion(suprecion1)
-        assertEquals(1,especie.mutacionesPosibles)
-        assertTrue(suprecion1.equals(especie.mutacionesPosibles[0]))
+        assertEquals(1,especie.mutacionesPosibles.size)
+        assertTrue(suprecion1.equals(especie.mutacionesPosibles.first()))
 
         especie.intentarAgregarMutacion(suprecion2)
-        assertEquals(2,especie.mutacionesPosibles)
-        assertTrue(suprecion2.equals(especie.mutacionesPosibles[1]))
+        assertEquals(2,especie.mutacionesPosibles.size)
+        assertTrue(suprecion2.equals(especie.mutacionesPosibles.toList()[1]))
     }
 
 
     @Test
     fun `no agrega mutacion que ya esta`(){
-        assertEquals(0,especie.mutacionesPosibles)
+        assertEquals(0,especie.mutacionesPosibles.size)
 
         especie.intentarAgregarMutacion(suprecion1)
-        assertEquals(1,especie.mutacionesPosibles)
-        assertTrue(suprecion1.equals(especie.mutacionesPosibles[0]))
+        assertEquals(1,especie.mutacionesPosibles.size)
+        assertTrue(suprecion1.equals(especie.mutacionesPosibles.first()))
 
         especie.intentarAgregarMutacion(suprecion1)
-        assertEquals(1,especie.mutacionesPosibles)
-        assertTrue(suprecion1.equals(especie.mutacionesPosibles[0]))
+        assertEquals(1,especie.mutacionesPosibles.size)
+        assertTrue(suprecion1.equals(especie.mutacionesPosibles.first()))
     }
 
     @Test
@@ -109,15 +109,15 @@ class EspecieTest {
         mutacionAComparar as SupresionBiomecanica
 
         val mutacionEquivalente : Mutacion = SupresionBiomecanica(mutacionAComparar.potencia)
-        assertEquals(0,especie.mutacionesPosibles)
+        assertEquals(0,especie.mutacionesPosibles.size)
 
         especie.intentarAgregarMutacion(mutacionAComparar)
-        assertEquals(1,especie.mutacionesPosibles)
-        assertTrue(mutacionAComparar.equals(especie.mutacionesPosibles[0]))
+        assertEquals(1,especie.mutacionesPosibles.size)
+        assertTrue(mutacionAComparar.equals(especie.mutacionesPosibles.first()))
 
         especie.intentarAgregarMutacion(mutacionEquivalente)
-        assertEquals(1,especie.mutacionesPosibles)
-        assertFalse(mutacionEquivalente.equals(especie.mutacionesPosibles[0]))
+        assertEquals(1,especie.mutacionesPosibles.size)
+        assertTrue(mutacionEquivalente.equals(especie.mutacionesPosibles.first()))
     }
 
 

@@ -90,18 +90,14 @@ class Vector(var tipo: TipoDeVector) {
     }
 
     fun eliminarEspeciesPorSupresion(potencia: Int) {
-        this.especiesContagiadas.stream().forEach { es -> this.eliminarPorSupresion(es, potencia) }
+        var especiesAEliminar = this.especiesContagiadas.stream().filter { es -> this.eliminaPorSupresion(es, potencia) }.toList()
+        especiesContagiadas.removeAll(especiesAEliminar)
     }
 
-    private fun eliminarPorSupresion(especie: Especie, potencia: Int) {
-        if (especie.defensa() >= potencia) {
-            this.eliminarEspecie(especie)
-        }
+    private fun eliminaPorSupresion(especie: Especie, potencia: Int): Boolean {
+        return especie.defensa() < potencia
     }
 
-    private fun eliminarEspecie(especie: Especie) {
-        this.especiesContagiadas.remove(especie)
-    }
 }
 
 enum class TipoDeVector {

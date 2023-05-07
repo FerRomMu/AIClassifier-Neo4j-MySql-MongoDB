@@ -17,6 +17,16 @@ internal class MutacionTest {
     lateinit var bioAlteracionAnimal2: Mutacion
     lateinit var bioAlteracionPersona: Mutacion
 
+    lateinit var especie1: Especie
+    lateinit var especie2: Especie
+    lateinit var especie3: Especie
+
+    lateinit var patogeno1: Patogeno
+    lateinit var patogeno2: Patogeno
+
+    lateinit var vector: Vector
+
+
     @BeforeEach
     fun setUp() {
         supresion1 = SupresionBiomecanica(15)
@@ -26,6 +36,15 @@ internal class MutacionTest {
         bioAlteracionAnimal = BioalteracionGenetica(TipoDeVector.Animal)
         bioAlteracionAnimal2 = BioalteracionGenetica(TipoDeVector.Animal)
         bioAlteracionPersona = BioalteracionGenetica(TipoDeVector.Persona)
+
+        patogeno1 = Patogeno("Gripe")
+        patogeno2 = Patogeno("Gripe2")
+
+        vector = Vector(TipoDeVector.Persona)
+
+        especie1 = Especie(patogeno1, "virusT", "1")
+        especie2 = Especie(patogeno1, "virusG", "2")
+        especie3 = Especie(patogeno2, "virusC", "3")
     }
 
 
@@ -167,13 +186,13 @@ internal class MutacionTest {
     }
 
     @Test
-    fun `Es supresion y impide el contagio porque su potencia es igual`(){
+    fun `Es supresion y no impide el contagio porque su potencia es igual`(){
         var patogeno : Patogeno = Patogeno("tipoPat")
         patogeno.setCapacidadDeDefensa(50)
 
         var especie : Especie = Especie(patogeno,"nombreEspecie","Francia")
 
-        assertTrue(supresion2.impideContagioDe(especie))
+        assertFalse(supresion2.impideContagioDe(especie))
     }
 
 
@@ -197,6 +216,31 @@ internal class MutacionTest {
         assertFalse(bioAlteracionAnimal.impideContagioDe(especie))
     }
 
+    @Test
+    fun `si surto efecto de supresion elimino las enfermedades con defensa menor del vector`(){
+        patogeno1.setCapacidadDeDefensa(20)
+        patogeno2.setCapacidadDeDefensa(50)
+        vector.agregarEspecie(especie1); vector.agregarEspecie(especie2); vector.agregarEspecie(especie3)
+
+        assertEquals(3, vector.especiesContagiadas.size)
+
+        supresion2.surtirEfectoEn(vector)
+
+        assertEquals(1, vector.especiesContagiadas.size)
+        assertTrue(vector.especiesContagiadas.contains(especie3))
+    }
+
+    @Test
+    fun `si surto efecto de biomecanizacion a las enfermedades con defensa no hace nada`(){
+        patogeno1.setCapacidadDeDefensa(20)
+        vector.agregarEspecie(especie1); vector.agregarEspecie(especie2)
+
+        assertEquals(vector.especiesContagiadas.size, 2)
+
+        bioAlteracionAnimal.surtirEfectoEn(vector)
+
+        assertEquals(vector.especiesContagiadas.size, 2)
+    }
 
     @AfterEach
     fun tearDown() {
