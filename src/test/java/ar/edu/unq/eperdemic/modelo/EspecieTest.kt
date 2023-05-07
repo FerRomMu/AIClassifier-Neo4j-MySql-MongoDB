@@ -82,11 +82,13 @@ class EspecieTest {
 
         especie.intentarAgregarMutacion(suprecion1)
         assertEquals(1,especie.mutacionesPosibles.size)
-        assertTrue(suprecion1.equals(especie.mutacionesPosibles.first()))
 
         especie.intentarAgregarMutacion(suprecion2)
         assertEquals(2,especie.mutacionesPosibles.size)
-        assertTrue(suprecion2.equals(especie.mutacionesPosibles.toList()[1]))
+
+        var mutacionesDeEspecie = especie.mutacionesPosibles.toList()
+        assertFalse(mutacionesDeEspecie[0].equals(mutacionesDeEspecie[1]))
+        assertTrue(mutacionesDeEspecie.stream().allMatch{m -> m.equals(suprecion1) || m.equals(suprecion2)})
     }
 
 
