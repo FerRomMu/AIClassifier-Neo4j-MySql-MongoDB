@@ -1,7 +1,5 @@
 package ar.edu.unq.eperdemic.modelo
 
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -11,9 +9,9 @@ import org.junit.jupiter.api.Assertions.*
 
 internal class MutacionTest {
 
-    lateinit var suprecion1: Mutacion
-    lateinit var suprecion2: Mutacion
-    lateinit var suprecion3: Mutacion
+    lateinit var supresion1: Mutacion
+    lateinit var supresion2: Mutacion
+    lateinit var supresion3: Mutacion
 
     lateinit var bioAlteracionAnimal: Mutacion
     lateinit var bioAlteracionAnimal2: Mutacion
@@ -21,9 +19,9 @@ internal class MutacionTest {
 
     @BeforeEach
     fun setUp() {
-        suprecion1 = SupresionBiomecanica(15)
-        suprecion2 = SupresionBiomecanica(50)
-        suprecion3 = SupresionBiomecanica(15)
+        supresion1 = SupresionBiomecanica(15)
+        supresion2 = SupresionBiomecanica(50)
+        supresion3 = SupresionBiomecanica(15)
 
         bioAlteracionAnimal = BioalteracionGenetica(TipoDeVector.Animal)
         bioAlteracionAnimal2 = BioalteracionGenetica(TipoDeVector.Animal)
@@ -33,22 +31,22 @@ internal class MutacionTest {
 
     @Test
     fun `comparar por potencia 2 supreciones distintas de diferente poder`(){
-        assertFalse(suprecion1.compararPorPotencia(suprecion2))
+        assertFalse(supresion1.compararPorPotencia(supresion2))
     }
 
     @Test
     fun `comparar por potencia 2 supreciones distintas de igual poder`(){
-        assertTrue(suprecion1.compararPorPotencia(suprecion3))
+        assertTrue(supresion1.compararPorPotencia(supresion3))
     }
 
     @Test
-    fun `comparar por potencia la misma suprecion`(){
-        assertTrue(suprecion1.compararPorPotencia(suprecion1))
+    fun `comparar por potencia la misma supresion`(){
+        assertTrue(supresion1.compararPorPotencia(supresion1))
     }
 
     @Test
-    fun `comparar por potencia una supreciones con una Bioalteracion`(){
-        assertFalse(bioAlteracionAnimal.compararPorPotencia(suprecion1))
+    fun `comparar por potencia una supresiones con una Bioalteracion`(){
+        assertFalse(bioAlteracionAnimal.compararPorPotencia(supresion1))
     }
 
     @Test
@@ -57,27 +55,46 @@ internal class MutacionTest {
     }
 
     @Test
-    fun compararPorTipo() {
-
+    fun `comparar por tipo 2 bioalteraciones distintas de diferente tipo es falso` () {
+        assertFalse(bioAlteracionAnimal.compararPorTipo(bioAlteracionPersona))
     }
 
+    @Test
+    fun `comparar por tipo 2 bioalteraciones distintas de igual tipo es verdadero` () {
+        assertTrue(bioAlteracionAnimal.compararPorTipo(bioAlteracionAnimal2))
+    }
+
+    @Test
+    fun `comparar por tipo la misma bioalteracion es verdadero` () {
+        assertTrue(bioAlteracionAnimal.compararPorTipo(bioAlteracionAnimal))
+    }
+
+    @Test
+    fun `comparar por tipo una bioalteracion y una supresion es falso` () {
+        assertFalse(supresion1.compararPorTipo(bioAlteracionAnimal))
+    }
+
+    @Test
+    fun `comparar por tipo 2 supresiones es falso`(){
+        assertFalse(supresion1.compararPorTipo(supresion2))
+    }
 
     @Test
     fun `Me fijo si son equivalentes 2 supresiones distintas de diferente poder mediante el mensaje equals`(){
-        assertFalse(suprecion1.equals(suprecion2))
-        assertFalse(suprecion2.equals(suprecion1))
+        assertFalse(supresion1.equals(supresion2))
+        assertFalse(supresion2.equals(supresion1))
     }
 
     @Test
     fun `Me fijo si son equivalentes 2 supresiones distintas de igual poder mediante el mensaje equals`(){
-        assertTrue(suprecion1.equals(suprecion3))
-        assertTrue(suprecion3.equals(suprecion1))
+        assertTrue(supresion1.equals(supresion3))
+        assertTrue(supresion3.equals(supresion1))
     }
 
     @Test
     fun `Me fijo si son equivalentes una supresiones con una Bioalteracion`(){
-        assertFalse(bioAlteracionAnimal.equals(suprecion1))
-        assertFalse(suprecion1.equals(bioAlteracionAnimal))
+        assertFalse(bioAlteracionAnimal.equals(supresion1))
+        assertFalse(supresion1.equals(bioAlteracionAnimal))
     }
 
     @Test
@@ -91,9 +108,6 @@ internal class MutacionTest {
         assertTrue(bioAlteracionAnimal.equals(bioAlteracionAnimal2))
         assertTrue(bioAlteracionAnimal2.equals(bioAlteracionAnimal))
     }
-
-
-
 
     @AfterEach
     fun tearDown() {
