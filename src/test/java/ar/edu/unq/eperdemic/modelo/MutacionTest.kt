@@ -132,6 +132,13 @@ internal class MutacionTest {
     }
 
     @Test
+    fun `La mutacion no esta en las mutaciones a ver (esta vez vacio)`(){
+        var mutaciones : MutableSet<Mutacion> = HashSet()
+
+        assertFalse(bioAlteracionAnimal.estaEn(mutaciones))
+    }
+
+    @Test
     fun `si supresion pregunta si tiene mutacion para contagiar cualquier tipo devuelve falso `(){
         assertFalse(supresion1.tengoMutacionParaContagiarATipo(TipoDeVector.Insecto))
         assertFalse(supresion1.tengoMutacionParaContagiarATipo(TipoDeVector.Persona))
