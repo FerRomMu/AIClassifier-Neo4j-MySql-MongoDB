@@ -109,6 +109,28 @@ internal class MutacionTest {
         assertTrue(bioAlteracionAnimal2.equals(bioAlteracionAnimal))
     }
 
+    @Test
+    fun `La mutacion esta en las mutaciones a ver`(){
+     var mutaciones : MutableSet<Mutacion> = HashSet()
+        mutaciones.add(supresion1)
+        mutaciones.add(supresion2)
+        mutaciones.add(supresion3)
+        mutaciones.add(bioAlteracionPersona)
+
+        assertTrue(supresion2.estaEn(mutaciones))
+    }
+
+    @Test
+    fun `La mutacion no esta en las mutaciones a ver`(){
+        var mutaciones : MutableSet<Mutacion> = HashSet()
+        mutaciones.add(supresion1)
+        mutaciones.add(supresion2)
+        mutaciones.add(supresion3)
+        mutaciones.add(bioAlteracionPersona)
+
+        assertFalse(bioAlteracionAnimal.estaEn(mutaciones))
+    }
+
     @AfterEach
     fun tearDown() {
 
