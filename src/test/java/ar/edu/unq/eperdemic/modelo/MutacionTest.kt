@@ -156,6 +156,48 @@ internal class MutacionTest {
         assertFalse(bioAlteracionAnimal.permitoContagiarATipo(TipoDeVector.Persona))
     }
 
+    @Test
+    fun `Es supresion y impide el contagio porque su potencia es mayor`(){
+        var patogeno : Patogeno = Patogeno("tipoPat")
+        patogeno.setCapacidadDeDefensa(30)
+
+        var especie : Especie = Especie(patogeno,"nombreEspecie","Francia")
+
+        assertTrue(supresion2.impideContagioDe(especie))
+    }
+
+    @Test
+    fun `Es supresion y impide el contagio porque su potencia es igual`(){
+        var patogeno : Patogeno = Patogeno("tipoPat")
+        patogeno.setCapacidadDeDefensa(50)
+
+        var especie : Especie = Especie(patogeno,"nombreEspecie","Francia")
+
+        assertTrue(supresion2.impideContagioDe(especie))
+    }
+
+
+    @Test
+    fun `Es supresion y no impide el contagio porque su potencia es menor`(){
+        var patogeno : Patogeno = Patogeno("tipoPat")
+        patogeno.setCapacidadDeDefensa(30)
+
+        var especie : Especie = Especie(patogeno,"nombreEspecie","Francia")
+
+        assertFalse(supresion1.impideContagioDe(especie))
+    }
+
+    @Test
+    fun `Es bioalteracion por ende no impide`(){
+        var patogeno : Patogeno = Patogeno("tipoPat")
+        patogeno.setCapacidadDeDefensa(30)
+
+        var especie : Especie = Especie(patogeno,"nombreEspecie","Francia")
+
+        assertFalse(bioAlteracionAnimal.impideContagioDe(especie))
+    }
+
+
     @AfterEach
     fun tearDown() {
 
