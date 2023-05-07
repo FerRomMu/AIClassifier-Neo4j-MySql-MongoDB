@@ -2,6 +2,8 @@ package ar.edu.unq.eperdemic.persistencia.repository.spring
 
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
+import ar.edu.unq.eperdemic.modelo.TipoDeVector
+import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.utils.DataService
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -105,6 +107,54 @@ class EspecieRepositoryTest {
         val especieContagiada = data.crearPandemiaPositiva()
 
         assertEquals(21, especieRepository.cantidadDeInfectados(especieContagiada.id!!))
+    }
+
+    @Test
+    fun `si pido la especie lider me da la especie que infecto a mas vectores del tipo dado`(){
+
+        val setInicial = data.crearSetDeDatosIniciales()
+        val especieSupuestoLider = setInicial
+            .find {
+                it is Especie
+            } as Especie
+        val animales = setInicial
+            .filterIsInstance<Vector>()
+            .filter {
+                it.tipo == TipoDeVector.Animal
+            }
+        animales.forEach{ it.agregarEspecie(especieSupuestoLider) }
+        data.persistir(animales)
+        data.persistir(especieSupuestoLider)
+
+        val especieLider = especieRepository.especieLider(TipoDeVector.Animal)
+
+        assertEquals(especieSupuestoLider.id, especieLider.id)
+        assertEquals(especieSupuestoLider.paisDeOrigen, especieLider.paisDeOrigen)
+        assertEquals(especieSupuestoLider.nombre, especieLider.nombre)
+    }
+
+    @Test
+    fun `si pido la especie lider sin aclarar tipo me da la especie que infecto a mas humanos`(){
+
+        val setInicial = data.crearSetDeDatosIniciales()
+        val especieSupuestoLider = setInicial
+            .find {
+                it is Especie
+            } as Especie
+        val personas = setInicial
+            .filterIsInstance<Vector>()
+            .filter {
+                it.tipo == TipoDeVector.Persona
+            }
+        personas.forEach{ it.agregarEspecie(especieSupuestoLider) }
+        data.persistir(personas)
+        data.persistir(especieSupuestoLider)
+
+        val especieLider = especieRepository.especieLider()
+
+        assertEquals(especieSupuestoLider.id, especieLider.id)
+        assertEquals(especieSupuestoLider.paisDeOrigen, especieLider.paisDeOrigen)
+        assertEquals(especieSupuestoLider.nombre, especieLider.nombre)
     }
 
     @AfterEach
