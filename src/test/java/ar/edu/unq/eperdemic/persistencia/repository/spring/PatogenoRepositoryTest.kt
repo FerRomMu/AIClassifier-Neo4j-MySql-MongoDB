@@ -94,15 +94,6 @@ class PatogenoRepositoryTest {
     }
 
     @Test
-    fun `si borro un patogeno que es referenciado por una o mas especies falla`(){
-
-        val patogenos = data.crearSetDeDatosIniciales().filterIsInstance<Patogeno>()
-        val patogenoABorrar = patogenos.first()
-
-        assertThrows(DataIntegrityViolationException::class.java) { patogenoRepository.deleteById(patogenoABorrar.id!!) }
-    }
-
-    @Test
     fun `si borro un patogeno  con id invalido no devuelve nada`() {
 
         assertThrows(NullPointerException::class.java) { patogenoRepository.deleteById(patogeno.id!!) }

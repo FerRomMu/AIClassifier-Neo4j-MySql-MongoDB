@@ -18,6 +18,9 @@ class Especie(patogenoParam: Patogeno,
     val patogeno: Patogeno = patogenoParam
 
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @JoinTable(name = "especie_vector_contagiado",
+        joinColumns = [JoinColumn(name = "especie_id")],
+        inverseJoinColumns = [JoinColumn(name = "vector_id")])
     val vectores: MutableSet<Vector> = HashSet()
 
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)

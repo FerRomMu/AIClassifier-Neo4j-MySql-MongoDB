@@ -58,6 +58,7 @@ class DataServiceSpring: DataService {
             val vector = Vector(listOf(TipoDeVector.Insecto, TipoDeVector.Animal, TipoDeVector.Persona)[i % 3])
             vector.ubicacion = ubicacion
             vector.especiesContagiadas.add(especie)
+            especie.vectores.add(vector)
 
             patogenoRepository.save(patogeno)
             ubicacionRepository.save(ubicacion)
@@ -84,6 +85,7 @@ class DataServiceSpring: DataService {
             vector.ubicacion = ubicacion
 
             vector.especiesContagiadas.add(especiePandemica)
+            especiePandemica.vectores.add(vector)
             ubicacionRepository.save(ubicacion)
             vectorRepository.save(vector)
         }

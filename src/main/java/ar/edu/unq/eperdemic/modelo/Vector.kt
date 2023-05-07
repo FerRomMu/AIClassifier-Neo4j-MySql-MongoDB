@@ -15,7 +15,7 @@ class Vector(var tipo: TipoDeVector) {
     @ManyToOne
     lateinit var ubicacion: Ubicacion
 
-    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, mappedBy = "vectores")
     var especiesContagiadas: MutableSet<Especie> = HashSet()
 
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
