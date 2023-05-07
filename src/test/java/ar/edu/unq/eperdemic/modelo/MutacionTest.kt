@@ -131,6 +131,24 @@ internal class MutacionTest {
         assertFalse(bioAlteracionAnimal.estaEn(mutaciones))
     }
 
+    @Test
+    fun `si supresion pregunta si tiene mutacion para contagiar cualquier tipo devuelve falso `(){
+        assertFalse(supresion1.tengoMutacionParaContagiarATipo(TipoDeVector.Insecto))
+        assertFalse(supresion1.tengoMutacionParaContagiarATipo(TipoDeVector.Persona))
+        assertFalse(supresion1.tengoMutacionParaContagiarATipo(TipoDeVector.Animal))
+    }
+
+    @Test
+    fun `si bioAlteracionAnimal pregunta si tiene mutacion para contagiar animal da verdadero `(){
+        assertTrue(bioAlteracionAnimal.tengoMutacionParaContagiarATipo(TipoDeVector.Animal))
+    }
+
+    @Test
+    fun `si bioAlteracionAnimal pregunta si tiene mutacion para contagiar tipo no animal da falso`(){
+        assertFalse(bioAlteracionAnimal.tengoMutacionParaContagiarATipo(TipoDeVector.Insecto))
+        assertFalse(bioAlteracionAnimal.tengoMutacionParaContagiarATipo(TipoDeVector.Persona))
+    }
+
     @AfterEach
     fun tearDown() {
 
