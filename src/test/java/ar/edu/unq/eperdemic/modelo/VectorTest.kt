@@ -19,6 +19,8 @@ class VectorTest {
     lateinit var patogeno: Patogeno
     lateinit var ubicacion: Ubicacion
     lateinit var dado: Randomizador
+    lateinit var supresion: SupresionBiomecanica
+    lateinit var bioalteracionAnimal: BioalteracionGenetica
 
     @BeforeEach
     fun setup() {
@@ -36,10 +38,14 @@ class VectorTest {
         patogeno.setCapacidadDeContagioHumano(100)
         patogeno.setCapacidadDeContagioAnimal(100)
         patogeno.setCapacidadDeContagioInsecto(100)
+        patogeno.setCapacidadDeBiomecanizacion(100)
         especie = Especie(patogeno, "virusT", "raccoon city")
 
         dado = Randomizador.getInstance()
         dado.estado = EstadoRandomizadorDeterminístico()
+
+        supresion = SupresionBiomecanica(50)
+        bioalteracionAnimal = BioalteracionGenetica(TipoDeVector.Animal)
 
     }
 
@@ -167,4 +173,103 @@ class VectorTest {
 
         assertEquals(0, vectorAnimal2.especiesContagiadas.size)
     }
+
+    @Test
+    fun `si un vector animal con bioalteracion animal intenta infectar otro vector animal, lo contagia`() {
+        assertEquals(0, vectorAnimal2.especiesContagiadas.size)
+
+        vectorAnimal1.agregarEspecie(especie)
+        vectorAnimal1.mutacionesSufridas.add(bioalteracionAnimal)
+        vectorAnimal1.intentarInfectar(vectorAnimal2)
+
+        assertTrue(vectorAnimal2.especiesContagiadas.contains(especie))
+    }
+
+    @Test
+    fun `si un vector animal intenta infectar a un vector insecto con suprecion biomecanica que lo cancela, no lo contagia`() {
+        assertEquals(0, vectorInsecto1.especiesContagiadas.size)
+        patogeno.setCapacidadDeDefensa(20)
+
+        vectorAnimal1.agregarEspecie(especie)
+        vectorInsecto1.mutacionesSufridas.add(supresion)
+        vectorAnimal1.intentarInfectar(vectorInsecto1)
+
+        assertEquals(0, vectorInsecto1.especiesContagiadas.size)
+    }
+
+    @Test
+    fun `si un vector animal intenta infectar a un vector insecto con suprecion biomecanica de misma potencia que defensa, lo contagia`() {
+        assertEquals(0, vectorInsecto1.especiesContagiadas.size)
+        patogeno.setCapacidadDeDefensa(50)
+
+        vectorAnimal1.agregarEspecie(especie)
+        vectorInsecto1.mutacionesSufridas.add(supresion)
+        vectorAnimal1.intentarInfectar(vectorInsecto1)
+
+        assertTrue(vectorInsecto1.especiesContagiadas.contains(especie))
+    }
+
+    @Test
+    fun `si la especie con la que un vector humano contagia a otro existosamente no tiene mutaciones posibles, entonces no muta`() {
+        assertEquals(0, vectorHumano2.especiesContagiadas.size)
+
+        vectorHumano1.agregarEspecie(especie)
+        assertEquals(0, vectorHumano1.mutacionesSufridas.size)
+        assertEquals(0, especie.mutacionesPosibles.size)
+
+        vectorHumano1.intentarInfectar(vectorHumano2)
+
+        val especieQueFueContagiada = vectorHumano2.especiesContagiadas.first()
+        val especieQueContagia = vectorHumano1.especiesContagiadas.first()
+
+        assertEquals(1, vectorHumano2.especiesContagiadas.size)
+        assertEquals(especieQueContagia,especieQueFueContagiada)
+        assertEquals(0, vectorHumano1.mutacionesSufridas.size)
+    }
+
+
+    @Test
+    fun `si un vector humano intenta infectar a un vector humano lo contagia y si hay suerte el primero muta porque hay mutaciones posibles`() {
+        assertEquals(0, vectorHumano2.especiesContagiadas.size)
+        especie.agregarMutacion(bioalteracionAnimal)
+
+        vectorHumano1.agregarEspecie(especie)
+        assertEquals(0, vectorHumano1.mutacionesSufridas.size)
+        assertEquals(1, especie.mutacionesPosibles.size)
+
+        vectorHumano1.intentarInfectar(vectorHumano2)
+
+        val especieQueFueContagiada = vectorHumano2.especiesContagiadas.first()
+        val especieQueContagia = vectorHumano1.especiesContagiadas.first()
+
+        assertEquals(1, vectorHumano2.especiesContagiadas.size)
+        assertEquals(especieQueContagia,especieQueFueContagiada)
+
+        assertEquals(1, vectorHumano1.mutacionesSufridas.size)
+        assertTrue(bioalteracionAnimal.equals(vectorHumano1.mutacionesSufridas.first()))
+    }
+
+    @Test
+    fun `si un vector humano intenta infectar a un vector humano lo contagia y si hay suerte el primero no muta porque el vector ya tiene todas las mutaciones posibles`() {
+        assertEquals(0, vectorHumano2.especiesContagiadas.size)
+        especie.agregarMutacion(bioalteracionAnimal)
+
+        vectorHumano1.agregarEspecie(especie)
+        vectorHumano1.mutacionesSufridas.add(bioalteracionAnimal)
+
+        assertEquals(1, vectorHumano1.mutacionesSufridas.size)
+        assertEquals(1, especie.mutacionesPosibles.size)
+
+        vectorHumano1.intentarInfectar(vectorHumano2)
+
+        val especieQueFueContagiada = vectorHumano2.especiesContagiadas.first()
+        val especieQueContagia = vectorHumano1.especiesContagiadas.first()
+
+        assertEquals(1, vectorHumano2.especiesContagiadas.size)
+        assertEquals(especieQueContagia,especieQueFueContagiada)
+
+        assertEquals(1, vectorHumano1.mutacionesSufridas.size)
+        assertTrue(vectorHumano1.mutacionesSufridas.contains(bioalteracionAnimal))
+    }
+
 }

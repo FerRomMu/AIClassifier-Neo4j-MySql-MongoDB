@@ -81,4 +81,13 @@ class Patogeno(var tipo: String) : Serializable{
             return this.capacidadDeContagioAnimal
         }
     }
+
+    fun getCapacidadDeBiomecanizacion(): Int {
+        return this.capacidadDeBiomecanizacion
+    }
+
+    fun capacidadDeDefensa(): Int{
+        return this.capacidadDeDefensa
+    }
+
 }
