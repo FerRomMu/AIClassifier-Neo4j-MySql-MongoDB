@@ -113,48 +113,38 @@ class EspecieRepositoryTest {
     fun `si pido la especie lider me da la especie que infecto a mas vectores del tipo dado`(){
 
         val setInicial = data.crearSetDeDatosIniciales()
-        val especieSupuestoLider = setInicial
-            .find {
-                it is Especie
-            } as Especie
         val animales = setInicial
             .filterIsInstance<Vector>()
             .filter {
                 it.tipo == TipoDeVector.Animal
             }
-        animales.forEach{ it.agregarEspecie(especieSupuestoLider) }
+        animales.forEach{ it.agregarEspecie(especie) }
         data.persistir(animales)
-        data.persistir(especieSupuestoLider)
 
         val especieLider = especieRepository.especieLider(TipoDeVector.Animal)
 
-        assertEquals(especieSupuestoLider.id, especieLider.id)
-        assertEquals(especieSupuestoLider.paisDeOrigen, especieLider.paisDeOrigen)
-        assertEquals(especieSupuestoLider.nombre, especieLider.nombre)
+        assertEquals(especie.id, especieLider.id)
+        assertEquals(especie.paisDeOrigen, especieLider.paisDeOrigen)
+        assertEquals(especie.nombre, especieLider.nombre)
     }
 
     @Test
     fun `si pido la especie lider sin aclarar tipo me da la especie que infecto a mas humanos`(){
 
         val setInicial = data.crearSetDeDatosIniciales()
-        val especieSupuestoLider = setInicial
-            .find {
-                it is Especie
-            } as Especie
         val personas = setInicial
             .filterIsInstance<Vector>()
             .filter {
                 it.tipo == TipoDeVector.Persona
             }
-        personas.forEach{ it.agregarEspecie(especieSupuestoLider) }
+        personas.forEach{ it.agregarEspecie(especie) }
         data.persistir(personas)
-        data.persistir(especieSupuestoLider)
 
         val especieLider = especieRepository.especieLider()
 
-        assertEquals(especieSupuestoLider.id, especieLider.id)
-        assertEquals(especieSupuestoLider.paisDeOrigen, especieLider.paisDeOrigen)
-        assertEquals(especieSupuestoLider.nombre, especieLider.nombre)
+        assertEquals(especie.id, especieLider.id)
+        assertEquals(especie.paisDeOrigen, especieLider.paisDeOrigen)
+        assertEquals(especie.nombre, especieLider.nombre)
     }
 
     @AfterEach
