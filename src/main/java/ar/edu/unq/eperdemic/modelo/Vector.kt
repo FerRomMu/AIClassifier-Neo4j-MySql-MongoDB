@@ -45,6 +45,10 @@ class Vector(var tipo: TipoDeVector) {
         return this.tipo.puedeContagiarme(vectorQueMeIntentaContagiar.tipo)
     }
 
+    fun eliminarEspeciesPorSupresion(potencia: Int) {
+        TODO()
+    }
+
 
 }
 

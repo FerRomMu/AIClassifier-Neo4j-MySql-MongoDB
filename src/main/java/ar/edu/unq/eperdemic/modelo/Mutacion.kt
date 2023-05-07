@@ -19,9 +19,17 @@ abstract class Mutacion {
         return false
     }
 
+    fun estaEn(mutaciones: MutableSet<Mutacion>): Boolean {
+        return mutaciones.stream().anyMatch { m -> m.equals(this) }
+    }
+
+    open fun impideContagio(especie: Especie) : Boolean {
+        return false
+    }
+
     abstract fun equals(mutacion: Mutacion) : Boolean
-
-
+    abstract fun tengoMutacionParaContagiarATipo(tipo: TipoDeVector) : Boolean
+    open fun surtirEfectoEn(vetor: Vector) {}
 }
 
 
@@ -36,6 +44,18 @@ class SupresionBiomecanica(val potencia: Int) : Mutacion() {
         return mutacion.potencia  == this.potencia
     }
 
+    override fun tengoMutacionParaContagiarATipo(tipo: TipoDeVector): Boolean {
+        return false
+    }
+
+    override fun surtirEfectoEn(vector: Vector) {
+        vector.eliminarEspeciesPorSupresion(this.potencia)
+    }
+
+    override fun impideContagio(especie:Especie): Boolean {
+        TODO()
+    }
+
 }
 
 
@@ -48,6 +68,10 @@ class BioalteracionGenetica(val tipoVectorContagiable: TipoDeVector) : Mutacion(
     override fun compararPorTipo(mutacion: Mutacion) : Boolean{
         mutacion as BioalteracionGenetica
         return mutacion.tipoVectorContagiable  == this.tipoVectorContagiable
+    }
+
+    override fun tengoMutacionParaContagiarATipo(tipo: TipoDeVector): Boolean {
+        return this.tipoVectorContagiable == tipo
     }
 
 }
