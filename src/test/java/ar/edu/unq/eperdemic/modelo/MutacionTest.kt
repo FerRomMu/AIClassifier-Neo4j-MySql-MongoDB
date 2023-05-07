@@ -28,7 +28,6 @@ internal class MutacionTest {
         bioAlteracionAnimal = BioalteracionGenetica(TipoDeVector.Animal)
         bioAlteracionAnimal2 = BioalteracionGenetica(TipoDeVector.Animal)
         bioAlteracionPersona = BioalteracionGenetica(TipoDeVector.Persona)
-
     }
 
 
@@ -57,17 +56,44 @@ internal class MutacionTest {
         assertFalse(bioAlteracionAnimal.compararPorPotencia(bioAlteracionPersona))
     }
 
-
-
     @Test
     fun compararPorTipo() {
 
     }
 
-    @Test
-    fun testEquals() {
 
+    @Test
+    fun `Me fijo si son equivalentes 2 supresiones distintas de diferente poder mediante el mensaje equals`(){
+        assertFalse(suprecion1.equals(suprecion2))
+        assertFalse(suprecion2.equals(suprecion1))
     }
+
+    @Test
+    fun `Me fijo si son equivalentes 2 supresiones distintas de igual poder mediante el mensaje equals`(){
+        assertTrue(suprecion1.equals(suprecion3))
+        assertTrue(suprecion3.equals(suprecion1))
+    }
+
+    @Test
+    fun `Me fijo si son equivalentes una supresiones con una Bioalteracion`(){
+        assertFalse(bioAlteracionAnimal.equals(suprecion1))
+        assertFalse(suprecion1.equals(bioAlteracionAnimal))
+    }
+
+    @Test
+    fun `Me fijo si son equivalentes 2 Bioalteraciones de diferete tipo `(){
+        assertFalse(bioAlteracionAnimal.equals(bioAlteracionPersona))
+        assertFalse(bioAlteracionPersona.equals(bioAlteracionAnimal))
+    }
+
+    @Test
+    fun `Me fijo si son equivalentes 2 Bioalteraciones del mismo tipo `(){
+        assertTrue(bioAlteracionAnimal.equals(bioAlteracionAnimal2))
+        assertTrue(bioAlteracionAnimal2.equals(bioAlteracionAnimal))
+    }
+
+
+
 
     @AfterEach
     fun tearDown() {
