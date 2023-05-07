@@ -28,7 +28,7 @@ abstract class Mutacion {
     }
 
     abstract fun equals(mutacion: Mutacion) : Boolean
-    abstract fun tengoMutacionParaContagiarATipo(tipo: TipoDeVector) : Boolean
+    abstract fun permitoContagiarATipo(tipo: TipoDeVector) : Boolean
     open fun surtirEfectoEn(vetor: Vector) {}
 }
 
@@ -44,7 +44,7 @@ class SupresionBiomecanica(val potencia: Int) : Mutacion() {
         return mutacion.potencia  == this.potencia
     }
 
-    override fun tengoMutacionParaContagiarATipo(tipo: TipoDeVector): Boolean {
+    override fun permitoContagiarATipo(tipo: TipoDeVector): Boolean {
         return false
     }
 
@@ -70,7 +70,7 @@ class BioalteracionGenetica(val tipoVectorContagiable: TipoDeVector) : Mutacion(
         return mutacion.tipoVectorContagiable  == this.tipoVectorContagiable
     }
 
-    override fun tengoMutacionParaContagiarATipo(tipo: TipoDeVector): Boolean {
+    override fun permitoContagiarATipo(tipo: TipoDeVector): Boolean {
         return this.tipoVectorContagiable == tipo
     }
 
