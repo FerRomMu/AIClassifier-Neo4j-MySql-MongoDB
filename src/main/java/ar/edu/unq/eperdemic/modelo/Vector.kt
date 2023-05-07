@@ -27,7 +27,7 @@ class Vector(var tipo: TipoDeVector) {
     }
 
     fun intentarInfectar(vectorAContagiar: Vector){
-        var especiesAContagiar = this.especiesContagiadas
+        val especiesAContagiar = this.especiesContagiadas
         for (especie in especiesAContagiar){
             this.intentarContagiarA(vectorAContagiar,especie)
         }
@@ -52,8 +52,8 @@ class Vector(var tipo: TipoDeVector) {
 
     private fun haySuerte (especieAContagiar: Especie,tipoVictima : TipoDeVector): Boolean{
         val dado = Randomizador.getInstance()
-        var numeroContagio = dado.valor(1,10) + especieAContagiar.capacidadDeContagioA(tipoVictima)
-        var numeroRuleta = dado.valor(1,100)
+        val numeroContagio = dado.valor(1,10) + especieAContagiar.capacidadDeContagioA(tipoVictima)
+        val numeroRuleta = dado.valor(1,100)
         return numeroContagio >= numeroRuleta
     }
 
@@ -67,7 +67,7 @@ class Vector(var tipo: TipoDeVector) {
     }
 
     private fun intentarMutar(especieAMutar : Especie){
-        var mutacionesPosibles = this.mutacionesNuevas(especieAMutar)
+        val mutacionesPosibles = this.mutacionesNuevas(especieAMutar)
         if (this.haySuerteMutacion(especieAMutar) && mutacionesPosibles.isNotEmpty()){
             val mutacionAMutar=  mutacionesPosibles.random()
             mutacionAMutar.surtirEfectoEn(this)
@@ -76,22 +76,29 @@ class Vector(var tipo: TipoDeVector) {
     }
 
     private fun mutacionesNuevas(especieAMutar: Especie): List<Mutacion>  {
-        var mutacionesDelVector = this.mutacionesSufridas
-        var mutacionesDeEspecie = especieAMutar.mutacionesPosibles
+        val mutacionesDelVector = this.mutacionesSufridas
+        val mutacionesDeEspecie = especieAMutar.mutacionesPosibles
 
         return mutacionesDeEspecie.stream().filter {me -> me.estaEn(mutacionesDelVector).not()}.toList()
     }
 
     private fun haySuerteMutacion(especieAMutar: Especie): Boolean{
         val dado = Randomizador.getInstance()
-        var numeroContagio = especieAMutar.capacidadDeBiomecanizacion()
-        var numeroRuleta = dado.valor(1,100)
+        val numeroContagio = especieAMutar.capacidadDeBiomecanizacion()
+        val numeroRuleta = dado.valor(1,100)
         return numeroContagio >= numeroRuleta
     }
 
     fun eliminarEspeciesPorSupresion(potencia: Int) {
-        var especiesAEliminar = this.especiesContagiadas.stream().filter { es -> this.eliminaPorSupresion(es, potencia) }.toList()
-        especiesContagiadas.removeAll(especiesAEliminar)
+        val especiesAEliminar = this.especiesContagiadas.stream().filter { es -> this.eliminaPorSupresion(es, potencia) }.toList()
+        this.removerEspecies(especiesAEliminar)
+    }
+
+    private fun removerEspecies(especies: List<Especie>) {
+        especies.forEach{
+            it.vectores.remove(this)
+            this.especiesContagiadas.remove(it)
+        }
     }
 
     private fun eliminaPorSupresion(especie: Especie, potencia: Int): Boolean {
