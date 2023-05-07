@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.modelo
 
 import org.aspectj.weaver.GeneratedReferenceTypeDelegate
 import javax.persistence.*
+import kotlin.streams.toList
 
 @Entity
 @Table(name = "vector")
@@ -74,11 +75,11 @@ class Vector(var tipo: TipoDeVector) {
         }
     }
 
-    private fun mutacionesNuevas(especieAMutar: Especie): MutableSet<Mutacion>  {
+    private fun mutacionesNuevas(especieAMutar: Especie): List<Mutacion>  {
         var mutacionesDelVector = this.mutacionesSufridas
         var mutacionesDeEspecie = especieAMutar.mutacionesPosibles
 
-        return mutacionesDeEspecie.stream().filter {me -> me.estaEn(mutacionesDelVector).not()}
+        return mutacionesDeEspecie.stream().filter {me -> me.estaEn(mutacionesDelVector).not()}.toList()
     }
 
     private fun haySuerteMutacion(especieAMutar: Especie): Boolean{
