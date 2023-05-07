@@ -34,8 +34,9 @@ class DataServiceSpring: DataService {
         entidades.forEach { entidad ->
             when (entidad) {
                 is Patogeno -> patogenoRepository.save(entidad)
-                is Ubicacion -> ubicacionRepository.save(entidad)
                 is Vector -> vectorRepository.save(entidad)
+                is Especie -> especieRepository.save(entidad)
+                is Ubicacion -> ubicacionRepository.save(entidad)
                 else -> throw InvalidDataTypeException("El dato no es persistible.")
             }
         }
@@ -54,15 +55,21 @@ class DataServiceSpring: DataService {
             patogeno.tipo = "Tipo $i"
             val especie = patogeno.crearEspecie("Especie $i", "Pais $i")
             val ubicacion = Ubicacion ("Ubicacion $i")
+            val vector = Vector(listOf(TipoDeVector.Insecto, TipoDeVector.Animal, TipoDeVector.Persona)[i % 3])
+            vector.ubicacion = ubicacion
+            vector.especiesContagiadas.add(especie)
 
-            ubicacionRepository.save(ubicacion)
             patogenoRepository.save(patogeno)
+            ubicacionRepository.save(ubicacion)
             especieRepository.save(especie)
+            patogenoRepository.save(patogeno)
+            vectorRepository.save(vector)
 
-            todos.addAll(listOf(ubicacion, patogeno, especie))
+            todos.addAll(listOf(ubicacion, patogeno, especie, vector))
         }
         return todos.toList()
     }
+
     override fun crearPandemiaPositiva(): Especie {
         val patogeno = Patogeno("Gripe")
         patogenoRepository.save(patogeno)

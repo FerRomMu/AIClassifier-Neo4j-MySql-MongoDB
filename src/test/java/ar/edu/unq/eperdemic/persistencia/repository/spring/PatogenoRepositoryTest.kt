@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
@@ -85,12 +86,20 @@ class PatogenoRepositoryTest {
     @Test
     fun `si borro un patogeno este deja de estar persistido`(){
 
+        data.persistir(patogeno)
+
+        patogenoRepository.deleteById(patogeno.id!!)
+
+        assertTrue(patogenoRepository.findById(patogeno.id!!).isEmpty)
+    }
+
+    @Test
+    fun `si borro un patogeno que es referenciado por una o mas especies falla`(){
+
         val patogenos = data.crearSetDeDatosIniciales().filterIsInstance<Patogeno>()
         val patogenoABorrar = patogenos.first()
 
-        patogenoRepository.deleteById(patogenoABorrar.id!!)
-
-        assertTrue(patogenoRepository.findById(patogenoABorrar.id!!).isEmpty)
+        assertThrows(DataIntegrityViolationException::class.java) { patogenoRepository.deleteById(patogenoABorrar.id!!) }
     }
 
     @Test
