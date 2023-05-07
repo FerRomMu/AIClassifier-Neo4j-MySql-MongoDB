@@ -16,13 +16,13 @@ interface EspecieRepository: CrudRepository<Especie, Long> {
             "WHERE es.id = :idEspecie\n")
     fun cantidadDeInfectados(@Param("idEspecie") especieId: Long): Int
 
-    @Query("select es \n" +
-            "from Vector v \n" +
-            "join Especie es \n" +
-            "where v.tipo = :tipo\n" +
-            "group by es.id \n" +
-            "order by count(es.id) \n" +
-            "desc")
+
+    @Query("select e.id, e.nombre, e.pais_de_origen, e.id_patogeno from especie_vector_contagiado evc\n" +
+            "join vector v on v.tipo = :tipo\n" +
+            "join especie e on e.id = evc.especie_id\n" +
+            "group by e.id, e.nombre, e.pais_de_origen, e.id_patogeno\n" +
+            "order by count(e.id) desc\n" +
+            "limit 1 ", nativeQuery = true )
     fun especieLider(@Param("tipo") tipo: TipoDeVector = TipoDeVector.Persona): Especie
 
 }
