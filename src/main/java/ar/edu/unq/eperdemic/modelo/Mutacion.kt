@@ -23,7 +23,7 @@ abstract class Mutacion {
         return mutaciones.stream().anyMatch { m -> m.equals(this) }
     }
 
-    open fun impideContagio(especie: Especie) : Boolean {
+    open fun impideContagioDe(especie: Especie) : Boolean {
         return false
     }
 
@@ -52,8 +52,8 @@ class SupresionBiomecanica(val potencia: Int) : Mutacion() {
         vector.eliminarEspeciesPorSupresion(this.potencia)
     }
 
-    override fun impideContagio(especie:Especie): Boolean {
-        TODO()
+    override fun impideContagioDe(especie:Especie): Boolean {
+        return this.potencia > especie.defensa()
     }
 
 }

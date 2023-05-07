@@ -33,7 +33,7 @@ class Vector(var tipo: TipoDeVector) {
     }
 
     private fun intentarContagiarA(vectorAContagiar: Vector,especieAContagiar: Especie){
-        if (condicionParaInfectar(vectorAContagiar,especieAContagiar)){
+        if (this.condicionParaInfectar(vectorAContagiar,especieAContagiar)){
             vectorAContagiar.agregarEspecie(especieAContagiar)
             this.intentarMutar(especieAContagiar)
         }
@@ -41,12 +41,12 @@ class Vector(var tipo: TipoDeVector) {
 
     private fun condicionParaInfectar(vectorAContagiar: Vector,especieAContagiar: Especie): Boolean{
         return vectorAContagiar.puedoSerContagiadoPor(this) &&
-                this.haySuerte(especieAContagiar,vectorAContagiar.tipo)
-                !vectorAContagiar.sobrepasaMutaciones(especieAContagiar)
+                this.haySuerte(especieAContagiar,vectorAContagiar.tipo) &&
+                !vectorAContagiar.sobrepasaPorMutaciones(especieAContagiar)
     }
 
-    private fun sobrepasaMutaciones(especieAContagiar: Especie): Boolean {
-        return this.mutacionesSufridas.stream().anyMatch { m -> m.impideContagio(especieAContagiar) }
+    private fun sobrepasaPorMutaciones(especieAContagiar: Especie): Boolean {
+        return this.mutacionesSufridas.stream().anyMatch { m -> m.impideContagioDe(especieAContagiar) }
     }
 
     private fun haySuerte (especieAContagiar: Especie,tipoVictima : TipoDeVector): Boolean{
@@ -83,7 +83,7 @@ class Vector(var tipo: TipoDeVector) {
 
     private fun haySuerteMutacion(especieAMutar: Especie): Boolean{
         val dado = Randomizador.getInstance()
-        var numeroContagio = especieAMutar.capacidadDeBiomecanizacion
+        var numeroContagio = especieAMutar.capacidadDeBiomecanizacion()
         var numeroRuleta = dado.valor(1,100)
         return numeroContagio >= numeroRuleta
     }
@@ -93,7 +93,7 @@ class Vector(var tipo: TipoDeVector) {
     }
 
     private fun eliminarPorSupresion(especie: Especie, potencia: Int) {
-        if (especie.defensa >= potencia) {
+        if (especie.defensa() >= potencia) {
             this.eliminarEspecie(especie)
         }
     }
