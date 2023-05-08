@@ -24,4 +24,14 @@ interface UbicacionRepository : CrudRepository<Ubicacion, Long> {
             "join v.especiesContagiadas es " +
             "where v.ubicacion.nombre = :nombre")
     fun cantidadVectoresInfectados(@Param("nombre") nombreDeLaUbicacion: String) : Long
+
+    @Query("SELECT es.nombre FROM especie_vector_contagiado evc\n" +
+            "JOIN especie es ON es.id = evc.especie_id\n" +
+            "JOIN vector v ON v.id = evc.vector_id\n" +
+            "JOIN ubicacion u ON u.id = v.ubicacion_id\n" +
+            "WHERE u.nombre = :nombreUbicacion\n" +
+            "GROUP BY es.nombre\n" +
+            "ORDER BY COUNT(v.id) DESC\n" +
+            "LIMIT 1", nativeQuery = true)
+    fun nombreEspecieQueMasInfectaVectores(@Param("nombreUbicacion") nombreDeLaUbicacion: String) : String
 }
