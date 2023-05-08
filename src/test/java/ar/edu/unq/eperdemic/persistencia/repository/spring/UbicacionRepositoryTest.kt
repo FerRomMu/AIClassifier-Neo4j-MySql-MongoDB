@@ -1,8 +1,6 @@
 package ar.edu.unq.eperdemic.persistencia.repository.spring
 
-import ar.edu.unq.eperdemic.modelo.TipoDeVector
-import ar.edu.unq.eperdemic.modelo.Ubicacion
-import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.utils.DataService
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -115,6 +113,30 @@ class UbicacionRepositoryTest {
         assertEquals(2, vectoresDelLugar.size)
         assertEquals(vector.id, vectoresDelLugar[0].id)
         assertEquals(vector2.id, vectoresDelLugar[1].id)
+    }
+
+    @Test
+    fun `cantidad de vectores infectados en una ubicacion`()  {
+        val patogeno = Patogeno("patogenoSSS")
+
+        val vector1 = Vector(TipoDeVector.Insecto) ; vector1.ubicacion = ubicacion
+        val vector2 = Vector(TipoDeVector.Insecto) ; vector2.ubicacion = ubicacion
+        val vector3 = Vector(TipoDeVector.Insecto) ; vector3.ubicacion = ubicacion
+        val vector4 = Vector(TipoDeVector.Insecto) ; vector4.ubicacion = ubicacion
+        val vector5 = Vector(TipoDeVector.Insecto) ; vector5.ubicacion = ubicacion
+
+        val especie1 = Especie(patogeno, "especie111", "arg")
+        val especie2 = Especie(patogeno, "especie222", "arg")
+        val especie3 = Especie(patogeno, "especie333", "arg")
+
+        vector1.agregarEspecie(especie1) ; vector2.agregarEspecie(especie1); vector3.agregarEspecie(especie1)
+        vector4.agregarEspecie(especie2)
+
+        data.persistir(listOf(especie1, especie2, especie3, vector1, vector2, vector3, vector4, vector5, ubicacion, patogeno))
+
+        val cantidad = ubicacionRepository.cantidadVectoresInfectados(ubicacion.nombre)
+
+        assertEquals(4, cantidad)
     }
 
     @AfterEach

@@ -25,8 +25,8 @@ class DataServiceSpring: DataService {
 
     override fun eliminarTodo() {
         patogenoRepository.deleteAll()
-        ubicacionRepository.deleteAll()
         vectorRepository.deleteAll()
+        ubicacionRepository.deleteAll()
         especieRepository.deleteAll()
     }
 
