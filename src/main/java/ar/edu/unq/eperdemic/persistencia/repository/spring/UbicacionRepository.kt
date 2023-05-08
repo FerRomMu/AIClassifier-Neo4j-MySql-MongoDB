@@ -14,6 +14,11 @@ interface UbicacionRepository : CrudRepository<Ubicacion, Long> {
             "WHERE v.ubicacion.id = :idUbicacion")
     fun vectoresEn(@Param("idUbicacion") ubicacionId: Long?): List<Vector>
 
+    @Query("SELECT COUNT(*)\n" +
+            "FROM Vector v\n" +
+            "WHERE v.ubicacion.nombre = :nombreUbicacion")
+    fun cantidadVectoresPresentes(@Param("nombreUbicacion") nombreDeLaUbicacion: String) : Long
+
     @Query("select count(distinct v.id) " +
             "from Vector v " +
             "join v.especiesContagiadas es " +

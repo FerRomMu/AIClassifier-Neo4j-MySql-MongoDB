@@ -139,6 +139,55 @@ class UbicacionRepositoryTest {
         assertEquals(4, cantidad)
     }
 
+    @Test
+    fun `cantidad de vectores que no estan presentes en una ubicacion`() {
+        val patogeno = Patogeno("patogenoSSS")
+        val ubicacion2 = Ubicacion("ubicacion22")
+
+        val vector1 = Vector(TipoDeVector.Insecto) ; vector1.ubicacion = ubicacion
+        val vector2 = Vector(TipoDeVector.Insecto) ; vector2.ubicacion = ubicacion
+        val vector3 = Vector(TipoDeVector.Insecto) ; vector3.ubicacion = ubicacion
+        val vector4 = Vector(TipoDeVector.Insecto) ; vector4.ubicacion = ubicacion
+        val vector5 = Vector(TipoDeVector.Insecto) ; vector5.ubicacion = ubicacion
+
+        val especie1 = Especie(patogeno, "especie111", "arg")
+        val especie2 = Especie(patogeno, "especie222", "arg")
+        val especie3 = Especie(patogeno, "especie333", "arg")
+
+        vector1.agregarEspecie(especie1) ; vector2.agregarEspecie(especie1); vector3.agregarEspecie(especie1)
+        vector4.agregarEspecie(especie2)
+
+        data.persistir(listOf(especie1, especie2, especie3, vector1, vector2, vector3, vector4, vector5, ubicacion, ubicacion2, patogeno))
+
+        val cantidad = ubicacionRepository.cantidadVectoresPresentes(ubicacion2.nombre)
+
+        assertEquals(0, cantidad)
+    }
+
+    @Test
+    fun `cantidad de vectores presentes en una ubicacion`() {
+        val patogeno = Patogeno("patogenoSSS")
+
+        val vector1 = Vector(TipoDeVector.Insecto) ; vector1.ubicacion = ubicacion
+        val vector2 = Vector(TipoDeVector.Insecto) ; vector2.ubicacion = ubicacion
+        val vector3 = Vector(TipoDeVector.Insecto) ; vector3.ubicacion = ubicacion
+        val vector4 = Vector(TipoDeVector.Insecto) ; vector4.ubicacion = ubicacion
+        val vector5 = Vector(TipoDeVector.Insecto) ; vector5.ubicacion = ubicacion
+
+        val especie1 = Especie(patogeno, "especie111", "arg")
+        val especie2 = Especie(patogeno, "especie222", "arg")
+        val especie3 = Especie(patogeno, "especie333", "arg")
+
+        vector1.agregarEspecie(especie1) ; vector2.agregarEspecie(especie1); vector3.agregarEspecie(especie1)
+        vector4.agregarEspecie(especie2)
+
+        data.persistir(listOf(especie1, especie2, especie3, vector1, vector2, vector3, vector4, vector5, ubicacion, patogeno))
+
+        val cantidad = ubicacionRepository.cantidadVectoresPresentes(ubicacion.nombre)
+
+        assertEquals(5, cantidad)
+    }
+
     @AfterEach
     fun tearDown() {
         data.eliminarTodo()
