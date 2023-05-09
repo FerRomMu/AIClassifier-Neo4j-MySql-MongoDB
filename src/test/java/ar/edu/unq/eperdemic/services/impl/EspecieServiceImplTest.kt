@@ -30,15 +30,12 @@ class EspecieServiceImplTest {
 
     @BeforeEach
     fun setup() {
-
+        patogeno = Patogeno("Gripe")
+        especie = Especie(patogeno,"especie11", "ARG")
     }
 
     @Test
     fun `puedo recuperar una especie guardada con su id`() {
-
-        patogeno = Patogeno("Gripe")
-        especie = Especie(patogeno,"especie11", "ARG")
-
         data.persistir(listOf(patogeno, especie))
 
         val recuperado = especieService.recuperarEspecie(especie.id!!)
@@ -75,8 +72,6 @@ class EspecieServiceImplTest {
 
     @Test
     fun `obtener la cantidad de infectados de una especie que no infecto a ningun vector`() {
-        patogeno = Patogeno("Gripe")
-        especie = Especie(patogeno,"especie11", "ARG")
         val vector = Vector(TipoDeVector.Animal)
         val vector2 = Vector(TipoDeVector.Persona)
 
