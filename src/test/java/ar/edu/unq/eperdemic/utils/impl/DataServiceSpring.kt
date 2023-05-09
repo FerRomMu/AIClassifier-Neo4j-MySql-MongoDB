@@ -26,6 +26,7 @@ class DataServiceSpring: DataService {
         ubicacionRepository.deleteAll()
         vectorRepository.deleteAll()
         especieRepository.deleteAll()
+        mutacionRepositor.deleteAll()
     }
 
     override fun persistir(entidades: List<Any>): List<Any> {
