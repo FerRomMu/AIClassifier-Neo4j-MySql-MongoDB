@@ -1,6 +1,7 @@
 package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
+import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
@@ -21,7 +22,7 @@ class EspecieServiceImpl() : EspecieService {
 
     override fun recuperarEspecie(id: Long): Especie {
         return especieRepository.findById(id)
-            .getOrNull() ?: throw DataNotFoundException("No se encontró una especie con el id dado.")
+            .getOrNull() ?: throw IdNotFoundException("No se encontró una especie con el id dado.")
     }
 
     override fun recuperarTodos(): List<Especie> {
