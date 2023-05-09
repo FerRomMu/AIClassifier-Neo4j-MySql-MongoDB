@@ -117,6 +117,7 @@ class UbicacionRepositoryTest {
 
     @Test
     fun `cantidad de vectores infectados en una ubicacion`()  {
+        data.crearSetDeDatosIniciales()
         val patogeno = Patogeno("patogenoSSS")
 
         val vector1 = Vector(TipoDeVector.Insecto) ; vector1.ubicacion = ubicacion
@@ -140,7 +141,8 @@ class UbicacionRepositoryTest {
     }
 
     @Test
-    fun `cantidad de vectores que no estan presentes en una ubicacion`() {
+    fun `si no hay vectores presentes en una ubicacion cantidad de vectores presentes de esa ubicacion da 0`() {
+        data.crearSetDeDatosIniciales()
         val patogeno = Patogeno("patogenoSSS")
         val ubicacion2 = Ubicacion("ubicacion22")
 
@@ -166,6 +168,7 @@ class UbicacionRepositoryTest {
 
     @Test
     fun `cantidad de vectores presentes en una ubicacion`() {
+        data.crearSetDeDatosIniciales()
         val patogeno = Patogeno("patogenoSSS")
 
         val vector1 = Vector(TipoDeVector.Insecto) ; vector1.ubicacion = ubicacion
@@ -212,6 +215,7 @@ class UbicacionRepositoryTest {
 
     @Test
     fun `nombre de la especie que esta infectando a mas vectores`() {
+        data.crearSetDeDatosIniciales()
         val patogeno = Patogeno("patogenoSSS")
 
         val vector1 = Vector(TipoDeVector.Insecto) ; vector1.ubicacion = ubicacion
