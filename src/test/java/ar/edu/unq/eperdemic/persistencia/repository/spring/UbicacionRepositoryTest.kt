@@ -1,18 +1,16 @@
 package ar.edu.unq.eperdemic.persistencia.repository.spring
 
-import ar.edu.unq.eperdemic.modelo.TipoDeVector
-import ar.edu.unq.eperdemic.modelo.Ubicacion
-import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
+import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.utils.DataService
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
@@ -115,6 +113,129 @@ class UbicacionRepositoryTest {
         assertEquals(2, vectoresDelLugar.size)
         assertEquals(vector.id, vectoresDelLugar[0].id)
         assertEquals(vector2.id, vectoresDelLugar[1].id)
+    }
+
+    @Test
+    fun `cantidad de vectores infectados en una ubicacion`()  {
+        data.crearSetDeDatosIniciales()
+        val patogeno = Patogeno("patogenoSSS")
+
+        val vector1 = Vector(TipoDeVector.Insecto) ; vector1.ubicacion = ubicacion
+        val vector2 = Vector(TipoDeVector.Insecto) ; vector2.ubicacion = ubicacion
+        val vector3 = Vector(TipoDeVector.Insecto) ; vector3.ubicacion = ubicacion
+        val vector4 = Vector(TipoDeVector.Insecto) ; vector4.ubicacion = ubicacion
+        val vector5 = Vector(TipoDeVector.Insecto) ; vector5.ubicacion = ubicacion
+
+        val especie1 = Especie(patogeno, "especie111", "arg")
+        val especie2 = Especie(patogeno, "especie222", "arg")
+        val especie3 = Especie(patogeno, "especie333", "arg")
+
+        vector1.agregarEspecie(especie1) ; vector2.agregarEspecie(especie1); vector3.agregarEspecie(especie1)
+        vector4.agregarEspecie(especie2)
+
+        data.persistir(listOf(especie1, especie2, especie3, vector1, vector2, vector3, vector4, vector5, ubicacion, patogeno))
+
+        val cantidad = ubicacionRepository.cantidadVectoresInfectados(ubicacion.nombre)
+
+        assertEquals(4, cantidad)
+    }
+
+    @Test
+    fun `si no hay vectores presentes en una ubicacion cantidad de vectores presentes de esa ubicacion da 0`() {
+        data.crearSetDeDatosIniciales()
+        val patogeno = Patogeno("patogenoSSS")
+        val ubicacion2 = Ubicacion("ubicacion22")
+
+        val vector1 = Vector(TipoDeVector.Insecto) ; vector1.ubicacion = ubicacion
+        val vector2 = Vector(TipoDeVector.Insecto) ; vector2.ubicacion = ubicacion
+        val vector3 = Vector(TipoDeVector.Insecto) ; vector3.ubicacion = ubicacion
+        val vector4 = Vector(TipoDeVector.Insecto) ; vector4.ubicacion = ubicacion
+        val vector5 = Vector(TipoDeVector.Insecto) ; vector5.ubicacion = ubicacion
+
+        val especie1 = Especie(patogeno, "especie111", "arg")
+        val especie2 = Especie(patogeno, "especie222", "arg")
+        val especie3 = Especie(patogeno, "especie333", "arg")
+
+        vector1.agregarEspecie(especie1) ; vector2.agregarEspecie(especie1); vector3.agregarEspecie(especie1)
+        vector4.agregarEspecie(especie2)
+
+        data.persistir(listOf(especie1, especie2, especie3, vector1, vector2, vector3, vector4, vector5, ubicacion, ubicacion2, patogeno))
+
+        val cantidad = ubicacionRepository.cantidadVectoresPresentes(ubicacion2.nombre)
+
+        assertEquals(0, cantidad)
+    }
+
+    @Test
+    fun `cantidad de vectores presentes en una ubicacion`() {
+        data.crearSetDeDatosIniciales()
+        val patogeno = Patogeno("patogenoSSS")
+
+        val vector1 = Vector(TipoDeVector.Insecto) ; vector1.ubicacion = ubicacion
+        val vector2 = Vector(TipoDeVector.Insecto) ; vector2.ubicacion = ubicacion
+        val vector3 = Vector(TipoDeVector.Insecto) ; vector3.ubicacion = ubicacion
+        val vector4 = Vector(TipoDeVector.Insecto) ; vector4.ubicacion = ubicacion
+        val vector5 = Vector(TipoDeVector.Insecto) ; vector5.ubicacion = ubicacion
+
+        val especie1 = Especie(patogeno, "especie111", "arg")
+        val especie2 = Especie(patogeno, "especie222", "arg")
+        val especie3 = Especie(patogeno, "especie333", "arg")
+
+        vector1.agregarEspecie(especie1) ; vector2.agregarEspecie(especie1); vector3.agregarEspecie(especie1)
+        vector4.agregarEspecie(especie2)
+
+        data.persistir(listOf(especie1, especie2, especie3, vector1, vector2, vector3, vector4, vector5, ubicacion, patogeno))
+
+        val cantidad = ubicacionRepository.cantidadVectoresPresentes(ubicacion.nombre)
+
+        assertEquals(5, cantidad)
+    }
+
+    @Test
+    fun `al intentar obtener nombre de especie que esta infectando a mas vectores en una ubicacion inexistente falla` () {
+        val patogeno = Patogeno("patogenoSSS")
+
+        val vector1 = Vector(TipoDeVector.Insecto) ; vector1.ubicacion = ubicacion
+        val vector2 = Vector(TipoDeVector.Insecto) ; vector2.ubicacion = ubicacion
+        val vector3 = Vector(TipoDeVector.Insecto) ; vector3.ubicacion = ubicacion
+        val vector4 = Vector(TipoDeVector.Insecto) ; vector4.ubicacion = ubicacion
+        val vector5 = Vector(TipoDeVector.Insecto) ; vector5.ubicacion = ubicacion
+
+        val especie1 = Especie(patogeno, "especie111", "arg")
+        val especie2 = Especie(patogeno, "especie222", "arg")
+        val especie3 = Especie(patogeno, "especie333", "arg")
+
+        vector1.agregarEspecie(especie1) ; vector2.agregarEspecie(especie1); vector3.agregarEspecie(especie1)
+        vector4.agregarEspecie(especie2)
+
+        data.persistir(listOf(especie1, especie2, especie3, vector1, vector2, vector3, vector4, vector5, ubicacion, patogeno))
+
+        assertThrows(EmptyResultDataAccessException::class.java) { ubicacionRepository.nombreEspecieQueMasInfectaVectores("pepito") }
+    }
+
+    @Test
+    fun `nombre de la especie que esta infectando a mas vectores`() {
+        data.crearSetDeDatosIniciales()
+        val patogeno = Patogeno("patogenoSSS")
+
+        val vector1 = Vector(TipoDeVector.Insecto) ; vector1.ubicacion = ubicacion
+        val vector2 = Vector(TipoDeVector.Insecto) ; vector2.ubicacion = ubicacion
+        val vector3 = Vector(TipoDeVector.Insecto) ; vector3.ubicacion = ubicacion
+        val vector4 = Vector(TipoDeVector.Insecto) ; vector4.ubicacion = ubicacion
+        val vector5 = Vector(TipoDeVector.Insecto) ; vector5.ubicacion = ubicacion
+
+        val especie1 = Especie(patogeno, "especie111", "arg")
+        val especie2 = Especie(patogeno, "especie222", "arg")
+        val especie3 = Especie(patogeno, "especie333", "arg")
+
+        vector1.agregarEspecie(especie1) ; vector2.agregarEspecie(especie1); vector3.agregarEspecie(especie1)
+        vector4.agregarEspecie(especie2)
+
+        data.persistir(listOf(especie1, especie2, especie3, vector1, vector2, vector3, vector4, vector5, ubicacion, patogeno))
+
+        val nombreEspecieQueMasInfecto = ubicacionRepository.nombreEspecieQueMasInfectaVectores(ubicacion.nombre)
+
+        assertEquals(especie1.nombre, nombreEspecieQueMasInfecto)
     }
 
     @AfterEach
