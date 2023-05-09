@@ -5,6 +5,7 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
+@Table(name = "mutacion")
 abstract class Mutacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +33,8 @@ abstract class Mutacion {
     open fun surtirEfectoEn(vetor: Vector) {}
 }
 
-
+@Entity
+@Table(name = "supresionBiomecanica")
 class SupresionBiomecanica(val potencia: Int) : Mutacion() {
 
     override fun equals(mutacion: Mutacion) : Boolean{
@@ -58,7 +60,8 @@ class SupresionBiomecanica(val potencia: Int) : Mutacion() {
 
 }
 
-
+@Entity
+@Table(name = "bioalteracionGenetica")
 class BioalteracionGenetica(val tipoVectorContagiable: TipoDeVector) : Mutacion() {
 
     override fun equals(mutacion: Mutacion) : Boolean{
