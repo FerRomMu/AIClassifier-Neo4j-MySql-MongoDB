@@ -24,7 +24,7 @@ class PatogenoServiceTest {
     //@Autowired lateinit var ubicacionService: UbicacionService
     //@Autowired lateinit var vectorService: VectorService
     @Autowired lateinit var dataService: DataService
-    //@Autowired lateinit var especieService : EspecieService
+    @Autowired lateinit var especieService : EspecieService
 
     lateinit var patogeno: Patogeno
 

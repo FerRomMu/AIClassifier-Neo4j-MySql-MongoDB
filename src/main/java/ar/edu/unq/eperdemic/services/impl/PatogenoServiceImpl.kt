@@ -41,21 +41,17 @@ class PatogenoServiceImpl() : PatogenoService {
     }
 
     override fun agregarEspecie(id: Long, nombre: String, ubicacionId: Long): Especie {
-        /*return runTrx {
-            val vectorAInfectar = vectorDAO.vectorAleatorioEn(ubicacionId)
-            val patogeno = patogenoDAO.recuperar(id)
-            val especieNueva = patogeno.crearEspecie(nombre, vectorAInfectar.ubicacion.nombre)
+        val vectorAInfectar = vectorRepository.vectorAleatorioEn(ubicacionId)
+        val patogeno = this.recuperarPatogeno(id)
+        val especieNueva = patogeno.crearEspecie(nombre, vectorAInfectar.ubicacion.nombre)
 
-            vectorAInfectar.agregarEspecie(especieNueva)
+        vectorAInfectar.agregarEspecie(especieNueva)
 
-            vectorDAO.guardar(vectorAInfectar)
-            patogenoDAO.guardar(patogeno)
-            especieDAO.guardar(especieNueva)
+        vectorRepository.save(vectorAInfectar)
+        patogenoRepository.save(patogeno)
+        especieRepository.save(especieNueva)
 
-            especieNueva
-        }
-         */
-        TODO()
+        return especieNueva
     }
 
     override fun cantidadDeInfectados(especieId: Long): Int {
