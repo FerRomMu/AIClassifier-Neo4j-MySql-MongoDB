@@ -21,7 +21,11 @@ class EstadisticaServiceImpl() : EstadisticaService {
     lateinit var ubicacionRepository: UbicacionRepository
 
     override fun especieLider(): Especie {
-        return  especieRepository.especieLider()
+        try {
+            return  especieRepository.especieLider()
+        } catch(e: EmptyResultDataAccessException) {
+            throw DataNotFoundException("No hay especie lider.")
+        }
     }
 
     override fun reporteDeContagios(nombreDeLaUbicacion: String): ReporteDeContagios {

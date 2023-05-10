@@ -292,7 +292,7 @@ internal class EstadisticaServiceImplTest {
         val vectorHumano1 = Vector(TipoDeVector.Persona)
         dataService.persistir(vectorHumano1)
 
-        assertThrows(NoResultException::class.java) {
+        assertThrows(DataNotFoundException::class.java) {
             estadisticaService.especieLider()
         }
 
