@@ -7,7 +7,9 @@ import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
+import ar.edu.unq.eperdemic.persistencia.repository.spring.EspecieRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.PatogenoRepository
+import ar.edu.unq.eperdemic.persistencia.repository.spring.VectorRepository
 import ar.edu.unq.eperdemic.services.EspecieService
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.VectorService
@@ -22,8 +24,8 @@ import kotlin.jvm.optionals.getOrNull
 class PatogenoServiceImpl() : PatogenoService {
 
     @Autowired lateinit var patogenoRepository: PatogenoRepository
-    //@Autowired lateinit var vectorService: VectorService
-    //@Autowired lateinit var especieService: EspecieService
+    @Autowired lateinit var vectorRepository: VectorRepository
+    @Autowired lateinit var especieRepository: EspecieRepository
 
     override fun crearPatogeno(patogeno: Patogeno): Patogeno {
         return patogenoRepository.save(patogeno)

@@ -4,12 +4,11 @@ import ar.edu.unq.eperdemic.modelo.Patogeno
 
 class PatogenoDTO (val id:Long?, val tipo : String, val cantidadDeEspecies:Int?){
 
-        fun aModelo() : Patogeno {
-            val patogeno = Patogeno(this.tipo)
-            patogeno.id = this.id
-
-            return patogeno
-   }
+    fun aModelo() : Patogeno {
+        val patogeno = Patogeno(this.tipo)
+        patogeno.id = this.id
+        return patogeno
+    }
 
     companion object {
         fun desdeModelo(patogeno: Patogeno) : PatogenoDTO {
