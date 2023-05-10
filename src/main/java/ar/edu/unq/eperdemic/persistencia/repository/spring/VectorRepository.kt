@@ -17,6 +17,7 @@ interface VectorRepository : CrudRepository<Vector, Long> {
 
     @Query("SELECT * FROM vector v " +
             "JOIN ubicacion u ON u.id = :idUbi " +
+            "WHERE v.ubicacion_id = :idUbi " +
             "order by rand() " +
             "limit 1", nativeQuery = true)
     fun vectorAleatorioEn(@Param("idUbi") ubicacionId: Long): Vector

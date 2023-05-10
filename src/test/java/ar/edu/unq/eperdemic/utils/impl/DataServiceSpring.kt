@@ -4,10 +4,7 @@ import ar.edu.unq.eperdemic.exceptions.InvalidDataTypeException
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.persistencia.dao.*
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
-import ar.edu.unq.eperdemic.persistencia.repository.spring.EspecieRepository
-import ar.edu.unq.eperdemic.persistencia.repository.spring.PatogenoRepository
-import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
-import ar.edu.unq.eperdemic.persistencia.repository.spring.VectorRepository
+import ar.edu.unq.eperdemic.persistencia.repository.spring.*
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.utils.DataService
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,12 +19,14 @@ class DataServiceSpring: DataService {
     @Autowired lateinit var ubicacionRepository: UbicacionRepository
     @Autowired lateinit var vectorRepository: VectorRepository
     @Autowired lateinit var especieRepository: EspecieRepository
+    @Autowired lateinit var mutacionRepositor: MutacionRepository
 
     override fun eliminarTodo() {
         patogenoRepository.deleteAll()
         vectorRepository.deleteAll()
         ubicacionRepository.deleteAll()
         especieRepository.deleteAll()
+        mutacionRepositor.deleteAll()
     }
 
     override fun persistir(entidades: List<Any>): List<Any> {
@@ -37,6 +36,7 @@ class DataServiceSpring: DataService {
                 is Vector -> vectorRepository.save(entidad)
                 is Especie -> especieRepository.save(entidad)
                 is Ubicacion -> ubicacionRepository.save(entidad)
+                is Mutacion -> mutacionRepositor.save(entidad)
                 else -> throw InvalidDataTypeException("El dato no es persistible.")
             }
         }
