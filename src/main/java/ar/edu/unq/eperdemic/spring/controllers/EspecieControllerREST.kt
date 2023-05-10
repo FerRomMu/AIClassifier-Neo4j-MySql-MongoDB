@@ -33,7 +33,7 @@ class EspecieControllerREST {
 
     @GetMapping("/cantidadInfectados/{id}")
     fun cantidadDeInfectados(@PathVariable("id") especieId: Long): Int {
-        TODO()
+        return especieService.cantidadDeInfectados(especieId)
     }
 
 }
