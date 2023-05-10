@@ -27,10 +27,5 @@ class EstadisticaControllerREST {
     fun repoteDeContagios(
         @PathVariable nombre: String
     ): ReporteDeContagiosDTO = ReporteDeContagiosDTO.from(estadisticaService.reporteDeContagios(nombre))
-    /*
 
-    fun especieLider(): Especie
-    fun reporteDeContagios(nombreDeLaUbicacion: String): ReporteDeContagios
-    fun lideres(): List<Especie>
-    * */
 }
