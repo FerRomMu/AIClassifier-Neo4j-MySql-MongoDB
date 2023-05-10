@@ -15,6 +15,6 @@ class MutacionControllerREST {
 
     @PostMapping("/{id}")
     fun agregarMutacion(@PathVariable id: Long, @RequestBody mutacion: MutacionDTO): MutacionDTO {
-        return MutacionDTO.desdeModelo(mutacionService.agregarMutacion(id, MutacionDTO.aModelo(mutacion)))
+        return MutacionDTO.desdeModelo(mutacionService.agregarMutacion(id, mutacion.aModelo()), id)
     }
 }
