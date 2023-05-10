@@ -1,46 +1,36 @@
 package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.*
-import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
-import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
-internal class UbicacionServiceImplTest {
+@ExtendWith(SpringExtension::class)
+@SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class UbicacionServiceImplTest {
 
+
+    @Autowired
     lateinit var vectorService: VectorServiceImpl
-    lateinit var vectorDAO: HibernateVectorDAO
-    lateinit var patogenoDAO: PatogenoDAO
-    lateinit var especieDAO: EspecieDAO
 
     lateinit var ubicacionService: UbicacionServiceImpl
-    lateinit var ubicacionDAO: HibernateUbicacionDAO
     lateinit var dado: Randomizador
     lateinit var dataService: DataService
 
     @BeforeEach
     fun setUp() {
-        ubicacionDAO = HibernateUbicacionDAO()
-        ubicacionService = UbicacionServiceImpl()
         dataService = DataServiceImpl()
-        ubicacionDAO = HibernateUbicacionDAO()
         ubicacionService = UbicacionServiceImpl()
-        patogenoDAO = HibernatePatogenoDAO()
-
-        especieDAO = HibernateEspecieDAO()
-
-        vectorDAO = HibernateVectorDAO()
-        vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO,especieDAO)
 
         dado = Randomizador.getInstance()
         dado.estado = EstadoRandomizadorDeterminístico()
