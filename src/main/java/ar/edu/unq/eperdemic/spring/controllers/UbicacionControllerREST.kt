@@ -51,7 +51,8 @@ class UbicacionControllerREST {
 
     @GetMapping("/vectoresEn/{id}")
     fun vectoresEn(@PathVariable("id") id: Long): List<VectorDAO> {
-        return ubicacionService.vectoresEn().map { vector -> VectorDTO.desdeModelo(vector) }
+        TODO("Quitar comentario cuando este vector DTO")
+        //return ubicacionService.vectoresEn().map { vector -> VectorDTO.desdeModelo(vector) }
     }
 
 }
