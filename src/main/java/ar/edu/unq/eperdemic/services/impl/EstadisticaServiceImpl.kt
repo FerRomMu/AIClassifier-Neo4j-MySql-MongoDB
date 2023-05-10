@@ -9,6 +9,7 @@ import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
 import ar.edu.unq.eperdemic.services.EstadisticaService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 
 @Service
@@ -24,11 +25,15 @@ class EstadisticaServiceImpl() : EstadisticaService {
     }
 
     override fun reporteDeContagios(nombreDeLaUbicacion: String): ReporteDeContagios {
-        return ReporteDeContagios(
-            ubicacionRepository.cantidadVectoresPresentes(nombreDeLaUbicacion).toInt(),
-            ubicacionRepository.cantidadVectoresInfectados(nombreDeLaUbicacion).toInt(),
-            ubicacionRepository.nombreEspecieQueMasInfectaVectores(nombreDeLaUbicacion)
-        )
+        try {
+            return ReporteDeContagios(
+                ubicacionRepository.cantidadVectoresPresentes(nombreDeLaUbicacion).toInt(),
+                ubicacionRepository.cantidadVectoresInfectados(nombreDeLaUbicacion).toInt(),
+                ubicacionRepository.nombreEspecieQueMasInfectaVectores(nombreDeLaUbicacion)
+            )
+        } catch(e: EmptyResultDataAccessException) {
+            throw DataNotFoundException("No hay ubicacion o especie en dicha ubicacion.")
+        }
     }
 
     override fun lideres(): List<Especie>{

@@ -18,14 +18,15 @@ class EstadisticaControllerREST {
     @Autowired lateinit var estadisticaService: EstadisticaServiceImpl
 
     @GetMapping("/especieLider")
-    fun especieLider() = EspecieDTO.from(estadisticaService.especieLider())
+    fun especieLider() = EspecieDTO.desdeModelo(estadisticaService.especieLider())
 
     @GetMapping("/lideres")
-    fun lideres(): List<EspecieDTO> = estadisticaService.lideres().map { EspecieDTO.from(it) }
+    fun lideres(): List<EspecieDTO> = estadisticaService.lideres().map { EspecieDTO.desdeModelo(it) }
 
-    @GetMapping("/reporteDeContagios/{nombre}")
+    @GetMapping("/reporteDeContagios/{nombre}/{equipo}")
     fun repoteDeContagios(
-        @PathVariable nombre: String
-    ): ReporteDeContagiosDTO = ReporteDeContagiosDTO.from(estadisticaService.reporteDeContagios(nombre))
-
+        @PathVariable nombre: String,
+        @PathVariable equipo: String
+    ): ReporteDeContagiosDTO = ReporteDeContagiosDTO
+                                    .desdeModelo(estadisticaService.reporteDeContagios(nombre), nombre, equipo)
 }

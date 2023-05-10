@@ -1,11 +1,9 @@
-package ar.edu.unq.eperdemic.service.impl
+package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
-import ar.edu.unq.eperdemic.persistencia.dao.*
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.services.*
-import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
+import ar.edu.unq.eperdemic.utils.DataService
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,10 +21,10 @@ import javax.persistence.NoResultException
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class EstadisticaServiceImplTest {
 
-    @Autowired lateinit var dataService: DataServiceImpl
+    @Autowired lateinit var dataService: DataService
     @Autowired lateinit var estadisticaService: EstadisticaService
     @Autowired lateinit var ubicacionService : UbicacionService
-    @Autowired lateinit var vectorService : VectorService
+    //@Autowired lateinit var vectorService : VectorService
     @Autowired lateinit var especieService: EspecieService
 
     @BeforeEach
@@ -36,7 +34,7 @@ internal class EstadisticaServiceImplTest {
 
     @Test
     fun especieLider() {
-
+        TODO("Quitar comentario cuando se agregue vector service.") /*
         ubicacionService.crearUbicacion("ubicacionTest")
 
         val patogenoDeLaEspecie1 = Patogeno("Gripe")
@@ -60,11 +58,12 @@ internal class EstadisticaServiceImplTest {
 
         especie1 = especieService.recuperarEspecie(especie1.id!!)
 
-        assertEquals(especie1.id,estadisticaService.especieLider().id)
+        assertEquals(especie1.id,estadisticaService.especieLider().id)*/
     }
 
     @Test
     fun `si devuelvo los lideres obtengo las 10 especies con mayores infectados en orden descendente`(){
+        TODO("Quitar comentario cuando se agregue vector service.")/*
         val patogenoDeLaEspecie1 = Patogeno("Gripe")
         dataService.persistir(patogenoDeLaEspecie1)
 
@@ -222,11 +221,12 @@ internal class EstadisticaServiceImplTest {
         assertEquals(especie1.id, especiesLideres[9].id)
         assertEquals(especie1.patogeno.id, especiesLideres[9].patogeno.id)
         assertEquals(especie1.nombre, especiesLideres[9].nombre)
-        assertEquals(especie1.paisDeOrigen, especiesLideres[9].paisDeOrigen)
+        assertEquals(especie1.paisDeOrigen, especiesLideres[9].paisDeOrigen)*/
     }
 
     @Test
     fun `si devuelvo los lideres y no hay 10 especies obtengo las especies con mayores infectados en orden descendente que haya`(){
+        TODO("Quitar comentario cuando se agregue vector service.")/*
         val patogenoDeLaEspecie1 = Patogeno("Gripe")
         dataService.persistir(patogenoDeLaEspecie1)
 
@@ -283,7 +283,7 @@ internal class EstadisticaServiceImplTest {
         assertEquals(especie1.nombre, especiesLideres[3].nombre)
         assertEquals(especie1.paisDeOrigen, especiesLideres[3].paisDeOrigen)
 
-        assertEquals(4, especiesLideres.size)
+        assertEquals(4, especiesLideres.size)*/
     }
 
     @Test
