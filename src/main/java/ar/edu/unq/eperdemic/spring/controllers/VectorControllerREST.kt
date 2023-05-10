@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.spring.controllers
 
+import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.TipoDeVector
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.spring.controllers.dto.EspecieDTO
@@ -38,4 +39,9 @@ class VectorControllerREST {
         @PathVariable("especie") especieDTO: EspecieDTO
     ) =
         vectorService.infectar(vectorDTO.aModelo(), especieDTO.aModelo())
+
+    @GetMapping("/enfermedades/{vectorId}")
+    fun enfermedades(@PathVariable("vectorId") vectorId: Long): List<EspecieDTO>
+        = vectorService.enfermedades(vectorId).map { e -> EspecieDTO.desdeModelo(e) }
+
 }
