@@ -74,10 +74,10 @@ class PatogenoServiceTest {
 
         assertEquals(0, patogenos.size)
     }
-/*
+
     @Test
     fun `si agrego una especie se persiste en el patogeno`() {
-
+        TODO("Remover comentario cuando este ubicacion service") /*
         val ubicacion = ubicacionService.crearUbicacion("Ubicacion")
         var vectorInfectado = Vector(TipoDeVector.Persona)
         vectorInfectado.ubicacion = ubicacion
@@ -88,14 +88,12 @@ class PatogenoServiceTest {
         patogenoService.agregarEspecie(patogeno.id!!, "virusT", ubicacion.id!!)
         val patogenoRecuperado = patogenoService.recuperarPatogeno(patogeno.id!!)
 
-        assertTrue(patogenoRecuperado.especies.map{e -> e.nombre}.contains("virusT"))
+        assertTrue(patogenoRecuperado.especies.map{e -> e.nombre}.contains("virusT"))*/
     }
 
- */
-/*
     @Test
     fun `si agrego una especie infecta a un vector de la ubicacion`() {
-
+        TODO("Remover comentario cuando este ubicacion service") /*
         val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion")
         var vectorInfectado = Vector(TipoDeVector.Persona)
         vectorInfectado.ubicacion = ubicacionPatogeno
@@ -108,14 +106,12 @@ class PatogenoServiceTest {
         patogenoService.agregarEspecie(patogeno.id!!, "virusT", ubicacionPatogeno.id!!)
         vectorInfectado = vectorService.recuperarVector(vectorInfectado.id!!)
 
-        assertTrue(vectorInfectado.especiesContagiadas.map{e -> e.nombre}.contains("virusT"))
+        assertTrue(vectorInfectado.especiesContagiadas.map{e -> e.nombre}.contains("virusT"))*/
     }
 
- */
-/*
     @Test
     fun `si agrego una especie se persiste la especie`() {
-
+        TODO("Remover comentario cuando este ubicacion service") /*
         val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion")
         val vector = Vector(TipoDeVector.Persona)
         vector.ubicacion = ubicacionPatogeno
@@ -128,15 +124,13 @@ class PatogenoServiceTest {
         
         assertEquals(especieCreada.id, especiePersistida.id)
         assertEquals(especieCreada.patogeno.id, especiePersistida.patogeno.id)
-        assertEquals(especieCreada.nombre, especiePersistida.nombre)
+        assertEquals(especieCreada.nombre, especiePersistida.nombre)*/
 
     }
-    
- */
 
-    /*
     @Test
     fun `si agrego una especie y no hay vectores a infectar en la ubicacion falla`() {
+        TODO("Remover comentario cuando este ubicacion service") /*
         patogeno = Patogeno("Gripe")
 
         patogenoService.crearPatogeno(patogeno)
@@ -144,10 +138,8 @@ class PatogenoServiceTest {
 
         assertThrows(NoResultException::class.java) {
             patogenoService.agregarEspecie(patogeno.id!!, "virusT", ubicacionSinVectores.id!!)
-        }
+        }*/
     }
-
-     */
 
     @Test
     fun `si trato de recuperar las especies de un patogeno las devuelve`() {
@@ -174,9 +166,10 @@ class PatogenoServiceTest {
 
         assertTrue(patogenoService.esPandemia(especie.id!!))
     }
-    /*
+
     @Test
     fun `si ejecuto esPandemia devuelve falso para una especie en menos de la mitad de ubicaciones`(){
+        TODO("Remover comentario cuando este ubicacion y vector service")/*
         dataService.crearSetDeDatosIniciales()
 
         var patogeno = Patogeno("Gripe")
@@ -188,10 +181,8 @@ class PatogenoServiceTest {
         var vector = vectorService.crearVector(TipoDeVector.Persona, ubicacion.id!!)
         vectorService.infectar(vector,especie)
 
-        assertFalse(patogenoService.esPandemia(especie.id!!))
+        assertFalse(patogenoService.esPandemia(especie.id!!))*/
     }
-
-     */
 
     @AfterEach
     fun deleteAll() {
