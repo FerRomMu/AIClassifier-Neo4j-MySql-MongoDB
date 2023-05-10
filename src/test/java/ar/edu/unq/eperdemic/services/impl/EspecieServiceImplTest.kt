@@ -81,9 +81,10 @@ class EspecieServiceImplTest {
 
         assertEquals(0, cantidad)
     }
-/*
+
     @Test
     fun `obtener la cantidad de infectados de una especie`() {
+        TODO("Quitar comentario cuando este vector service implementado")/*
         patogeno = Patogeno("Gripe")
         especie = Especie(patogeno,"especie11", "ARG")
         val vector = Vector(TipoDeVector.Animal)
@@ -95,10 +96,8 @@ class EspecieServiceImplTest {
 
         val cantidad = especieService.cantidadDeInfectados(especie.id!!)
 
-        assertEquals(2, cantidad)
+        assertEquals(2, cantidad)*/
     }
-
- */
 
     @AfterEach
     fun deleteAll() {
