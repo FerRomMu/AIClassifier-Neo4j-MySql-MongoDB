@@ -75,7 +75,7 @@ class UbicacionRepositoryTest {
     fun `si borro una ubicacion esta deja de estar`(){
         data.persistir(ubicacion)
 
-        ubicacionRepository.deleteById(ubicacion.id)
+        ubicacionRepository.deleteById(ubicacion.id!!)
 
         assertTrue(ubicacionRepository.findById(ubicacion.id!!).isEmpty)
     }
