@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.services.impl
 
+import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.TipoDeVector
 import ar.edu.unq.eperdemic.modelo.Ubicacion
@@ -10,50 +11,57 @@ import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.persistencia.repository.spring.EspecieRepository
+import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
+import ar.edu.unq.eperdemic.persistencia.repository.spring.VectorRepository
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import kotlin.jvm.optionals.getOrNull
 
-class VectorServiceImpl(
-    private val vectorDAO: VectorDAO,
-    private val ubicacionDAO: UbicacionDAO,
-    private val especieDAO: EspecieDAO
-  ): VectorService {
+@Transactional
+@Service
+class VectorServiceImpl(): VectorService {
+
+    @Autowired lateinit var vectorRepository: VectorRepository
+    @Autowired lateinit var ubicacionRepository: UbicacionRepository
+    @Autowired lateinit var especieRepository: EspecieRepository
 
     override fun infectar(vector: Vector, especie: Especie) {
-        runTrx {
-            vector.agregarEspecie(especie)
-            especie.agregarVector(vector)
-            especieDAO.guardar(especie)
-            vectorDAO.guardar(vector)
-        }
+        vector.agregarEspecie(especie)
+        especie.agregarVector(vector)
+        especieRepository.save(especie)
+        vectorRepository.save(vector)
     }
 
     override fun enfermedades(vectorId: Long): List<Especie> {
-        return runTrx { vectorDAO.enfermedades(vectorId) }
+        return vectorRepository.enfermedades(vectorId)
     }
 
     override fun crearVector(tipo: TipoDeVector, ubicacionId: Long): Vector {
-        return runTrx {
-            val ubicacionDelVector = ubicacionDAO.recuperar(ubicacionId);
+        val ubicacionDelVector = ubicacionRepository.findById(ubicacionId)
+            .getOrNull()?: throw IdNotFoundException("No se encontró una ubicación con el id dado.")
 
-            val vector = Vector( tipo)
-            vector.ubicacion = ubicacionDelVector
-            vectorDAO.guardar(vector)
+        val vector = Vector( tipo)
+        vector.ubicacion = ubicacionDelVector
+        vectorRepository.save(vector)
 
-            vector
-        }
+        return vector
     }
 
     override fun recuperarVector(vectorId: Long): Vector {
-        return runTrx { vectorDAO.recuperar(vectorId) }
+        return vectorRepository.findById(vectorId)
+            .getOrNull() ?: throw IdNotFoundException("No se encontró un vector con el id dado.")
     }
 
     override fun borrarVector(vectorId: Long) {
-        return runTrx { vectorDAO.borrar(vectorId) }
+        vectorRepository.deleteById(vectorId)
     }
 
     override fun recuperarTodos(): List<Vector> {
-        return runTrx { vectorDAO.recuperarTodos() }
+        return vectorRepository.findAll().toList()
     }
 
 }
