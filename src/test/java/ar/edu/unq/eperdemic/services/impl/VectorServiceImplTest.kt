@@ -2,32 +2,31 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
-import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
+import ar.edu.unq.eperdemic.services.UbicacionService
+import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.utils.DataService
 import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VectorServiceImplTest {
-    @Autowired lateinit var vectorService: VectorServiceImpl
-    @Autowired lateinit var ubicacionService: UbicacionServiceImpl
-
-    //@Autowired lateinit var patogenoRep: PatogenoRepository
+    @Autowired lateinit var vectorService: VectorService
+    @Autowired lateinit var ubicacionService: UbicacionService
+    @Autowired lateinit var dataService: DataService
 
     lateinit var bernal: Ubicacion
-    lateinit var dataService: DataServiceImpl
+
 
     @BeforeEach
     fun setUp() {
-
-        vectorService = VectorServiceImpl()
-        // ubicacionService = UbicacionServiceImpl()
-        dataService = DataServiceImpl()
-
         bernal = ubicacionService.crearUbicacion("Bernal")
     }
 
@@ -40,14 +39,14 @@ class VectorServiceImplTest {
 
         val especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
 
-        Assertions.assertEquals(vectorAInfectar.especiesContagiadas.size, 0)
+        assertEquals(vectorAInfectar.especiesContagiadas.size, 0)
 
         vectorService.infectar(vectorAInfectar,especieAContagiar)
 
-        Assertions.assertEquals(vectorAInfectar.especiesContagiadas.size, 1)
-        Assertions.assertEquals(vectorAInfectar.especiesContagiadas.first().id, especieAContagiar.id)
-        Assertions.assertEquals(vectorAInfectar.especiesContagiadas.first().nombre, especieAContagiar.nombre)
-        Assertions.assertEquals(
+        assertEquals(vectorAInfectar.especiesContagiadas.size, 1)
+        assertEquals(vectorAInfectar.especiesContagiadas.first().id, especieAContagiar.id)
+        assertEquals(vectorAInfectar.especiesContagiadas.first().nombre, especieAContagiar.nombre)
+        assertEquals(
             vectorAInfectar.especiesContagiadas.first().paisDeOrigen,
             especieAContagiar.paisDeOrigen
         )
@@ -59,17 +58,17 @@ class VectorServiceImplTest {
         val patogenoDeLaEspecie = Patogeno("Gripe")
         dataService.persistir(patogenoDeLaEspecie)
 
-        val vectorAInfectar = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
+        val vectorAInfectar = Vector(TipoDeVector.Persona)
 
         val especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
 
         vectorService.infectar(vectorAInfectar,especieAContagiar)
         val resultado = vectorService.enfermedades(vectorAInfectar.id!!)
 
-        Assertions.assertEquals(1, resultado.size)
-        Assertions.assertEquals(especieAContagiar.id, resultado[0].id)
-        Assertions.assertEquals(especieAContagiar.nombre, resultado[0].nombre)
-        Assertions.assertEquals(especieAContagiar.paisDeOrigen, resultado[0].paisDeOrigen)
+        assertEquals(1, resultado.size)
+        assertEquals(especieAContagiar.id, resultado[0].id)
+        assertEquals(especieAContagiar.nombre, resultado[0].nombre)
+        assertEquals(especieAContagiar.paisDeOrigen, resultado[0].paisDeOrigen)
 
     }
 
@@ -77,7 +76,7 @@ class VectorServiceImplTest {
     fun `Si pido enfermedad de un vector que no esta infectado recibo 0 enfermedades`() {
 
         val vectorSano = vectorService.crearVector(TipoDeVector.Persona, bernal.id!!)
-        Assertions.assertEquals(0, vectorService.enfermedades(vectorSano.id!!).size)
+        assertEquals(0, vectorService.enfermedades(vectorSano.id!!).size)
 
     }
 
@@ -107,9 +106,9 @@ class VectorServiceImplTest {
         val vector = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
         val vectorRecuperado = vectorService.recuperarVector(vector.id!!)
 
-        Assertions.assertEquals(vector.id, vectorRecuperado.id)
-        Assertions.assertEquals(vector.tipo, vectorRecuperado.tipo)
-        Assertions.assertEquals(vector.ubicacion.id, vectorRecuperado.ubicacion.id)
+        assertEquals(vector.id, vectorRecuperado.id)
+        assertEquals(vector.tipo, vectorRecuperado.tipo)
+        assertEquals(vector.ubicacion.id, vectorRecuperado.ubicacion.id)
 
     }
 
@@ -124,7 +123,7 @@ class VectorServiceImplTest {
         val vector = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
         val vectorRecuperado = vectorService.recuperarVector(vector.id!!)
 
-        Assertions.assertEquals(vector.id, vectorRecuperado.id)
+        assertEquals(vector.id, vectorRecuperado.id)
 
         vectorService.borrarVector(vector.id!!)
 
@@ -133,8 +132,7 @@ class VectorServiceImplTest {
 
     @Test
     fun `si trato de borrar un vector con id invalida falla`() {
-
-        Assertions.assertThrows(IdNotFoundException::class.java) { vectorService.borrarVector(123241) }
+        Assertions.assertThrows(EmptyResultDataAccessException::class.java) { vectorService.borrarVector(123241) }
     }
 
     @Test
@@ -142,8 +140,8 @@ class VectorServiceImplTest {
         val vectoresPersistidos = dataService.crearSetDeDatosIniciales().filterIsInstance<Vector>()
         val vectores = vectorService.recuperarTodos()
 
-        Assertions.assertEquals(vectoresPersistidos.size, vectores.size)
-        Assertions.assertTrue(
+        assertEquals(vectoresPersistidos.size, vectores.size)
+        assertTrue(
             vectores.all { vector ->
                 vectoresPersistidos.any {
                     it.id == vector.id &&
@@ -160,7 +158,7 @@ class VectorServiceImplTest {
 
         val vectores = vectorService.recuperarTodos()
 
-        Assertions.assertEquals(0, vectores.size)
+        assertEquals(0, vectores.size)
     }
 
     @AfterEach

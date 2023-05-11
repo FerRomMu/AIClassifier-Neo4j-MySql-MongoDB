@@ -57,7 +57,7 @@ class VectorServiceImpl(): VectorService {
     }
 
     override fun borrarVector(vectorId: Long) {
-        return vectorRepository.deleteById(vectorId)
+        vectorRepository.deleteById(vectorId)
     }
 
     override fun recuperarTodos(): List<Vector> {
