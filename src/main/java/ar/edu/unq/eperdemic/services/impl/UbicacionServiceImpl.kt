@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.Randomizador
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
+import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
@@ -11,15 +12,15 @@ import org.hibernate.exception.ConstraintViolationException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import kotlin.jvm.optionals.getOrNull
 
 @Transactional
 @Service
 class UbicacionServiceImpl(): UbicacionService {
 
-    @Autowired
-    lateinit var ubicacionRepository : UbicacionRepository
-    @Autowired
-    lateinit var vectorRepository : VectorRepository
+    @Autowired lateinit var ubicacionRepository : UbicacionRepository
+
+    @Autowired lateinit var vectorRepository : VectorRepository
 
     override fun mover(vectorId: Long, ubicacionid: Long) {
             var listaDeVectores = ubicacionRepository.vectoresEn(ubicacionid).toList()
@@ -48,9 +49,10 @@ class UbicacionServiceImpl(): UbicacionService {
                 val vectorContagioso = vectores.removeAt(numeroAleatorio)
                 for(vector in vectores){
                     vectorContagioso.intentarInfectar(vector)
+                    vectorRepository.save(vector)
                 }
+                vectorRepository.save(vectorContagioso)
             }
-
     }
 
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
@@ -64,7 +66,8 @@ class UbicacionServiceImpl(): UbicacionService {
     }
 
     override fun recuperar(id: Long): Ubicacion {
-        return ubicacionRepository.findById(id).get()
+        return ubicacionRepository.findById(id)
+            .getOrNull() ?: throw IdNotFoundException("No se encontró una especie con el id dado.")
     }
 
     override fun recuperarTodos(): List<Ubicacion> {

@@ -30,7 +30,7 @@ abstract class Mutacion {
 
     abstract fun equals(mutacion: Mutacion) : Boolean
     abstract fun permitoContagiarATipo(tipo: TipoDeVector) : Boolean
-    open fun surtirEfectoEn(vetor: Vector) {}
+    open fun surtirEfectoEn(vector: Vector) {}
 }
 
 @Entity
