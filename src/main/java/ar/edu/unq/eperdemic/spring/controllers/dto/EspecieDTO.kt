@@ -1,6 +1,7 @@
 package ar.edu.unq.eperdemic.spring.controllers.dto
 
 import ar.edu.unq.eperdemic.modelo.Especie
+import ar.edu.unq.eperdemic.modelo.Patogeno
 
 class EspecieDTO(
     val nombre: String,
@@ -8,10 +9,7 @@ class EspecieDTO(
     val patogenoId: Long?
 ) {
 
-// TODO: Implementar aModelo
-//        fun aModelo() : Especie {
-//        return null
-//   }
+    fun aModelo(patogeno: Patogeno) : Especie = Especie(patogeno, this.nombre, this.paisDeOrigen)
 
 
 companion object {
