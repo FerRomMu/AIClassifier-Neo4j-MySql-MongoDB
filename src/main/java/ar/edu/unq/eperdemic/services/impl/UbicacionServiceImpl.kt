@@ -56,6 +56,7 @@ class UbicacionServiceImpl(): UbicacionService {
             }
     }
 
+    @Transactional(rollbackFor = [Exception::class], noRollbackFor = [DataIntegrityViolationException::class])
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
         val ubicacion = Ubicacion(nombreUbicacion)
         try {
