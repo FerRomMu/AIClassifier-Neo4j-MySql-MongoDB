@@ -2,8 +2,11 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
+import ar.edu.unq.eperdemic.services.UbicacionService
+import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
+import org.hibernate.exception.ConstraintViolationException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -20,24 +23,24 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 class UbicacionServiceImplTest {
 
 
-    @Autowired
-    lateinit var vectorService: VectorServiceImpl
 
-    lateinit var ubicacionService: UbicacionServiceImpl
+    // @Autowired lateinit var vectorService: VectorService
+
+    @Autowired lateinit var ubicacionService: UbicacionService
+
+    @Autowired lateinit var dataService: DataService
+
     lateinit var dado: Randomizador
-    lateinit var dataService: DataService
 
     @BeforeEach
     fun setUp() {
-        dataService = DataServiceImpl()
-        ubicacionService = UbicacionServiceImpl()
-
         dado = Randomizador.getInstance()
         dado.estado = EstadoRandomizadorDeterminístico()
     }
 
     @Test
     fun  `mover vector a una ubicacion con un humano y un animal`() {
+        TODO("Remover comentario cuando este Vector service") /*
         var cordoba = ubicacionService.crearUbicacion("Cordoba")
         var chaco = ubicacionService.crearUbicacion("Chaco")
 
@@ -79,10 +82,12 @@ class UbicacionServiceImplTest {
         assertEquals(vectorVictima1.especiesContagiadas.size,1)
         assertEquals(vectorVictima1.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
+        */
     }
 
     @Test
     fun  `mover vector insecto a una ubicacion con solo insectos`() {
+        TODO("Remover comentario cuando este Vector service") /*
         var cordoba = ubicacionService.crearUbicacion("Cordoba")
         var chaco = ubicacionService.crearUbicacion("Chaco")
 
@@ -121,10 +126,12 @@ class UbicacionServiceImplTest {
         assertEquals(vectorAMover.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
+        */
     }
 
     @Test
     fun  `mover vector a ubicacion vacia`() {
+        TODO("Remover comentario cuando este Vector service") /*
         var cordoba = ubicacionService.crearUbicacion("Cordoba")
         var chaco = ubicacionService.crearUbicacion("Chaco")
 
@@ -146,10 +153,12 @@ class UbicacionServiceImplTest {
 
         vectorAMover = vectorService.recuperarVector(vectorAMover.id!!)
         assertEquals(vectorAMover.ubicacion.id,chaco.id)
+        */
     }
 
     @Test
     fun `Expandir en una ubicacion`() {
+        TODO("Remover comentario cuando este Vector service") /*
         var cordoba = ubicacionService.crearUbicacion("Cordoba")
 
 
@@ -182,10 +191,12 @@ class UbicacionServiceImplTest {
         assertEquals(vectorLocal.especiesContagiadas.size,1)
         assertEquals(vectorLocal.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorLocal2.especiesContagiadas.size,0)
+        */
     }
 
     @Test
     fun `Expandir en una ubicacion sin contagios no hace nada`() {
+        TODO("Remover comentario cuando este Vector service") /*
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
 
         val vectorSinContagiar = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
@@ -197,6 +208,7 @@ class UbicacionServiceImplTest {
         assertEquals(vectorSinContagiar.especiesContagiadas.size,0)
         assertEquals(vectorSinContagiar2.especiesContagiadas.size,0)
         assertEquals(vectorSinContagiar3.especiesContagiadas.size,0)
+        */
     }
 
 

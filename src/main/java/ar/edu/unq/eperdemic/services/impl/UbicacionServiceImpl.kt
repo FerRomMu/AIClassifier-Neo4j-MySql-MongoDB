@@ -10,6 +10,7 @@ import ar.edu.unq.eperdemic.persistencia.repository.spring.VectorRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
 import org.hibernate.exception.ConstraintViolationException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.jvm.optionals.getOrNull
@@ -60,7 +61,7 @@ class UbicacionServiceImpl(): UbicacionService {
         try {
             ubicacionRepository.save(ubicacion)
             return ubicacion
-        } catch (e: ConstraintViolationException) {
+        } catch (e: DataIntegrityViolationException) {  // ConstraintViolationException
             throw DataDuplicationException("Ya existe una ubicación con ese nombre.")
         }
     }
