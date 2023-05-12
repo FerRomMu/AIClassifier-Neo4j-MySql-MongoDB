@@ -34,253 +34,123 @@ internal class EstadisticaServiceImplTest {
 
     @Test
     fun especieLider() {
-        ubicacionService.crearUbicacion("ubicacionTest")
+        val patogeno2 = Patogeno("tipo444444")
+        val especie2 = patogeno2.crearEspecie("nombre444444", "lugar34444")
+        dataService.persistir(listOf(especie2, patogeno2))
 
-        val patogenoDeLaEspecie1 = Patogeno("Gripe")
-        dataService.persistir(patogenoDeLaEspecie1)
+        val setInicial = dataService.crearSetDeDatosIniciales()
+        val personas = setInicial
+            .filterIsInstance<Vector>()
+            .filter {
+                it.tipo == TipoDeVector.Persona
+            }
+        personas.forEach{ it.agregarEspecie(especie2) }
+        dataService.persistir(personas)
 
-        var especie1 = patogenoDeLaEspecie1.crearEspecie("Especie1","Rusia")
-        val especie2 = patogenoDeLaEspecie1.crearEspecie("Especie2","Rusia")
+        val especieLider = estadisticaService.especieLider()
 
-        val vectorHumano1 = Vector(TipoDeVector.Persona)
-        val vectorHumano2 = Vector(TipoDeVector.Persona)
-        val vectorHumano3 = Vector(TipoDeVector.Persona)
-        val vectorAnimal = Vector(TipoDeVector.Animal)
-        val vectorInsecto = Vector(TipoDeVector.Insecto)
-
-        vectorService.infectar(vectorHumano1,especie1)
-        vectorService.infectar(vectorHumano2,especie1)
-
-        vectorService.infectar(vectorHumano3,especie2)
-        vectorService.infectar(vectorAnimal,especie2)
-        vectorService.infectar(vectorInsecto,especie2)
-
-        especie1 = especieService.recuperarEspecie(especie1.id!!)
-
-        assertEquals(especie1.id,estadisticaService.especieLider().id)
+        assertEquals(especie2.id, especieLider.id)
+        assertEquals(especie2.paisDeOrigen, especieLider.paisDeOrigen)
+        assertEquals(especie2.nombre, especieLider.nombre)
     }
 
     @Test
-    fun `si devuelvo los lideres obtengo las 10 especies con mayores infectados en orden descendente`(){
-        val patogenoDeLaEspecie1 = Patogeno("Gripe")
-        dataService.persistir(patogenoDeLaEspecie1)
+    fun `si pido los lideres y hay menos de diez me da los que haya en orden de mas contagios`(){
 
-        val especie1 = patogenoDeLaEspecie1.crearEspecie("Especie1","Rusia")
-        val especie2 = patogenoDeLaEspecie1.crearEspecie("Especie2","Rusia")
-        val especie3 = patogenoDeLaEspecie1.crearEspecie("Especie3","Rusia")
-        val especie4 = patogenoDeLaEspecie1.crearEspecie("Especie4","Rusia")
-        val especie5 = patogenoDeLaEspecie1.crearEspecie("Especie5","Rusia")
-        val especie6 = patogenoDeLaEspecie1.crearEspecie("Especie6","Rusia")
-        val especie7 = patogenoDeLaEspecie1.crearEspecie("Especie7","Rusia")
-        val especie8 = patogenoDeLaEspecie1.crearEspecie("Especie8","Rusia")
-        val especie9 = patogenoDeLaEspecie1.crearEspecie("Especie9","Rusia")
-        val especie10 = patogenoDeLaEspecie1.crearEspecie("Especie10","Rusia")
-        patogenoDeLaEspecie1.crearEspecie("Especie11","Rusia")
-        patogenoDeLaEspecie1.crearEspecie("Especie12","Rusia")
+        val patogeno2 = Patogeno("tipo444444")
+        val especie2 = patogeno2.crearEspecie("nombre444444", "lugar34444")
+        val especie3 = patogeno2.crearEspecie("nombre34243", "lugar34243")
+        dataService.persistir(listOf(especie2, especie3, patogeno2))
 
-        val vectorHumano1 = Vector(TipoDeVector.Persona)
-        val vectorHumano2 = Vector(TipoDeVector.Persona)
-        val vectorHumano3 = Vector(TipoDeVector.Persona)
-        val vectorHumano4 = Vector(TipoDeVector.Persona)
-        val vectorHumano5 = Vector(TipoDeVector.Persona)
-        val vectorHumano6 = Vector(TipoDeVector.Persona)
-        val vectorHumano7 = Vector(TipoDeVector.Persona)
-        val vectorHumano8 = Vector(TipoDeVector.Persona)
-        val vectorHumano9 = Vector(TipoDeVector.Persona)
+        val setInicial = dataService.crearSetDeDatosIniciales()
+        val animalesYPersonas = setInicial
+            .filterIsInstance<Vector>()
+            .filter {
+                it.tipo == TipoDeVector.Animal ||
+                        it.tipo == TipoDeVector.Persona
+            }
 
-        val vectorAnimal1 = Vector(TipoDeVector.Animal)
-        val vectorAnimal2 = Vector(TipoDeVector.Animal)
-        val vectorAnimal3 = Vector(TipoDeVector.Animal)
-        val vectorAnimal4 = Vector(TipoDeVector.Animal)
+        for (i in animalesYPersonas.indices) {
+            if (i < 5) {
+                animalesYPersonas[i].agregarEspecie(especie2)
+                animalesYPersonas[i].agregarEspecie(especie3)
+            } else {
+                animalesYPersonas[i].agregarEspecie(especie2)
+            }
+        }
+        val especiesLideresOrdenadas = mutableListOf(especie2, especie3)
 
-        val vectorInsecto1 = Vector(TipoDeVector.Insecto)
-        val vectorInsecto2 = Vector(TipoDeVector.Insecto)
+        dataService.persistir(animalesYPersonas)
 
-        vectorService.infectar(vectorHumano1,especie9)
-        vectorService.infectar(vectorHumano2,especie9)
-        vectorService.infectar(vectorHumano3,especie9)
-        vectorService.infectar(vectorHumano4,especie9)
-        vectorService.infectar(vectorHumano5,especie9)
-        vectorService.infectar(vectorHumano6,especie9)
-        vectorService.infectar(vectorHumano7,especie9)
-        vectorService.infectar(vectorHumano8,especie9)
-        vectorService.infectar(vectorHumano9,especie9)
+        val lideres = estadisticaService.lideres()
 
-        vectorService.infectar(vectorHumano3,especie2)
-        vectorService.infectar(vectorAnimal1,especie2)
-
-        vectorService.infectar(vectorHumano4,especie3)
-        vectorService.infectar(vectorHumano5,especie3)
-        vectorService.infectar(vectorHumano6,especie3)
-
-        vectorService.infectar(vectorHumano5,especie4)
-        vectorService.infectar(vectorHumano4,especie4)
-        vectorService.infectar(vectorHumano3,especie4)
-        vectorService.infectar(vectorHumano2,especie4)
-
-        vectorService.infectar(vectorAnimal2,especie5)
-        vectorService.infectar(vectorAnimal1,especie5)
-        vectorService.infectar(vectorAnimal3,especie5)
-        vectorService.infectar(vectorAnimal4,especie5)
-        vectorService.infectar(vectorHumano7,especie5)
-
-        vectorService.infectar(vectorHumano9,especie7)
-        vectorService.infectar(vectorHumano1,especie7)
-        vectorService.infectar(vectorHumano2,especie7)
-        vectorService.infectar(vectorHumano3,especie7)
-        vectorService.infectar(vectorHumano5,especie7)
-        vectorService.infectar(vectorAnimal2,especie7)
-        vectorService.infectar(vectorAnimal4,especie7)
-
-        vectorService.infectar(vectorAnimal4,especie6)
-        vectorService.infectar(vectorAnimal3,especie6)
-        vectorService.infectar(vectorAnimal2,especie6)
-        vectorService.infectar(vectorAnimal1,especie6)
-        vectorService.infectar(vectorHumano5,especie6)
-        vectorService.infectar(vectorHumano6,especie6)
-
-        vectorService.infectar(vectorHumano1,especie8)
-        vectorService.infectar(vectorHumano2,especie8)
-        vectorService.infectar(vectorHumano3,especie8)
-        vectorService.infectar(vectorHumano4,especie8)
-        vectorService.infectar(vectorHumano5,especie8)
-        vectorService.infectar(vectorHumano6,especie8)
-        vectorService.infectar(vectorHumano7,especie8)
-        vectorService.infectar(vectorHumano8,especie8)
-
-        vectorService.infectar(vectorHumano9,especie1)
-
-        vectorService.infectar(vectorAnimal3,especie10)
-        vectorService.infectar(vectorAnimal2,especie10)
-        vectorService.infectar(vectorAnimal1,especie10)
-        vectorService.infectar(vectorHumano4,especie10)
-        vectorService.infectar(vectorHumano2,especie10)
-        vectorService.infectar(vectorHumano1,especie10)
-        vectorService.infectar(vectorHumano3,especie10)
-        vectorService.infectar(vectorHumano8,especie10)
-        vectorService.infectar(vectorHumano5,especie10)
-        vectorService.infectar(vectorHumano6,especie10)
-
-
-        vectorService.infectar(vectorHumano6,especie1)
-
-        vectorService.infectar(vectorInsecto1,especie2)
-        vectorService.infectar(vectorInsecto2,especie2)
-
-        assertEquals(10,estadisticaService.lideres().size)
-
-        val especiesLideres = estadisticaService.lideres()
-
-        assertEquals(especie10.id, especiesLideres[0].id)
-        assertEquals(especie10.patogeno.id, especiesLideres[0].patogeno.id)
-        assertEquals(especie10.nombre, especiesLideres[0].nombre)
-        assertEquals(especie10.paisDeOrigen, especiesLideres[0].paisDeOrigen)
-
-        assertEquals(especie9.id, especiesLideres[1].id)
-        assertEquals(especie9.patogeno.id, especiesLideres[1].patogeno.id)
-        assertEquals(especie9.nombre, especiesLideres[1].nombre)
-        assertEquals(especie9.paisDeOrigen, especiesLideres[1].paisDeOrigen)
-
-        assertEquals(especie8.id, especiesLideres[2].id)
-        assertEquals(especie8.patogeno.id, especiesLideres[2].patogeno.id)
-        assertEquals(especie8.nombre, especiesLideres[2].nombre)
-        assertEquals(especie8.paisDeOrigen, especiesLideres[2].paisDeOrigen)
-
-        assertEquals(especie7.id, especiesLideres[3].id)
-        assertEquals(especie7.patogeno.id, especiesLideres[3].patogeno.id)
-        assertEquals(especie7.nombre, especiesLideres[3].nombre)
-        assertEquals(especie7.paisDeOrigen, especiesLideres[3].paisDeOrigen)
-
-        assertEquals(especie6.id, especiesLideres[4].id)
-        assertEquals(especie6.patogeno.id, especiesLideres[4].patogeno.id)
-        assertEquals(especie6.nombre, especiesLideres[4].nombre)
-        assertEquals(especie6.paisDeOrigen, especiesLideres[4].paisDeOrigen)
-
-        assertEquals(especie5.id, especiesLideres[5].id)
-        assertEquals(especie5.patogeno.id, especiesLideres[5].patogeno.id)
-        assertEquals(especie5.nombre, especiesLideres[5].nombre)
-        assertEquals(especie5.paisDeOrigen, especiesLideres[5].paisDeOrigen)
-
-        assertEquals(especie4.id, especiesLideres[6].id)
-        assertEquals(especie4.patogeno.id, especiesLideres[6].patogeno.id)
-        assertEquals(especie4.nombre, especiesLideres[6].nombre)
-        assertEquals(especie4.paisDeOrigen, especiesLideres[6].paisDeOrigen)
-
-        assertEquals(especie3.id, especiesLideres[7].id)
-        assertEquals(especie3.patogeno.id, especiesLideres[7].patogeno.id)
-        assertEquals(especie3.nombre, especiesLideres[7].nombre)
-        assertEquals(especie3.paisDeOrigen, especiesLideres[7].paisDeOrigen)
-
-        assertEquals(especie2.id, especiesLideres[8].id)
-        assertEquals(especie2.patogeno.id, especiesLideres[8].patogeno.id)
-        assertEquals(especie2.nombre, especiesLideres[8].nombre)
-        assertEquals(especie2.paisDeOrigen, especiesLideres[8].paisDeOrigen)
-
-        assertEquals(especie1.id, especiesLideres[9].id)
-        assertEquals(especie1.patogeno.id, especiesLideres[9].patogeno.id)
-        assertEquals(especie1.nombre, especiesLideres[9].nombre)
-        assertEquals(especie1.paisDeOrigen, especiesLideres[9].paisDeOrigen)
+        assertEquals(2, lideres.size)
+        for (i in lideres.indices) {
+            assertEquals(especiesLideresOrdenadas[i].id, lideres[i].id)
+            assertEquals(especiesLideresOrdenadas[i].nombre, lideres[i].nombre)
+            assertEquals(especiesLideresOrdenadas[i].paisDeOrigen, lideres[i].paisDeOrigen)
+            assertEquals(especiesLideresOrdenadas[i].patogeno.id, lideres[i].patogeno.id)
+        }
     }
 
     @Test
-    fun `si devuelvo los lideres y no hay 10 especies obtengo las especies con mayores infectados en orden descendente que haya`(){
-        val patogenoDeLaEspecie1 = Patogeno("Gripe")
-        dataService.persistir(patogenoDeLaEspecie1)
+    fun `si pido los lideres me da los primeros diez con mas contagios`(){
 
-        val especie1 = patogenoDeLaEspecie1.crearEspecie("Especie1","Rusia")
-        val especie2 = patogenoDeLaEspecie1.crearEspecie("Especie2","Rusia")
-        val especie3 = patogenoDeLaEspecie1.crearEspecie("Especie3","Rusia")
-        val especie4 = patogenoDeLaEspecie1.crearEspecie("Especie4","Rusia")
+        val patogeno2 = Patogeno("tipo444444")
 
-        val vectorHumano1 = Vector(TipoDeVector.Persona)
-        val vectorHumano2 = Vector(TipoDeVector.Persona)
+        val especiesNoLideres: MutableList<Especie> = mutableListOf()
+        for (i in 1..100) {
+            especiesNoLideres.add(patogeno2.crearEspecie("nombre$i", "lugar$i"))
+        }
 
-        val vectorAnimal1 = Vector(TipoDeVector.Animal)
-        val vectorAnimal2 = Vector(TipoDeVector.Animal)
+        val especiesQueSeranLideres: MutableList<Especie> = mutableListOf()
+        for (i in 101..110) {
+            especiesQueSeranLideres.add(patogeno2.crearEspecie("nombre$i", "lugar$i"))
+        }
 
-        val vectorInsecto1 = Vector(TipoDeVector.Insecto)
+        dataService.persistir(especiesNoLideres + especiesQueSeranLideres + patogeno2)
 
-        vectorService.infectar(vectorHumano1,especie1)
+        val setInicial = dataService.crearSetDeDatosIniciales()
+        val animalesYPersonas = setInicial
+            .filterIsInstance<Vector>()
+            .filter {
+                it.tipo == TipoDeVector.Animal ||
+                        it.tipo == TipoDeVector.Persona
+            }
 
-        vectorService.infectar(vectorHumano1,especie2)
-        vectorService.infectar(vectorAnimal1,especie2)
+        val especiesLideresOrdenadas = mutableListOf<Especie>()
+        for (i in animalesYPersonas.indices) {
+            if (i < 4) {
+                especiesNoLideres.forEach{ animalesYPersonas[i].agregarEspecie(it) }
+                especiesQueSeranLideres.forEach{ animalesYPersonas[i].agregarEspecie(it) }
+            } else {
+                especiesQueSeranLideres.forEach{ animalesYPersonas[i].agregarEspecie(it) }
+                val nuevoLider = especiesQueSeranLideres.removeFirst()
+                especiesLideresOrdenadas.add(nuevoLider)
+            }
+        }
+        especiesLideresOrdenadas.reverse()
 
-        vectorService.infectar(vectorHumano1,especie3)
-        vectorService.infectar(vectorHumano2,especie3)
-        vectorService.infectar(vectorAnimal1,especie3)
+        dataService.persistir(animalesYPersonas)
 
-        vectorService.infectar(vectorHumano1,especie4)
-        vectorService.infectar(vectorHumano2,especie4)
-        vectorService.infectar(vectorAnimal1,especie4)
-        vectorService.infectar(vectorAnimal2,especie4)
+        val lideres = estadisticaService.lideres()
 
-        vectorService.infectar(vectorInsecto1,especie2)
+        assertEquals(10, lideres.size)
+        for (i in lideres.indices) {
+            assertEquals(especiesLideresOrdenadas[i].id, lideres[i].id)
+            assertEquals(especiesLideresOrdenadas[i].nombre, lideres[i].nombre)
+            assertEquals(especiesLideresOrdenadas[i].paisDeOrigen, lideres[i].paisDeOrigen)
+            assertEquals(especiesLideresOrdenadas[i].patogeno.id, lideres[i].patogeno.id)
+        }
+    }
 
-        assertEquals(4,estadisticaService.lideres().size)
+    @Test
+    fun `si pido los lideres pero ninguna especie contagio tanto humanos como animales no recibo anda`(){
 
-        val especiesLideres = estadisticaService.lideres()
+        dataService.crearSetDeDatosIniciales()
+        val lideres = estadisticaService.lideres()
 
-        assertEquals(especie4.id, especiesLideres[0].id)
-        assertEquals(especie4.patogeno.id, especiesLideres[0].patogeno.id)
-        assertEquals(especie4.nombre, especiesLideres[0].nombre)
-        assertEquals(especie4.paisDeOrigen, especiesLideres[0].paisDeOrigen)
-
-        assertEquals(especie3.id, especiesLideres[1].id)
-        assertEquals(especie3.patogeno.id, especiesLideres[1].patogeno.id)
-        assertEquals(especie3.nombre, especiesLideres[1].nombre)
-        assertEquals(especie3.paisDeOrigen, especiesLideres[1].paisDeOrigen)
-
-        assertEquals(especie2.id, especiesLideres[2].id)
-        assertEquals(especie2.patogeno.id, especiesLideres[2].patogeno.id)
-        assertEquals(especie2.nombre, especiesLideres[2].nombre)
-        assertEquals(especie2.paisDeOrigen, especiesLideres[2].paisDeOrigen)
-
-        assertEquals(especie1.id, especiesLideres[3].id)
-        assertEquals(especie1.patogeno.id, especiesLideres[3].patogeno.id)
-        assertEquals(especie1.nombre, especiesLideres[3].nombre)
-        assertEquals(especie1.paisDeOrigen, especiesLideres[3].paisDeOrigen)
-
-        assertEquals(4, especiesLideres.size)
+        assertEquals(0, lideres.size)
     }
 
     @Test

@@ -41,7 +41,7 @@ class EstadisticaServiceImpl() : EstadisticaService {
     }
 
     override fun lideres(): List<Especie>{
-        return TODO("especieRepository.lideres() falta")
+        return especieRepository.lideres()
     }
 
 }
