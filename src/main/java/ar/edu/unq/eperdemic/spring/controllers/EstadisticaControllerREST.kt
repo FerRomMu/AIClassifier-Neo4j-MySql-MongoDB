@@ -25,8 +25,8 @@ class EstadisticaControllerREST {
 
     @GetMapping("/reporteDeContagios/{nombre}/{equipo}")
     fun repoteDeContagios(
-        @PathVariable nombre: String,
-        @PathVariable equipo: String
+        @PathVariable("nombre") nombre: String,
+        @PathVariable("equipo") equipo: String
     ): ReporteDeContagiosDTO = ReporteDeContagiosDTO
                                     .desdeModelo(estadisticaService.reporteDeContagios(nombre), nombre, equipo)
 }
