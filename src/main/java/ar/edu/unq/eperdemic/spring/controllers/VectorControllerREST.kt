@@ -19,12 +19,15 @@ class VectorControllerREST {
     @Autowired lateinit var patogenoService: PatogenoService
 
     @PostMapping("/crearVector/{ubicacionId}")
-    fun crearVector(
-        @RequestBody tipoDeVector: TipoDeVector,
-        @PathVariable("ubicacionId")  ubicacionId: Long
-    ): VectorDTO = VectorDTO
-                      .desdeModelo(vectorService.crearVector(tipoDeVector, ubicacionId))
-
+    fun crearVector(@RequestBody tipoDeVectorWrapper: TipoDeVectorWrapper, @PathVariable("ubicacionId")  ubicacionId: Long): VectorDTO {
+        val tipoDeVector = when (tipoDeVectorWrapper.tipoDeVector) {
+            "Persona" -> TipoDeVector.Persona
+            "Insecto" -> TipoDeVector.Insecto
+            "Animal" -> TipoDeVector.Animal
+            else -> throw IllegalArgumentException("Valor de tipoDeVector inválido")
+        }
+        return  VectorDTO.desdeModelo(vectorService.crearVector(tipoDeVector, ubicacionId))
+    }
     @GetMapping("/{id}")
     fun recuperarVector(@PathVariable("id") id: Long): VectorDTO
         = VectorDTO.desdeModelo(vectorService.recuperarVector(id))
@@ -50,3 +53,4 @@ class VectorControllerREST {
         = vectorService.enfermedades(vectorId).map { e -> EspecieDTO.desdeModelo(e) }
 
 }
+data class TipoDeVectorWrapper(val tipoDeVector: String)
