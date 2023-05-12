@@ -54,11 +54,12 @@ class UbicacionServiceImplTest {
 
 
         val especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+        dataService.persistir(especieAContagiar)
 
         vectorService.infectar(vectorAMover,especieAContagiar)
 
         assertEquals(vectorAMover.especiesContagiadas.size,1)
-        assertEquals(vectorAMover.especiesContagiadas.first().id, patogeno.id)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
@@ -77,9 +78,9 @@ class UbicacionServiceImplTest {
 
 
         assertEquals(vectorAMover.especiesContagiadas.size,1)
-        assertEquals(vectorAMover.especiesContagiadas.first().id, patogeno.id)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,1)
-        assertEquals(vectorVictima1.especiesContagiadas.first().id, patogeno.id)
+        assertEquals(vectorVictima1.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
     }
@@ -99,12 +100,13 @@ class UbicacionServiceImplTest {
         patogeno.setCapacidadDeContagioInsecto(100)
         dataService.persistir(patogeno)
 
-        val especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+        val especieAContagiar = Especie(patogeno,"Especie_Sl","Honduras")
+        dataService.persistir(especieAContagiar)
 
         vectorService.infectar(vectorAMover,especieAContagiar)
 
         assertEquals(vectorAMover.especiesContagiadas.size,1)
-        assertEquals(vectorAMover.especiesContagiadas.first().id, patogeno.id)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
@@ -122,7 +124,7 @@ class UbicacionServiceImplTest {
         vectorVictima2 =vectorService.recuperarVector(vectorVictima2.id!!)
 
         assertEquals(vectorAMover.especiesContagiadas.size,1)
-        assertEquals(vectorAMover.especiesContagiadas.first().id, patogeno.id)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
@@ -168,11 +170,12 @@ class UbicacionServiceImplTest {
         dataService.persistir(patogeno)
 
         val especieAContagiar = Especie(patogeno,"Especie_Sl","Honduras")
+        dataService.persistir(especieAContagiar)
 
         vectorService.infectar(vectorAExpandir,especieAContagiar)
 
         assertEquals(vectorAExpandir.especiesContagiadas.size,1)
-        assertEquals(vectorAExpandir.especiesContagiadas.first().id, patogeno.id)
+        assertEquals(vectorAExpandir.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorLocal.especiesContagiadas.size,0)
         assertEquals(vectorLocal2.especiesContagiadas.size,0)
 
@@ -183,9 +186,9 @@ class UbicacionServiceImplTest {
         vectorLocal2 =vectorService.recuperarVector(vectorLocal2.id!!)
 
         assertEquals(vectorAExpandir.especiesContagiadas.size,1)
-        assertEquals(vectorAExpandir.especiesContagiadas.first().id, patogeno.id)
+        assertEquals(vectorAExpandir.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorLocal.especiesContagiadas.size,1)
-        assertEquals(vectorLocal.especiesContagiadas.first().id, patogeno.id)
+        assertEquals(vectorLocal.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorLocal2.especiesContagiadas.size,0)
 
     }

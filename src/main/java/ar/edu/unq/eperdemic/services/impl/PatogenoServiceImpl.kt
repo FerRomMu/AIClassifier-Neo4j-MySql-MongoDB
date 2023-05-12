@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.services.impl
 
+import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
@@ -15,6 +16,7 @@ import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.jvm.optionals.getOrNull
@@ -41,17 +43,22 @@ class PatogenoServiceImpl() : PatogenoService {
     }
 
     override fun agregarEspecie(id: Long, nombre: String, ubicacionId: Long): Especie {
-        val vectorAInfectar = vectorRepository.vectorAleatorioEn(ubicacionId)
-        val patogeno = this.recuperarPatogeno(id)
-        val especieNueva = patogeno.crearEspecie(nombre, vectorAInfectar.ubicacion.nombre)
+        try {
+            val vectorAInfectar = vectorRepository.vectorAleatorioEn(ubicacionId)
+            val patogeno = this.recuperarPatogeno(id)
+            val especieNueva = patogeno.crearEspecie(nombre, vectorAInfectar.ubicacion.nombre)
 
-        vectorAInfectar.agregarEspecie(especieNueva)
+            vectorAInfectar.agregarEspecie(especieNueva)
 
-        vectorRepository.save(vectorAInfectar)
-        patogenoRepository.save(patogeno)
-        especieRepository.save(especieNueva)
+            vectorRepository.save(vectorAInfectar)
+            patogenoRepository.save(patogeno)
+            especieRepository.save(especieNueva)
 
-        return especieNueva
+            return especieNueva
+        } catch (e : EmptyResultDataAccessException){
+            throw DataNotFoundException("No existe un vector aleatorio en la ubicacion dada.")
+        }
+
     }
 
     override fun cantidadDeInfectados(especieId: Long): Int {
