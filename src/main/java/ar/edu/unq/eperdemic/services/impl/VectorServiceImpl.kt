@@ -31,8 +31,6 @@ class VectorServiceImpl(): VectorService {
 
     override fun infectar(vector: Vector, especie: Especie) {
         vector.agregarEspecie(especie)
-        especie.agregarVector(vector)
-        especieRepository.save(especie)
         vectorRepository.save(vector)
     }
 

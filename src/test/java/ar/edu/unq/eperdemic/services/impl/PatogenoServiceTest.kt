@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.services.impl
 
+import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.services.EspecieService
@@ -132,7 +133,7 @@ class PatogenoServiceTest {
         patogenoService.crearPatogeno(patogeno)
         val ubicacionSinVectores = ubicacionService.crearUbicacion("bernal")
 
-        assertThrows(NoResultException::class.java) {
+        assertThrows(DataNotFoundException::class.java) {
             patogenoService.agregarEspecie(patogeno.id!!, "virusT", ubicacionSinVectores.id!!)
         }
     }
@@ -168,12 +169,13 @@ class PatogenoServiceTest {
         dataService.crearSetDeDatosIniciales()
 
         val patogeno = Patogeno("Gripe")
-        val especie = Especie(patogeno,"21","BR")
         val ubicacion = ubicacionService.crearUbicacion("Lugar 21")
 
         patogenoService.crearPatogeno(patogeno)
-
         val vector = vectorService.crearVector(TipoDeVector.Persona, ubicacion.id!!)
+        val especie = Especie(patogeno, "21", "BR")
+        dataService.persistir(especie)
+
         vectorService.infectar(vector,especie)
 
         assertFalse(patogenoService.esPandemia(especie.id!!))
