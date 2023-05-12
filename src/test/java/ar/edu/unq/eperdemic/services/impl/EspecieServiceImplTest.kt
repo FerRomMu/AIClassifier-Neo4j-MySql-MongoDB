@@ -85,18 +85,9 @@ class EspecieServiceImplTest {
     @Test
     fun `obtener la cantidad de infectados de una especie`() {
 
-        patogeno = Patogeno("Gripe")
-        especie = Especie(patogeno,"especie11", "ARG")
-        val vector = Vector(TipoDeVector.Animal)
-        val vector2 = Vector(TipoDeVector.Persona)
+        val especieContagiada = data.crearPandemiaPositiva()
 
-        data.persistir(patogeno)
-        vectorService.infectar(vector, especie)
-        vectorService.infectar(vector2, especie)
-
-        val cantidad = especieService.cantidadDeInfectados(especie.id!!)
-
-        assertEquals(2, cantidad)
+        assertEquals(21, especieService.cantidadDeInfectados(especieContagiada.id!!))
     }
 
     @AfterEach
