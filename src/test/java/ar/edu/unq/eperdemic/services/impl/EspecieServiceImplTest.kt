@@ -24,7 +24,7 @@ class EspecieServiceImplTest {
 
     @Autowired lateinit var especieService: EspecieService
     @Autowired lateinit var data : DataService
-    //@Autowired lateinit var vectorService: VectorServiceImpl
+    @Autowired lateinit var vectorService: VectorServiceImpl
     lateinit var especie: Especie
     lateinit var patogeno: Patogeno
 
@@ -84,7 +84,7 @@ class EspecieServiceImplTest {
 
     @Test
     fun `obtener la cantidad de infectados de una especie`() {
-        TODO("Quitar comentario cuando este vector service implementado")/*
+
         patogeno = Patogeno("Gripe")
         especie = Especie(patogeno,"especie11", "ARG")
         val vector = Vector(TipoDeVector.Animal)
@@ -96,7 +96,7 @@ class EspecieServiceImplTest {
 
         val cantidad = especieService.cantidadDeInfectados(especie.id!!)
 
-        assertEquals(2, cantidad)*/
+        assertEquals(2, cantidad)
     }
 
     @AfterEach

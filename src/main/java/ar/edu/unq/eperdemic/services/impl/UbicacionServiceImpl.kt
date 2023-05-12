@@ -24,8 +24,8 @@ class UbicacionServiceImpl(): UbicacionService {
     @Autowired lateinit var vectorRepository : VectorRepository
 
     override fun mover(vectorId: Long, ubicacionid: Long) {
-            var listaDeVectores = ubicacionRepository.vectoresEn(ubicacionid).toList()
-            var vectorAMover = vectorRepository.findById(vectorId).get()
+            val listaDeVectores = ubicacionRepository.vectoresEn(ubicacionid).toList()
+            val vectorAMover = vectorRepository.findById(vectorId).get()
 
              if(listaDeVectores.isNotEmpty()){
                  vectorAMover.ubicacion = listaDeVectores[0].ubicacion

@@ -24,7 +24,7 @@ class UbicacionServiceImplTest {
 
 
 
-    // @Autowired lateinit var vectorService: VectorService
+    @Autowired lateinit var vectorService: VectorService
 
     @Autowired lateinit var ubicacionService: UbicacionService
 
@@ -40,21 +40,20 @@ class UbicacionServiceImplTest {
 
     @Test
     fun  `mover vector a una ubicacion con un humano y un animal`() {
-        TODO("Remover comentario cuando este Vector service") /*
-        var cordoba = ubicacionService.crearUbicacion("Cordoba")
-        var chaco = ubicacionService.crearUbicacion("Chaco")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba")
+        val chaco = ubicacionService.crearUbicacion("Chaco")
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
         var vectorVictima1 = vectorService.crearVector(TipoDeVector.Persona,chaco.id!!)
         var vectorVictima2 = vectorService.crearVector(TipoDeVector.Animal,chaco.id!!)
 
-        var patogeno = Patogeno("Patogeni_SS")
+        val patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioHumano(100)
         dataService.persistir(patogeno)
 
 
-        var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+        val especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
 
         vectorService.infectar(vectorAMover,especieAContagiar)
 
@@ -82,25 +81,25 @@ class UbicacionServiceImplTest {
         assertEquals(vectorVictima1.especiesContagiadas.size,1)
         assertEquals(vectorVictima1.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
-        */
+
     }
 
     @Test
     fun  `mover vector insecto a una ubicacion con solo insectos`() {
-        TODO("Remover comentario cuando este Vector service") /*
-        var cordoba = ubicacionService.crearUbicacion("Cordoba")
-        var chaco = ubicacionService.crearUbicacion("Chaco")
+
+        val cordoba = ubicacionService.crearUbicacion("Cordoba")
+        val chaco = ubicacionService.crearUbicacion("Chaco")
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Insecto,cordoba.id!!)
 
         var vectorVictima1 = vectorService.crearVector(TipoDeVector.Insecto,chaco.id!!)
         var vectorVictima2 = vectorService.crearVector(TipoDeVector.Insecto,chaco.id!!)
 
-        var patogeno = Patogeno("Patogeni_SS")
+        val patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioInsecto(100)
         dataService.persistir(patogeno)
 
-        var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+        val especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
 
         vectorService.infectar(vectorAMover,especieAContagiar)
 
@@ -126,39 +125,36 @@ class UbicacionServiceImplTest {
         assertEquals(vectorAMover.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
-        */
+
     }
 
     @Test
     fun  `mover vector a ubicacion vacia`() {
-        TODO("Remover comentario cuando este Vector service") /*
-        var cordoba = ubicacionService.crearUbicacion("Cordoba")
-        var chaco = ubicacionService.crearUbicacion("Chaco")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba")
+        val chaco = ubicacionService.crearUbicacion("Chaco")
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
-        var patogeno = Patogeno("Patogeni_SS")
+        val patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioInsecto(100)
         dataService.persistir(patogeno)
 
-        var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+        val especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
 
         vectorService.infectar(vectorAMover,especieAContagiar)
         assertEquals(vectorAMover.especiesContagiadas.size,1)
 
-        var vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
+        val vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
         assertEquals(vectoresEnChaco.size,0)
 
         ubicacionService.mover(vectorAMover.id!!,chaco.id!!)
 
         vectorAMover = vectorService.recuperarVector(vectorAMover.id!!)
         assertEquals(vectorAMover.ubicacion.id,chaco.id)
-        */
     }
 
     @Test
     fun `Expandir en una ubicacion`() {
-        TODO("Remover comentario cuando este Vector service") /*
         var cordoba = ubicacionService.crearUbicacion("Cordoba")
 
 
@@ -167,11 +163,11 @@ class UbicacionServiceImplTest {
         var vectorAExpandir = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
 
-        var patogeno = Patogeno("Patogeni_SS")
+        val patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioHumano(100)
         dataService.persistir(patogeno)
 
-        var especieAContagiar = Especie(patogeno,"Especie_Sl","Honduras")
+        val especieAContagiar = Especie(patogeno,"Especie_Sl","Honduras")
 
         vectorService.infectar(vectorAExpandir,especieAContagiar)
 
@@ -191,12 +187,11 @@ class UbicacionServiceImplTest {
         assertEquals(vectorLocal.especiesContagiadas.size,1)
         assertEquals(vectorLocal.especiesContagiadas.first().id, patogeno.id)
         assertEquals(vectorLocal2.especiesContagiadas.size,0)
-        */
+
     }
 
     @Test
     fun `Expandir en una ubicacion sin contagios no hace nada`() {
-        TODO("Remover comentario cuando este Vector service") /*
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
 
         val vectorSinContagiar = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
@@ -208,13 +203,12 @@ class UbicacionServiceImplTest {
         assertEquals(vectorSinContagiar.especiesContagiadas.size,0)
         assertEquals(vectorSinContagiar2.especiesContagiadas.size,0)
         assertEquals(vectorSinContagiar3.especiesContagiadas.size,0)
-        */
     }
 
 
     @Test
     fun `si creo una ubicacion esta recibe un id`() {
-        var ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
+        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
         assertNotNull(ubicacion.id)
     }
 
