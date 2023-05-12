@@ -4,6 +4,7 @@ import java.io.Serializable
 import javax.persistence.*
 
 @Entity
+@Table(name = "patogeno")
 class Patogeno(var tipo: String) : Serializable{
 
     @Id
@@ -80,4 +81,13 @@ class Patogeno(var tipo: String) : Serializable{
             return this.capacidadDeContagioAnimal
         }
     }
+
+    fun getCapacidadDeBiomecanizacion(): Int {
+        return this.capacidadDeBiomecanizacion
+    }
+
+    fun capacidadDeDefensa(): Int{
+        return this.capacidadDeDefensa
+    }
+
 }

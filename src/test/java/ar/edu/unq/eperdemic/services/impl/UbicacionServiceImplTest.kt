@@ -1,71 +1,65 @@
 package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.*
-import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
-import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.services.UbicacionService
+import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
+import org.hibernate.exception.ConstraintViolationException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
-internal class UbicacionServiceImplTest {
+@ExtendWith(SpringExtension::class)
+@SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class UbicacionServiceImplTest {
 
-    lateinit var vectorService: VectorServiceImpl
-    lateinit var vectorDAO: HibernateVectorDAO
-    lateinit var patogenoDAO: PatogenoDAO
-    lateinit var especieDAO: EspecieDAO
 
-    lateinit var ubicacionService: UbicacionServiceImpl
-    lateinit var ubicacionDAO: HibernateUbicacionDAO
+
+    @Autowired lateinit var vectorService: VectorService
+
+    @Autowired lateinit var ubicacionService: UbicacionService
+
+    @Autowired lateinit var dataService: DataService
+
     lateinit var dado: Randomizador
-    lateinit var dataService: DataService
 
     @BeforeEach
     fun setUp() {
-        ubicacionDAO = HibernateUbicacionDAO()
-        ubicacionService = UbicacionServiceImpl(ubicacionDAO)
-        dataService = DataServiceImpl()
-         ubicacionDAO = HibernateUbicacionDAO()
-         ubicacionService = UbicacionServiceImpl(ubicacionDAO)
-        patogenoDAO = HibernatePatogenoDAO()
-
-        especieDAO = HibernateEspecieDAO()
-
-         vectorDAO = HibernateVectorDAO()
-         vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO,especieDAO)
-
-         dado = Randomizador.getInstance()
-         dado.estado = EstadoRandomizadorDeterminístico()
+        dado = Randomizador.getInstance()
+        dado.estado = EstadoRandomizadorDeterminístico()
     }
 
     @Test
     fun  `mover vector a una ubicacion con un humano y un animal`() {
-        var cordoba = ubicacionService.crearUbicacion("Cordoba")
-        var chaco = ubicacionService.crearUbicacion("Chaco")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba")
+        val chaco = ubicacionService.crearUbicacion("Chaco")
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
         var vectorVictima1 = vectorService.crearVector(TipoDeVector.Persona,chaco.id!!)
         var vectorVictima2 = vectorService.crearVector(TipoDeVector.Animal,chaco.id!!)
 
-        var patogeno = Patogeno("Patogeni_SS")
+        val patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioHumano(100)
         dataService.persistir(patogeno)
 
 
-        var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+        val especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+        dataService.persistir(especieAContagiar)
 
         vectorService.infectar(vectorAMover,especieAContagiar)
 
         assertEquals(vectorAMover.especiesContagiadas.size,1)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
@@ -84,29 +78,35 @@ internal class UbicacionServiceImplTest {
 
 
         assertEquals(vectorAMover.especiesContagiadas.size,1)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,1)
+        assertEquals(vectorVictima1.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
+
     }
 
     @Test
     fun  `mover vector insecto a una ubicacion con solo insectos`() {
-        var cordoba = ubicacionService.crearUbicacion("Cordoba")
-        var chaco = ubicacionService.crearUbicacion("Chaco")
+
+        val cordoba = ubicacionService.crearUbicacion("Cordoba")
+        val chaco = ubicacionService.crearUbicacion("Chaco")
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Insecto,cordoba.id!!)
 
         var vectorVictima1 = vectorService.crearVector(TipoDeVector.Insecto,chaco.id!!)
         var vectorVictima2 = vectorService.crearVector(TipoDeVector.Insecto,chaco.id!!)
 
-        var patogeno = Patogeno("Patogeni_SS")
+        val patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioInsecto(100)
         dataService.persistir(patogeno)
 
-        var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+        val especieAContagiar = Especie(patogeno,"Especie_Sl","Honduras")
+        dataService.persistir(especieAContagiar)
 
         vectorService.infectar(vectorAMover,especieAContagiar)
 
         assertEquals(vectorAMover.especiesContagiadas.size,1)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
@@ -124,27 +124,29 @@ internal class UbicacionServiceImplTest {
         vectorVictima2 =vectorService.recuperarVector(vectorVictima2.id!!)
 
         assertEquals(vectorAMover.especiesContagiadas.size,1)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
+
     }
 
     @Test
     fun  `mover vector a ubicacion vacia`() {
-        var cordoba = ubicacionService.crearUbicacion("Cordoba")
-        var chaco = ubicacionService.crearUbicacion("Chaco")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba")
+        val chaco = ubicacionService.crearUbicacion("Chaco")
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
-        var patogeno = Patogeno("Patogeni_SS")
+        val patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioInsecto(100)
         dataService.persistir(patogeno)
 
-        var especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+        val especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
 
         vectorService.infectar(vectorAMover,especieAContagiar)
         assertEquals(vectorAMover.especiesContagiadas.size,1)
 
-        var vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
+        val vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
         assertEquals(vectoresEnChaco.size,0)
 
         ubicacionService.mover(vectorAMover.id!!,chaco.id!!)
@@ -163,15 +165,17 @@ internal class UbicacionServiceImplTest {
         var vectorAExpandir = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
 
-        var patogeno = Patogeno("Patogeni_SS")
+        val patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioHumano(100)
         dataService.persistir(patogeno)
 
-        var especieAContagiar = Especie(patogeno,"Especie_Sl","Honduras")
+        val especieAContagiar = Especie(patogeno,"Especie_Sl","Honduras")
+        dataService.persistir(especieAContagiar)
 
         vectorService.infectar(vectorAExpandir,especieAContagiar)
 
         assertEquals(vectorAExpandir.especiesContagiadas.size,1)
+        assertEquals(vectorAExpandir.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorLocal.especiesContagiadas.size,0)
         assertEquals(vectorLocal2.especiesContagiadas.size,0)
 
@@ -182,21 +186,32 @@ internal class UbicacionServiceImplTest {
         vectorLocal2 =vectorService.recuperarVector(vectorLocal2.id!!)
 
         assertEquals(vectorAExpandir.especiesContagiadas.size,1)
+        assertEquals(vectorAExpandir.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorLocal.especiesContagiadas.size,1)
+        assertEquals(vectorLocal.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorLocal2.especiesContagiadas.size,0)
+
     }
 
     @Test
-    fun `Expandir en una ubicacion vacia`() {
-        var cordoba = ubicacionService.crearUbicacion("Cordoba")
+    fun `Expandir en una ubicacion sin contagios no hace nada`() {
+        val cordoba = ubicacionService.crearUbicacion("Cordoba")
+
+        val vectorSinContagiar = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
+        val vectorSinContagiar2 = vectorService.crearVector(TipoDeVector.Animal,cordoba.id!!)
+        val vectorSinContagiar3 = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
         ubicacionService.expandir(cordoba.id!!)
+
+        assertEquals(vectorSinContagiar.especiesContagiadas.size,0)
+        assertEquals(vectorSinContagiar2.especiesContagiadas.size,0)
+        assertEquals(vectorSinContagiar3.especiesContagiadas.size,0)
     }
 
 
     @Test
     fun `si creo una ubicacion esta recibe un id`() {
-        var ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
+        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
         assertNotNull(ubicacion.id)
     }
 
@@ -218,10 +233,18 @@ internal class UbicacionServiceImplTest {
 
     @Test
     fun `si trato de recuperar todos llegan todos`() {
-        dataService.crearSetDeDatosIniciales()
+        val ubicacionesPersistidas = dataService.crearSetDeDatosIniciales().filterIsInstance<Ubicacion>()
         val ubicaciones = ubicacionService.recuperarTodos()
 
-        assertEquals(21, ubicaciones.size)
+        assertEquals(ubicacionesPersistidas.size, ubicaciones.size)
+        assertTrue(
+            ubicaciones.all { ubicacion ->
+                ubicacionesPersistidas.any{
+                    it.id == ubicacion.id &&
+                            it.nombre == ubicacion.nombre
+                }
+            }
+        )
     }
 
     @Test

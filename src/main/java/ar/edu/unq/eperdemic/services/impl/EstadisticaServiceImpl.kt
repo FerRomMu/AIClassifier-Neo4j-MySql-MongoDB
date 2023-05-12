@@ -4,27 +4,44 @@ import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.ReporteDeContagios
 import ar.edu.unq.eperdemic.persistencia.dao.EstadisticaDAO
+import ar.edu.unq.eperdemic.persistencia.repository.spring.EspecieRepository
+import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
 import ar.edu.unq.eperdemic.services.EstadisticaService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.stereotype.Service
 
-class EstadisticaServiceImpl(var estadisticaDAO: EstadisticaDAO) : EstadisticaService {
+@Service
+class EstadisticaServiceImpl() : EstadisticaService {
+
+    @Autowired
+    lateinit var especieRepository: EspecieRepository
+    @Autowired
+    lateinit var ubicacionRepository: UbicacionRepository
 
     override fun especieLider(): Especie {
-        return runTrx { estadisticaDAO.especieLider()}
+        try {
+            return  especieRepository.especieLider()
+        } catch(e: EmptyResultDataAccessException) {
+            throw DataNotFoundException("No hay especie lider.")
+        }
     }
 
     override fun reporteDeContagios(nombreDeLaUbicacion: String): ReporteDeContagios {
-        return runTrx {
-                ReporteDeContagios(
-                    estadisticaDAO.cantidadVectoresPresentes(nombreDeLaUbicacion).toInt(),
-                    estadisticaDAO.cantidadVectoresInfectados(nombreDeLaUbicacion).toInt(),
-                    estadisticaDAO.nombreEspecieQueMasInfectaVectores(nombreDeLaUbicacion)
-                )
+        try {
+            return ReporteDeContagios(
+                ubicacionRepository.cantidadVectoresPresentes(nombreDeLaUbicacion).toInt(),
+                ubicacionRepository.cantidadVectoresInfectados(nombreDeLaUbicacion).toInt(),
+                ubicacionRepository.nombreEspecieQueMasInfectaVectores(nombreDeLaUbicacion)
+            )
+        } catch(e: EmptyResultDataAccessException) {
+            throw DataNotFoundException("No hay ubicacion o especie en dicha ubicacion.")
         }
     }
 
     override fun lideres(): List<Especie>{
-        return runTrx { estadisticaDAO.lideres()}
+        return especieRepository.lideres()
     }
 
 }

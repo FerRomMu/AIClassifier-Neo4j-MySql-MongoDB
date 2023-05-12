@@ -2,81 +2,82 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.Randomizador
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
+import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
-import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
-import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
+import ar.edu.unq.eperdemic.persistencia.repository.spring.VectorRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import org.hibernate.exception.ConstraintViolationException
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import kotlin.jvm.optionals.getOrNull
 
-class UbicacionServiceImpl(val ubicacionDAO: UbicacionDAO): UbicacionService {
+@Transactional
+@Service
+class UbicacionServiceImpl(): UbicacionService {
 
-    val vectorDAO : VectorDAO = HibernateVectorDAO()
+    @Autowired lateinit var ubicacionRepository : UbicacionRepository
+
+    @Autowired lateinit var vectorRepository : VectorRepository
 
     override fun mover(vectorId: Long, ubicacionid: Long) {
-         runTrx {
-            var listaDeVectores = ubicacionDAO.vectoresEn(ubicacionid).toList()
-            var vectorAMover = vectorDAO.recuperar(vectorId)
+            val listaDeVectores = ubicacionRepository.vectoresEn(ubicacionid).toList()
+            val vectorAMover = vectorRepository.findById(vectorId).get()
 
              if(listaDeVectores.isNotEmpty()){
                  vectorAMover.ubicacion = listaDeVectores[0].ubicacion
 
                  for (vector in listaDeVectores){
                      vectorAMover.intentarInfectar(vector)
-                     vectorDAO.guardar(vector)
+                     vectorRepository.save(vector)
                  }
-                 vectorDAO.guardar(vectorAMover)
+                 vectorRepository.save(vectorAMover)
              }else{
-                 val ubicacionAMover = ubicacionDAO.recuperar(ubicacionid)
+                 val ubicacionAMover = ubicacionRepository.findById(ubicacionid).get()
                  vectorAMover.ubicacion = ubicacionAMover
-                 vectorDAO.guardar(vectorAMover)
+                 vectorRepository.save(vectorAMover)
              }
-         }
     }
 
     override fun expandir(ubicacionId: Long) {
-        runTrx {
-            val vectores = ubicacionDAO.vectoresEn(ubicacionId).toMutableList()
+            val vectores = ubicacionRepository.vectoresEn(ubicacionId).toMutableList()
             if (vectores.isNotEmpty()) {
                 val dado = Randomizador.getInstance()
                 val numeroAleatorio = dado.valor(0, vectores.size-1)
                 val vectorContagioso = vectores.removeAt(numeroAleatorio)
                 for(vector in vectores){
                     vectorContagioso.intentarInfectar(vector)
+                    vectorRepository.save(vector)
                 }
+                vectorRepository.save(vectorContagioso)
             }
-        }
+    }
 
-}
-
+    @Transactional(rollbackFor = [Exception::class], noRollbackFor = [DataIntegrityViolationException::class])
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
         val ubicacion = Ubicacion(nombreUbicacion)
         try {
-            return runTrx {
-                ubicacionDAO.guardar(ubicacion)
-                ubicacion
-            }
-        } catch (e: ConstraintViolationException) {
+            ubicacionRepository.save(ubicacion)
+            return ubicacion
+        } catch (e: DataIntegrityViolationException) {  // ConstraintViolationException
             throw DataDuplicationException("Ya existe una ubicación con ese nombre.")
         }
     }
 
     override fun recuperar(id: Long): Ubicacion {
-        return runTrx { ubicacionDAO.recuperar(id) }
+        return ubicacionRepository.findById(id)
+            .getOrNull() ?: throw IdNotFoundException("No se encontró una especie con el id dado.")
     }
 
     override fun recuperarTodos(): List<Ubicacion> {
-        return runTrx {
-            ubicacionDAO.recuperarTodos()
-        }
+            return ubicacionRepository.findAll().toList()
     }
 
     override fun vectoresEn(id: Long): List<Vector> {
-        return runTrx {
-            ubicacionDAO.vectoresEn(id).toList()
-        }
+        return ubicacionRepository.vectoresEn(id).toList()
     }
 
 }

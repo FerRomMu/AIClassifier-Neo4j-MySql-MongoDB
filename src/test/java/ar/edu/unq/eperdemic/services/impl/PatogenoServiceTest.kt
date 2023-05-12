@@ -3,49 +3,34 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
-import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
-import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
-import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.services.EspecieService
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.utils.DataService
-import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import javax.persistence.NoResultException
 
+@ExtendWith(SpringExtension::class)
+@SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PatogenoServiceTest {
 
-    lateinit var patogenoDAO: PatogenoDAO
-    lateinit var especieDAO: EspecieDAO
-    lateinit var ubicacionDAO: UbicacionDAO
-    lateinit var vectorDAO: VectorDAO
-
-    lateinit var patogenoService: PatogenoService
-    lateinit var ubicacionService: UbicacionService
-    lateinit var vectorService: VectorService
-    lateinit var dataService: DataService
+    @Autowired lateinit var patogenoService: PatogenoService
+    @Autowired lateinit var ubicacionService: UbicacionService
+    @Autowired lateinit var vectorService: VectorService
+    @Autowired lateinit var dataService: DataService
+    @Autowired lateinit var especieService : EspecieService
 
     lateinit var patogeno: Patogeno
 
     @BeforeEach
     fun crearModelo() {
-        patogenoDAO = HibernatePatogenoDAO()
-        especieDAO = HibernateEspecieDAO()
-        ubicacionDAO = HibernateUbicacionDAO()
-        vectorDAO = HibernateVectorDAO()
-
-        vectorService = VectorServiceImpl(vectorDAO, ubicacionDAO, especieDAO)
-        patogenoService = PatogenoServiceImpl(patogenoDAO, especieDAO, vectorDAO)
-        ubicacionService = UbicacionServiceImpl(ubicacionDAO)
-        dataService = DataServiceImpl()
 
     }
 
@@ -93,9 +78,8 @@ class PatogenoServiceTest {
 
     @Test
     fun `si agrego una especie se persiste en el patogeno`() {
-
         val ubicacion = ubicacionService.crearUbicacion("Ubicacion")
-        var vectorInfectado = Vector(TipoDeVector.Persona)
+        val vectorInfectado = Vector(TipoDeVector.Persona)
         vectorInfectado.ubicacion = ubicacion
         dataService.persistir(vectorInfectado)
         patogeno = Patogeno("Gripe")
@@ -109,7 +93,6 @@ class PatogenoServiceTest {
 
     @Test
     fun `si agrego una especie infecta a un vector de la ubicacion`() {
-
         val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion")
         var vectorInfectado = Vector(TipoDeVector.Persona)
         vectorInfectado.ubicacion = ubicacionPatogeno
@@ -127,8 +110,6 @@ class PatogenoServiceTest {
 
     @Test
     fun `si agrego una especie se persiste la especie`() {
-
-        val especieService = EspecieServiceImpl(HibernateEspecieDAO())
         val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion")
         val vector = Vector(TipoDeVector.Persona)
         vector.ubicacion = ubicacionPatogeno
@@ -144,6 +125,7 @@ class PatogenoServiceTest {
         assertEquals(especieCreada.nombre, especiePersistida.nombre)
 
     }
+
     @Test
     fun `si agrego una especie y no hay vectores a infectar en la ubicacion falla`() {
         patogeno = Patogeno("Gripe")
@@ -151,7 +133,7 @@ class PatogenoServiceTest {
         patogenoService.crearPatogeno(patogeno)
         val ubicacionSinVectores = ubicacionService.crearUbicacion("bernal")
 
-        assertThrows(NoResultException::class.java) {
+        assertThrows(DataNotFoundException::class.java) {
             patogenoService.agregarEspecie(patogeno.id!!, "virusT", ubicacionSinVectores.id!!)
         }
     }
@@ -186,13 +168,14 @@ class PatogenoServiceTest {
     fun `si ejecuto esPandemia devuelve falso para una especie en menos de la mitad de ubicaciones`(){
         dataService.crearSetDeDatosIniciales()
 
-        var patogeno = Patogeno("Gripe")
-        var especie = Especie(patogeno,"21","BR")
-        var ubicacion = ubicacionService.crearUbicacion("Lugar 21")
+        val patogeno = Patogeno("Gripe")
+        val ubicacion = ubicacionService.crearUbicacion("Lugar 21")
 
         patogenoService.crearPatogeno(patogeno)
+        val vector = vectorService.crearVector(TipoDeVector.Persona, ubicacion.id!!)
+        val especie = Especie(patogeno, "21", "BR")
+        dataService.persistir(especie)
 
-        var vector = vectorService.crearVector(TipoDeVector.Persona, ubicacion.id!!)
         vectorService.infectar(vector,especie)
 
         assertFalse(patogenoService.esPandemia(especie.id!!))

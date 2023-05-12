@@ -4,6 +4,7 @@ import java.io.Serializable
 import javax.persistence.*
 
 @Entity
+@Table(name = "especie")
 class Especie(patogenoParam: Patogeno,
               var nombre: String,
               var paisDeOrigen: String):Serializable  {
@@ -17,7 +18,13 @@ class Especie(patogenoParam: Patogeno,
     val patogeno: Patogeno = patogenoParam
 
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @JoinTable(name = "especie_vector_contagiado",
+        joinColumns = [JoinColumn(name = "especie_id")],
+        inverseJoinColumns = [JoinColumn(name = "vector_id")])
     val vectores: MutableSet<Vector> = HashSet()
+
+    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    var mutacionesPosibles : MutableSet<Mutacion> = HashSet()
 
 
     fun capacidadDeContagioA(tipoVictima : TipoDeVector): Int {
@@ -25,6 +32,25 @@ class Especie(patogenoParam: Patogeno,
     }
     fun agregarVector(vector:Vector){
         vectores.add(vector)
+    }
+
+    fun agregarMutacion(mutacion:Mutacion){
+        this.mutacionesPosibles.add(mutacion)
+    }
+
+    fun intentarAgregarMutacion(mutacionAAgregar:Mutacion){
+        val existe  = this.mutacionesPosibles.stream().anyMatch{m -> m.equals(mutacionAAgregar)}
+        if (existe.not()){
+            this.agregarMutacion(mutacionAAgregar)
+        }
+    }
+
+    fun capacidadDeBiomecanizacion() : Int {
+        return this.patogeno.getCapacidadDeBiomecanizacion()
+    }
+
+    fun defensa(): Int{
+        return this.patogeno.capacidadDeDefensa()
     }
 
 }

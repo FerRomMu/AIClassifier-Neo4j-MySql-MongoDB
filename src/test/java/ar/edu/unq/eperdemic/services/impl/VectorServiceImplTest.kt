@@ -2,82 +2,73 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
-import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
-import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
-import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
-import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.utils.DataService
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.TestInstance
-
+@ExtendWith(SpringExtension::class)
+@SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VectorServiceImplTest {
-    lateinit var vectorService: VectorServiceImpl
-    lateinit var ubicacionService: UbicacionServiceImpl
-
-    lateinit var vectorDAO: HibernateVectorDAO
-    lateinit var ubicacionDAO: HibernateUbicacionDAO
-    lateinit var especieDAO: EspecieDAO
-    lateinit var patogenoDAO: PatogenoDAO
+    @Autowired lateinit var vectorService: VectorService
+    @Autowired lateinit var ubicacionService: UbicacionService
+    @Autowired lateinit var dataService: DataService
 
     lateinit var bernal: Ubicacion
-    lateinit var dataService: DataServiceImpl
+
 
     @BeforeEach
     fun setUp() {
-
-        ubicacionDAO = HibernateUbicacionDAO()
-        vectorDAO = HibernateVectorDAO()
-        patogenoDAO = HibernatePatogenoDAO()
-        especieDAO = HibernateEspecieDAO()
-
-        vectorService = VectorServiceImpl(vectorDAO,ubicacionDAO,especieDAO )
-        ubicacionService = UbicacionServiceImpl(ubicacionDAO)
-        dataService = DataServiceImpl()
-
         bernal = ubicacionService.crearUbicacion("Bernal")
     }
 
     @Test
     fun infectar() {
-        var vectorAInfectar = Vector(TipoDeVector.Persona)
+        val vectorAInfectar = Vector(TipoDeVector.Persona)
 
-        var patogenoDeLaEspecie = Patogeno("Gripe")
+        val patogenoDeLaEspecie = Patogeno("Gripe")
         dataService.persistir(patogenoDeLaEspecie)
 
-        var especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
+        val especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
 
-        assertEquals(vectorAInfectar.especiesContagiadas.size,0)
+        assertEquals(vectorAInfectar.especiesContagiadas.size, 0)
 
         vectorService.infectar(vectorAInfectar,especieAContagiar)
 
-        assertEquals(vectorAInfectar.especiesContagiadas.size,1)
+        assertEquals(vectorAInfectar.especiesContagiadas.size, 1)
+        assertEquals(vectorAInfectar.especiesContagiadas.first().id, especieAContagiar.id)
+        assertEquals(vectorAInfectar.especiesContagiadas.first().nombre, especieAContagiar.nombre)
+        assertEquals(
+            vectorAInfectar.especiesContagiadas.first().paisDeOrigen,
+            especieAContagiar.paisDeOrigen
+        )
     }
 
     @Test
     fun `Si miro las enfermedades de un vector las recibo`() {
 
-        var patogenoDeLaEspecie = Patogeno("Gripe")
-        val patogenoDAO = HibernatePatogenoDAO()
+        val patogenoDeLaEspecie = Patogeno("Gripe")
         dataService.persistir(patogenoDeLaEspecie)
 
-        var vectorAInfectar = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
+        val vectorAInfectar = Vector(TipoDeVector.Persona)
 
-        var especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
+        val especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
 
         vectorService.infectar(vectorAInfectar,especieAContagiar)
         val resultado = vectorService.enfermedades(vectorAInfectar.id!!)
 
-        assertEquals(1,resultado.size)
+        assertEquals(1, resultado.size)
         assertEquals(especieAContagiar.id, resultado[0].id)
+        assertEquals(especieAContagiar.nombre, resultado[0].nombre)
+        assertEquals(especieAContagiar.paisDeOrigen, resultado[0].paisDeOrigen)
 
     }
 
@@ -93,14 +84,19 @@ class VectorServiceImplTest {
     fun `si creo un vector este recibe un id`() {
 
         val vector = vectorService.crearVector(TipoDeVector.Persona,bernal.id!!)
-        assertNotNull(vector.id)
+        Assertions.assertNotNull(vector.id)
 
     }
 
     @Test
     fun `si trato de crear un vector con una ubicacion invalida falla`() {
 
-        assertThrows(IdNotFoundException::class.java){ vectorService.crearVector(TipoDeVector.Persona,1554798541) }
+        Assertions.assertThrows(IdNotFoundException::class.java) {
+            vectorService.crearVector(
+                TipoDeVector.Persona,
+                1554798541
+            )
+        }
 
     }
 
@@ -118,7 +114,7 @@ class VectorServiceImplTest {
 
     @Test
     fun `si trato de recuperar un vector inexistente falla`() {
-        assertThrows(IdNotFoundException::class.java) { vectorService.recuperarVector(1) }
+        Assertions.assertThrows(IdNotFoundException::class.java) { vectorService.recuperarVector(1) }
     }
 
     @Test
@@ -131,21 +127,30 @@ class VectorServiceImplTest {
 
         vectorService.borrarVector(vector.id!!)
 
-        assertThrows(IdNotFoundException::class.java) { vectorService.recuperarVector(vector.id!!) }
+        Assertions.assertThrows(IdNotFoundException::class.java) { vectorService.recuperarVector(vector.id!!) }
     }
 
     @Test
     fun `si trato de borrar un vector con id invalida falla`() {
-
-        assertThrows(IdNotFoundException::class.java) {  vectorService.borrarVector(123241) }
+        Assertions.assertThrows(EmptyResultDataAccessException::class.java) { vectorService.borrarVector(123241) }
     }
 
     @Test
     fun `si trato de recuperar todos llegan todos`() {
-        dataService.crearSetDeDatosIniciales()
+        val vectoresPersistidos = dataService.crearSetDeDatosIniciales().filterIsInstance<Vector>()
         val vectores = vectorService.recuperarTodos()
 
-        assertEquals(21, vectores.size)
+        assertEquals(vectoresPersistidos.size, vectores.size)
+        assertTrue(
+            vectores.all { vector ->
+                vectoresPersistidos.any {
+                    it.id == vector.id &&
+                            it.tipo == vector.tipo &&
+                            it.especiesContagiadas.size == vector.especiesContagiadas.size &&
+                            it.ubicacion.id == it.ubicacion.id
+                }
+            }
+        )
     }
 
     @Test

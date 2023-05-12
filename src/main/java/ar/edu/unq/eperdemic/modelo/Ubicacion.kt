@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic.modelo
 import javax.persistence.*
 
 @Entity
+@Table(name = "ubicacion")
 class Ubicacion(name: String) {
 
     @Id
