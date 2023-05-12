@@ -18,14 +18,14 @@ class VectorControllerREST {
     @Autowired lateinit var vectorService: VectorService
     @Autowired lateinit var patogenoService: PatogenoService
 
-    @PostMapping("/crearVector/{tipoDeVector}/{ubicacionId}")
+    @PostMapping("/crearVector/{ubicacionId}")
     fun crearVector(
-        @PathVariable("tipoDeVector") tipoDeVector: TipoDeVector,
+        @RequestBody tipoDeVector: TipoDeVector,
         @PathVariable("ubicacionId")  ubicacionId: Long
     ): VectorDTO = VectorDTO
                       .desdeModelo(vectorService.crearVector(tipoDeVector, ubicacionId))
 
-    @GetMapping("/vector/{id}")
+    @GetMapping("/{id}")
     fun recuperarVector(@PathVariable("id") id: Long): VectorDTO
         = VectorDTO.desdeModelo(vectorService.recuperarVector(id))
 
@@ -35,10 +35,10 @@ class VectorControllerREST {
     @GetMapping
     fun recuperarTodos() = vectorService.recuperarTodos().map { v -> VectorDTO.desdeModelo(v) }
 
-    @PutMapping("/infectar/{vector}/{especie}")
+    @PutMapping("/infectar")
     fun infectar(
-        @PathVariable("vector")  vectorDTO: VectorDTO,
-        @PathVariable("especie") especieDTO: EspecieDTO)
+        @RequestBody vectorDTO: VectorDTO,
+        @RequestBody especieDTO: EspecieDTO)
     {
         val patogeno = patogenoService.recuperarPatogeno(especieDTO.patogenoId!!)
         vectorService.infectar(vectorDTO.aModelo(), especieDTO.aModelo(patogeno))
