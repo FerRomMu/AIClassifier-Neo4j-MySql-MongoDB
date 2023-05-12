@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @CrossOrigin
 @ServiceREST
-@RequestMapping("/especie")
+@RequestMapping("/mutacion")
 class MutacionControllerREST {
     @Autowired
     lateinit var mutacionService: MutacionService
