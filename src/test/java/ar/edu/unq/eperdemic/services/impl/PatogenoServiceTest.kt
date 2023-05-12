@@ -168,12 +168,13 @@ class PatogenoServiceTest {
         dataService.crearSetDeDatosIniciales()
 
         val patogeno = Patogeno("Gripe")
-        val especie = Especie(patogeno,"21","BR")
         val ubicacion = ubicacionService.crearUbicacion("Lugar 21")
 
         patogenoService.crearPatogeno(patogeno)
-
         val vector = vectorService.crearVector(TipoDeVector.Persona, ubicacion.id!!)
+        val especie = Especie(patogeno, "21", "BR")
+        dataService.persistir(especie)
+
         vectorService.infectar(vector,especie)
 
         assertFalse(patogenoService.esPandemia(especie.id!!))

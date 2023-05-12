@@ -30,7 +30,6 @@ class VectorServiceImpl(): VectorService {
     @Autowired lateinit var especieRepository: EspecieRepository
 
     override fun infectar(vector: Vector, especie: Especie) {
-        val especie = especieRepository.findById(especie.id!!).get()
         vector.agregarEspecie(especie)
         vectorRepository.save(vector)
     }
