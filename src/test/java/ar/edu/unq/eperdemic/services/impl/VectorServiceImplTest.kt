@@ -32,12 +32,13 @@ class VectorServiceImplTest {
 
     @Test
     fun infectar() {
-        val vectorAInfectar = Vector(TipoDeVector.Persona)
+        val vectorAInfectar = vectorService.crearVector(TipoDeVector.Persona, bernal.id!!)
 
         val patogenoDeLaEspecie = Patogeno("Gripe")
         dataService.persistir(patogenoDeLaEspecie)
 
         val especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
+        dataService.persistir(especieAContagiar)
 
         assertEquals(vectorAInfectar.especiesContagiadas.size, 0)
 

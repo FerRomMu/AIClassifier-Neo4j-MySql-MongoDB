@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.spring.controllers
 
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.TipoDeVector
+import ar.edu.unq.eperdemic.services.EspecieService
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.spring.controllers.dto.EspecieDTO
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 class VectorControllerREST {
 
     @Autowired lateinit var vectorService: VectorService
-    @Autowired lateinit var patogenoService: PatogenoService
+    @Autowired lateinit var especieService: EspecieService
 
     @PostMapping("/crearVector/{ubicacionId}")
     fun crearVector(@RequestBody tipoDeVectorWrapper: TipoDeVectorWrapper, @PathVariable("ubicacionId")  ubicacionId: Long): VectorDTO {
@@ -38,13 +39,14 @@ class VectorControllerREST {
     @GetMapping
     fun recuperarTodos() = vectorService.recuperarTodos().map { v -> VectorDTO.desdeModelo(v) }
 
-    @PutMapping("/infectar")
+    @PutMapping("/infectar/{vectorId}/{especieId}")
     fun infectar(
-        @RequestBody vectorDTO: VectorDTO,
-        @RequestBody especieDTO: EspecieDTO)
+        @PathVariable("vectorId") vectorId: Long,
+        @PathVariable("especieId") especieId: Long)
     {
-        val patogeno = patogenoService.recuperarPatogeno(especieDTO.patogenoId!!)
-        vectorService.infectar(vectorDTO.aModelo(), especieDTO.aModelo(patogeno))
+        val especieAInfectar = especieService.recuperarEspecie(especieId)
+        val vectorAInfectar = vectorService.recuperarVector(vectorId)
+        vectorService.infectar(vectorAInfectar, especieAInfectar)
 
     }
 
