@@ -142,6 +142,7 @@ class UbicacionServiceImplTest {
         dataService.persistir(patogeno)
 
         val especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+        dataService.persistir(especieAContagiar)
 
         vectorService.infectar(vectorAMover,especieAContagiar)
         assertEquals(vectorAMover.especiesContagiadas.size,1)
