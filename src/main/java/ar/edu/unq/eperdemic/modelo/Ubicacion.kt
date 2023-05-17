@@ -13,4 +13,12 @@ class Ubicacion(name: String) {
     @Column(unique = true)
     var nombre: String = name
 
+    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    var caminos : MutableSet<Camino> = HashSet()
+
+    fun caminosA(ubicacionAMover: Ubicacion): MutableSet<Camino> {
+        return caminos.filter { c -> c.llegaA(ubicacionAMover) }.toMutableSet()
+    }
+
+
 }
