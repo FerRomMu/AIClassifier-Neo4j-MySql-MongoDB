@@ -20,5 +20,10 @@ class Ubicacion(name: String) {
         return caminos.filter { c -> c.llegaA(ubicacionAMover) }.toMutableSet()
     }
 
+    fun agregarCamino(camino:Camino){
+        if(this.caminos.any { c -> c.equals(c) }.not()){
+           this.caminos.add(camino)
+        }
+    }
 
 }
