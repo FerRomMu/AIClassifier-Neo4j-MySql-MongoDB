@@ -1,8 +1,16 @@
 package ar.edu.unq.eperdemic.modelo
 
-class Camino(val ubicacioOrigen: Ubicacion,
-             val ubicacioDestino: Ubicacion,
+import javax.persistence.*
+
+@Entity
+@Table(name = "camino")
+class Camino(@ManyToOne val ubicacioOrigen: Ubicacion,
+             @ManyToOne val ubicacioDestino: Ubicacion,
              val tipo: TipoDeCamino) {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id : Long? = null
 
     fun puedePasar(vector: Vector) : Boolean{
         return this.tipo.puedeTransitar(vector.tipo)
