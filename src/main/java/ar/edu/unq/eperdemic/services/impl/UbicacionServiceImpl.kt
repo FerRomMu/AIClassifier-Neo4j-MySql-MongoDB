@@ -3,6 +3,9 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.modelo.Randomizador
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
+import ar.edu.unq.eperdemic.exceptions.UbicacionMuyLejana
+import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
+import ar.edu.unq.eperdemic.modelo.Camino
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
@@ -23,9 +26,8 @@ class UbicacionServiceImpl(): UbicacionService {
 
     @Autowired lateinit var vectorRepository : VectorRepository
 
-    override fun mover(vectorId: Long, ubicacionid: Long) {
-            val listaDeVectores = ubicacionRepository.vectoresEn(ubicacionid).toList()
-            val vectorAMover = vectorRepository.findById(vectorId).get()
+     fun moverVector(vectorAMover: Vector, ubicacionAMover: Ubicacion) {
+            val listaDeVectores = ubicacionRepository.vectoresEn(ubicacionAMover.id).toList()
 
              if(listaDeVectores.isNotEmpty()){
                  vectorAMover.ubicacion = listaDeVectores[0].ubicacion
@@ -36,10 +38,29 @@ class UbicacionServiceImpl(): UbicacionService {
                  }
                  vectorRepository.save(vectorAMover)
              }else{
-                 val ubicacionAMover = ubicacionRepository.findById(ubicacionid).get()
                  vectorAMover.ubicacion = ubicacionAMover
                  vectorRepository.save(vectorAMover)
              }
+    }
+
+    override fun mover(vectorId: Long, ubicacionid: Long){
+        val vectorAMover = vectorRepository.findById(vectorId).get()
+        val ubicacionOrigen = vectorAMover.ubicacion
+        var ubicacionAMover =  ubicacionRepository.findById(ubicacionid).get()
+        var caminosDisponibles = ubicacionOrigen.caminosA(ubicacionAMover)
+
+        if(caminosDisponibles.isEmpty() ){
+            throw UbicacionMuyLejana("no es posible llegar desde la actual ubicación del vector a la nueva por medio de un camino.")
+        }
+        if(this.puedoUsarAlgunCamino(vectorAMover,caminosDisponibles)){
+            this.moverVector(vectorAMover,ubicacionAMover)
+        }else{
+            throw UbicacionNoAlcanzable("se intenta mover a un vector a través de un tipo de camino que no puede atravesar")
+        }
+    }
+
+    fun puedoUsarAlgunCamino(vector: Vector, caminosDisponibles: MutableSet<Camino>): Boolean {
+        return caminosDisponibles.any { c -> c.puedePasar(vector) }
     }
 
     override fun expandir(ubicacionId: Long) {
