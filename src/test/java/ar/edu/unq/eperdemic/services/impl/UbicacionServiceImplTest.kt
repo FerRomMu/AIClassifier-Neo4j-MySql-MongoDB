@@ -22,8 +22,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UbicacionServiceImplTest {
 
-
-
     @Autowired lateinit var vectorService: VectorService
 
     @Autowired lateinit var ubicacionService: UbicacionService
@@ -42,6 +40,10 @@ class UbicacionServiceImplTest {
     fun  `mover vector a una ubicacion con un humano y un animal`() {
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
         val chaco = ubicacionService.crearUbicacion("Chaco")
+
+        val caminoAChaco = Camino(cordoba,chaco, TipoDeCamino.CaminoTerreste)
+        cordoba.agregarCamino(caminoAChaco)
+        dataService.persistir(cordoba)
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
@@ -91,6 +93,10 @@ class UbicacionServiceImplTest {
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
         val chaco = ubicacionService.crearUbicacion("Chaco")
 
+        val caminoAChaco = Camino(cordoba,chaco, TipoDeCamino.CaminoTerreste)
+        cordoba.agregarCamino(caminoAChaco)
+        dataService.persistir(cordoba)
+
         var vectorAMover = vectorService.crearVector(TipoDeVector.Insecto,cordoba.id!!)
 
         var vectorVictima1 = vectorService.crearVector(TipoDeVector.Insecto,chaco.id!!)
@@ -134,6 +140,10 @@ class UbicacionServiceImplTest {
     fun  `mover vector a ubicacion vacia`() {
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
         val chaco = ubicacionService.crearUbicacion("Chaco")
+
+        val caminoAChaco = Camino(cordoba,chaco, TipoDeCamino.CaminoTerreste)
+        cordoba.agregarCamino(caminoAChaco)
+        dataService.persistir(cordoba)
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
