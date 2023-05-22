@@ -1,15 +1,14 @@
 package ar.edu.unq.eperdemic.modelo
 
-import javax.persistence.*
+import org.springframework.data.neo4j.core.schema.RelationshipId
+import org.springframework.data.neo4j.core.schema.RelationshipProperties
+import org.springframework.data.neo4j.core.schema.TargetNode
 
-@Entity
-@Table(name = "camino")
-class Camino(@ManyToOne val ubicacioOrigen: Ubicacion,
-             @ManyToOne val ubicacioDestino: Ubicacion,
+@RelationshipProperties
+class Camino(@TargetNode val ubicacioDestino: Ubicacion,
              val tipo: TipoDeCamino) {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @RelationshipId
     var id : Long? = null
 
     fun puedePasar(vector: Vector) : Boolean{
@@ -21,8 +20,7 @@ class Camino(@ManyToOne val ubicacioOrigen: Ubicacion,
     }
 
      fun equals(caminoAComparar : Camino): Boolean{
-        return this.ubicacioOrigen == caminoAComparar.ubicacioOrigen    &&
-                this.ubicacioDestino == caminoAComparar.ubicacioDestino &&
+        return  this.ubicacioDestino == caminoAComparar.ubicacioDestino &&
                 this.tipo == caminoAComparar.tipo
     }
 
