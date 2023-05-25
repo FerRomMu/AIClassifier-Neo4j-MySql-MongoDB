@@ -229,7 +229,97 @@ class EspecieRepositoryTest {
     }
 
     @Test
-    fun `si pido los lideres pero ninguna especie contagio tanto humanos como animales no recibo anda`(){
+    fun `si pido los lideres aclarando tipos y hay menos de 10 me da los que haya en orden de mas contagios para esos tipos de vector`(){
+
+        val patogeno2 = Patogeno("tipo444444")
+        val especie2 = patogeno2.crearEspecie("nombre444444", "lugar34444")
+        val especie3 = patogeno2.crearEspecie("nombre34243", "lugar34243")
+        data.persistir(listOf(especie2, especie3, patogeno2))
+
+        val setInicial = data.crearSetDeDatosIniciales()
+        val insectosYAnimales = setInicial
+            .filterIsInstance<Vector>()
+            .filter {
+                it.tipo == TipoDeVector.Insecto ||
+                        it.tipo == TipoDeVector.Animal
+            }
+
+        for (i in insectosYAnimales.indices) {
+            if (i < 5) {
+                insectosYAnimales[i].agregarEspecie(especie2)
+                insectosYAnimales[i].agregarEspecie(especie3)
+            } else {
+                insectosYAnimales[i].agregarEspecie(especie2)
+            }
+        }
+        val especiesLideresOrdenadas = mutableListOf(especie2, especie3)
+
+        data.persistir(insectosYAnimales)
+
+        val lideres = especieRepository.lideres(TipoDeVector.Insecto, TipoDeVector.Animal)
+
+        assertEquals(2, lideres.size)
+        for (i in lideres.indices) {
+            assertEquals(especiesLideresOrdenadas[i].id, lideres[i].id)
+            assertEquals(especiesLideresOrdenadas[i].nombre, lideres[i].nombre)
+            assertEquals(especiesLideresOrdenadas[i].paisDeOrigen, lideres[i].paisDeOrigen)
+            assertEquals(especiesLideresOrdenadas[i].patogeno.id, lideres[i].patogeno.id)
+        }
+    }
+
+    @Test
+    fun `si pido los lideres aclarando tipos me da los primeros 10 que haya en orden de mas contagios para esos tipos de vector`(){
+
+        val patogeno2 = Patogeno("tipo444444")
+
+        val especiesNoLideres: MutableList<Especie> = mutableListOf()
+        for (i in 1..100) {
+            especiesNoLideres.add(patogeno2.crearEspecie("nombre$i", "lugar$i"))
+        }
+
+        val especiesQueSeranLideres: MutableList<Especie> = mutableListOf()
+        for (i in 101..110) {
+            especiesQueSeranLideres.add(patogeno2.crearEspecie("nombre$i", "lugar$i"))
+        }
+
+        data.persistir(especiesNoLideres + especiesQueSeranLideres + patogeno2)
+
+        val setInicial = data.crearSetDeDatosIniciales()
+        val insectosYAnimales = setInicial
+            .filterIsInstance<Vector>()
+            .filter {
+                it.tipo == TipoDeVector.Insecto ||
+                        it.tipo == TipoDeVector.Animal
+            }
+
+        val especiesLideresOrdenadas = mutableListOf<Especie>()
+        for (i in insectosYAnimales.indices) {
+            if (i < 4) {
+                especiesNoLideres.forEach{ insectosYAnimales[i].agregarEspecie(it) }
+                especiesQueSeranLideres.forEach{ insectosYAnimales[i].agregarEspecie(it) }
+            } else {
+                especiesQueSeranLideres.forEach{ insectosYAnimales[i].agregarEspecie(it) }
+                val nuevoLider = especiesQueSeranLideres.removeFirst()
+                especiesLideresOrdenadas.add(nuevoLider)
+            }
+        }
+        especiesLideresOrdenadas.reverse()
+
+        data.persistir(insectosYAnimales)
+
+        val lideres = especieRepository.lideres(TipoDeVector.Insecto, TipoDeVector.Animal)
+
+        assertEquals(10, lideres.size)
+        for (i in lideres.indices) {
+            assertEquals(especiesLideresOrdenadas[i].id, lideres[i].id)
+            assertEquals(especiesLideresOrdenadas[i].nombre, lideres[i].nombre)
+            assertEquals(especiesLideresOrdenadas[i].paisDeOrigen, lideres[i].paisDeOrigen)
+            assertEquals(especiesLideresOrdenadas[i].patogeno.id, lideres[i].patogeno.id)
+        }
+    }
+
+    @Test
+    fun `si pido los lideres pero ninguna especie contagio tanto humanos como animales no recibo nada`(){
 
         data.crearSetDeDatosIniciales()
         val lideres = especieRepository.lideres()
