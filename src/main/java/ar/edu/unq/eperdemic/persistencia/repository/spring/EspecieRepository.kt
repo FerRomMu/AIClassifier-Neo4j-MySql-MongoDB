@@ -27,13 +27,23 @@ interface EspecieRepository: CrudRepository<Especie, Long> {
             "limit 1 ", nativeQuery = true )
     fun especieLider(@Param("tipo") tipo: TipoDeVector = TipoDeVector.Persona): Especie
 
-    @Query( "select es \n" +
-            "from Vector v \n" +
-            "join v.especiesContagiadas es \n" +
-            "where v.tipo = :tipoa and v.tipo = :tipob\n" +
-            "group by es.id \n" +
-            "order by count(es.id) \n" +
-            "desc")
+    @Query("SELECT es " +
+            "FROM Vector v " +
+            "JOIN v.especiesContagiadas es " +
+            "WHERE EXISTS (" +
+            "    SELECT v2 FROM Vector v2 " +
+            "    JOIN v2.especiesContagiadas es2 " +
+            "    WHERE v2.tipo = :tipob " +
+            "    AND es2 = es" +
+            ") " +
+            "AND EXISTS (" +
+            "    SELECT v3 FROM Vector v3 " +
+            "    JOIN v3.especiesContagiadas es3 " +
+            "    WHERE v3.tipo = :tipoa " +
+            "    AND es3 = es" +
+            ") " +
+            "GROUP BY es.id " +
+            "ORDER BY COUNT(es.id) DESC")
     fun lideres(@Param("tipoa") tipoA: TipoDeVector = TipoDeVector.Persona,
                 @Param("tipob") tipoB: TipoDeVector = TipoDeVector.Animal,
                 pageable: Pageable = PageRequest.of(0, 10)
