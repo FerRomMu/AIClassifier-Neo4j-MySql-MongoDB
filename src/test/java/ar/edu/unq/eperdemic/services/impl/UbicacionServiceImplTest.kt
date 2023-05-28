@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
+import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.utils.DataService
@@ -27,7 +28,7 @@ class UbicacionServiceImplTest {
     @Autowired lateinit var vectorService: VectorService
 
     @Autowired lateinit var ubicacionService: UbicacionService
-
+    @Autowired lateinit var ubicacionNeoRepository: UbicacionNeoRepository
     @Autowired lateinit var dataService: DataService
 
     lateinit var dado: Randomizador
@@ -158,7 +159,7 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `Expandir en una ubicacion`() {
-        var cordoba = ubicacionService.crearUbicacion("Cordoba")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba")
 
 
         var vectorLocal = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
@@ -217,6 +218,15 @@ class UbicacionServiceImplTest {
     }
 
     @Test
+    fun `si creo una ubicacion se guarda una ubicacionNeo con ese nombre tambien`() {
+        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
+
+        val ubicacionNeoCreada = ubicacionNeoRepository.findByNombre(ubicacion.nombre)
+
+        assertEquals("ubicacionTest", ubicacionNeoCreada.nombre)
+    }
+
+    @Test
     fun `si creo una ubicacion la puedo recuperar`() {
         val ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
         val ubicacionRecuperada = ubicacionService.recuperar(ubicacion.id!!)
@@ -259,6 +269,7 @@ class UbicacionServiceImplTest {
     @AfterEach
     fun tearDown() {
         dataService.eliminarTodo()
+        ubicacionNeoRepository.deleteAll()
     }
 
 }
