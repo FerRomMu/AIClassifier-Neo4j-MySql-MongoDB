@@ -18,15 +18,6 @@ interface EspecieRepository: CrudRepository<Especie, Long> {
             "WHERE es.id = :idEspecie\n")
     fun cantidadDeInfectados(@Param("idEspecie") especieId: Long): Int
 
-
-    @Query("select e.id, e.nombre, e.pais_de_origen, e.id_patogeno from especie_vector_contagiado evc\n" +
-            "join vector v on v.tipo = :tipo\n" +
-            "join especie e on e.id = evc.especie_id\n" +
-            "group by e.id, e.nombre, e.pais_de_origen, e.id_patogeno\n" +
-            "order by count(e.id) desc\n" +
-            "limit 1 ", nativeQuery = true )
-    fun especieLider(@Param("tipo") tipo: TipoDeVector = TipoDeVector.Persona): Especie
-
     @Query("SELECT es " +
             "FROM Vector v " +
             "JOIN v.especiesContagiadas es " +

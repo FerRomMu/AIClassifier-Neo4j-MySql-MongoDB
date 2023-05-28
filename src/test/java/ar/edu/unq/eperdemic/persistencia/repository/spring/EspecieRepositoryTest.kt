@@ -94,51 +94,6 @@ class EspecieRepositoryTest {
     }
 
     @Test
-    fun `si pido la especie lider me da la especie que infecto a mas vectores del tipo dado`(){
-
-        val patogeno2 = Patogeno("tipo444444")
-        val especie2 = patogeno2.crearEspecie("nombre444444", "lugar34444")
-        data.persistir(listOf(especie2, patogeno2))
-        val setInicial = data.crearSetDeDatosIniciales()
-        val animales = setInicial
-            .filterIsInstance<Vector>()
-            .filter {
-                it.tipo == TipoDeVector.Animal
-            }
-        animales.forEach{ it.agregarEspecie(especie2) }
-        data.persistir(animales)
-
-        val especieLider = especieRepository.especieLider(TipoDeVector.Animal)
-
-        assertEquals(especie2.id, especieLider.id)
-        assertEquals(especie2.paisDeOrigen, especieLider.paisDeOrigen)
-        assertEquals(especie2.nombre, especieLider.nombre)
-
-    }
-
-    @Test
-    fun `si pido la especie lider sin aclarar tipo me da la especie que infecto a mas humanos`(){
-        val patogeno2 = Patogeno("tipo444444")
-        val especie2 = patogeno2.crearEspecie("nombre444444", "lugar34444")
-        data.persistir(listOf(especie2, patogeno2))
-
-        val setInicial = data.crearSetDeDatosIniciales()
-        val personas = setInicial
-            .filterIsInstance<Vector>()
-            .filter {
-                it.tipo == TipoDeVector.Persona
-            }
-        personas.forEach{ it.agregarEspecie(especie2) }
-        data.persistir(personas)
-
-        val especieLider = especieRepository.especieLider()
-
-        assertEquals(especie2.id, especieLider.id)
-        assertEquals(especie2.paisDeOrigen, especieLider.paisDeOrigen)
-        assertEquals(especie2.nombre, especieLider.nombre)
-    }
-
-    @Test
     fun `si pido los lideres y hay menos de diez me da los que haya en orden de mas contagios`(){
 
         val patogeno2 = Patogeno("tipo444444")
