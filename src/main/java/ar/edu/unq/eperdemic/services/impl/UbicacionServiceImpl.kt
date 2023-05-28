@@ -5,6 +5,7 @@ import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.VectorRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
@@ -19,6 +20,7 @@ import kotlin.jvm.optionals.getOrNull
 @Service
 class UbicacionServiceImpl(): UbicacionService {
 
+    @Autowired lateinit var ubicacionNeoRepository: UbicacionNeoRepository
     @Autowired lateinit var ubicacionRepository : UbicacionRepository
 
     @Autowired lateinit var vectorRepository : VectorRepository
@@ -78,6 +80,10 @@ class UbicacionServiceImpl(): UbicacionService {
 
     override fun vectoresEn(id: Long): List<Vector> {
         return ubicacionRepository.vectoresEn(id).toList()
+    }
+
+    override fun conectar(nombreDeUbicacion1: String, nombreDeUbicacion2: String, tipoCamino: String) {
+
     }
 
 }

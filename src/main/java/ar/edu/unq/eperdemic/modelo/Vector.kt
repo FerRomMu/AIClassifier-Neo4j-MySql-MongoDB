@@ -126,4 +126,8 @@ enum class TipoDeVector {
         return this == Persona
     }
 
+    fun esAnimal(): Boolean{
+        return  this == Animal
+    }
+
 }
