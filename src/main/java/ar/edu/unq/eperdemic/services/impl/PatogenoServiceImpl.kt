@@ -61,16 +61,8 @@ class PatogenoServiceImpl() : PatogenoService {
 
     }
 
-    override fun cantidadDeInfectados(especieId: Long): Int {
-        TODO("Not yet implemented")
-    }
-
     override fun esPandemia(especieId: Long): Boolean {
         return patogenoRepository.esPandemia(especieId)
-    }
-
-    override fun recuperarEspecie(id: Long): Especie {
-        TODO("Not yet implemented")
     }
 
     override fun especiesDePatogeno(id: Long): List<Especie> {
