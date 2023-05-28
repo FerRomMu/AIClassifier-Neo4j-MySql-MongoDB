@@ -16,4 +16,10 @@ class UbicacionNeo() {
 
     @Relationship(type = "caminos")
     var caminos : MutableSet<Camino> = HashSet()
+
+    fun esLaUbicacion(idUbicacion : Long):Boolean {
+        return this.idUbicacion == idUbicacion
+    }
+
+
 }

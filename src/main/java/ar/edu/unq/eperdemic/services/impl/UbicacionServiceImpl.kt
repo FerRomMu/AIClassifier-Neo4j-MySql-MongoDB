@@ -1,13 +1,11 @@
 package ar.edu.unq.eperdemic.services.impl
 
-import ar.edu.unq.eperdemic.modelo.Randomizador
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.exceptions.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
-import ar.edu.unq.eperdemic.modelo.Camino
-import ar.edu.unq.eperdemic.modelo.Ubicacion
-import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.VectorRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
@@ -25,6 +23,8 @@ class UbicacionServiceImpl(): UbicacionService {
     @Autowired lateinit var ubicacionRepository : UbicacionRepository
 
     @Autowired lateinit var vectorRepository : VectorRepository
+
+    @Autowired lateinit var ubicacionNeoRepository : UbicacionNeoRepository
 
      fun moverVector(vectorAMover: Vector, ubicacionAMover: Ubicacion) {
             val listaDeVectores = ubicacionRepository.vectoresEn(ubicacionAMover.id).toList()
@@ -47,20 +47,21 @@ class UbicacionServiceImpl(): UbicacionService {
         val vectorAMover = vectorRepository.findById(vectorId).get()
         val ubicacionOrigen = vectorAMover.ubicacion
         var ubicacionAMover =  ubicacionRepository.findById(ubicacionid).get()
-        var caminosDisponibles = ubicacionOrigen.caminosA(ubicacionAMover)
+        var ubicacionesQueSePuedenLLegar = ubicacionNeoRepository.conectados(ubicacionAMover.nombre)
 
-        if(caminosDisponibles.isEmpty() ){
+        if(! ubicacionesQueSePuedenLLegar.any { u -> u.esLaUbicacion(ubicacionAMover.id!!) } ){
             throw UbicacionMuyLejana("no es posible llegar desde la actual ubicación del vector a la nueva por medio de un camino.")
         }
-        if(this.puedoUsarAlgunCamino(vectorAMover,caminosDisponibles)){
+        val tiposDeCaminosDisponibles = ubicacionNeoRepository.caminosEntre(ubicacionOrigen.nombre,ubicacionAMover.nombre)
+        if(this.puedoUsarAlgunCamino(vectorAMover,tiposDeCaminosDisponibles)){
             this.moverVector(vectorAMover,ubicacionAMover)
         }else{
             throw UbicacionNoAlcanzable("se intenta mover a un vector a través de un tipo de camino que no puede atravesar")
         }
     }
 
-    fun puedoUsarAlgunCamino(vector: Vector, caminosDisponibles: MutableSet<Camino>): Boolean {
-        return caminosDisponibles.any { c -> c.puedePasar(vector) }
+    fun puedoUsarAlgunCamino(vector: Vector, tiposDeCaminosDisponibles: List<TipoDeCamino>): Boolean {
+        return tiposDeCaminosDisponibles.any { tc -> tc.puedeTransitar(vector.tipo) }
     }
 
     override fun expandir(ubicacionId: Long) {
