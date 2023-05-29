@@ -285,7 +285,7 @@ class UbicacionServiceImplTest {
 
        assertThrows(DataNotFoundException::class.java)
             { ubicacionService.conectar("ubicacion inexistente 1",
-                                        "ubicacion inexistente 1",
+                                        "ubicacion inexistente 2",
                                         Camino.TipoDeCamino.CaminoTerreste) }
 
     }
