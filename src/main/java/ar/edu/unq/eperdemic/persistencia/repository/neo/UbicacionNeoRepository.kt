@@ -13,16 +13,4 @@ interface UbicacionNeoRepository : Neo4jRepository<UbicacionNeo, Long> {
 
     fun moverMasCorto(vectorId:Long, nombreDeUbicacion:String)
 
-
-    /*
-    @Query("""
-        Match(U:UbicacionNeo {nombre: ${'$'}nombreDeUbicacionOrigen })
-        Match (u)-[:NOMBRE]-(ubicacion)
-        return ubicacion
-    """)
-    private fun caminosEntre(nombreDeUbicacionOrigen:String,nombreDeUbicacionDestino:String) : List<TipoDeCamino>
-
-    */
-
-
 }

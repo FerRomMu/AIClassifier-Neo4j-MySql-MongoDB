@@ -45,23 +45,23 @@ class UbicacionServiceImpl(): UbicacionService {
 
     override fun mover(vectorId: Long, ubicacionid: Long){
         val vectorAMover = vectorRepository.findById(vectorId).get()
-        val ubicacionOrigen = vectorAMover.ubicacion
         var ubicacionAMover =  ubicacionRepository.findById(ubicacionid).get()
         var ubicacionesQueSePuedenLLegar = ubicacionNeoRepository.conectados(ubicacionAMover.nombre)
 
-        if(! ubicacionesQueSePuedenLLegar.any { u -> u.esLaUbicacion(ubicacionAMover.id!!) } ){
+        if(! ubicacionesQueSePuedenLLegar.any { uNeo -> uNeo.esLaUbicacion(ubicacionAMover.id!!) } ){
             throw UbicacionMuyLejana("no es posible llegar desde la actual ubicación del vector a la nueva por medio de un camino.")
         }
-        val tiposDeCaminosDisponibles = ubicacionNeoRepository.caminosEntre(ubicacionOrigen.nombre,ubicacionAMover.nombre)
-        if(this.puedoUsarAlgunCamino(vectorAMover,tiposDeCaminosDisponibles)){
+
+        val caminosUbicacionNeo = ubicacionesQueSePuedenLLegar.find { uNeo -> uNeo.idUbicacion!! == ubicacionAMover.id!!}!!.caminos
+        if(this.puedoUsarAlgunCamino(vectorAMover,caminosUbicacionNeo)){
             this.moverVector(vectorAMover,ubicacionAMover)
         }else{
             throw UbicacionNoAlcanzable("se intenta mover a un vector a través de un tipo de camino que no puede atravesar")
         }
     }
 
-    fun puedoUsarAlgunCamino(vector: Vector, tiposDeCaminosDisponibles: List<TipoDeCamino>): Boolean {
-        return tiposDeCaminosDisponibles.any { tc -> tc.puedeTransitar(vector.tipo) }
+    fun puedoUsarAlgunCamino(vector: Vector, caminosUbicacionNeo: MutableSet<Camino>): Boolean {
+        return caminosUbicacionNeo.any { c -> c.puedePasar(vector) }
     }
 
     override fun expandir(ubicacionId: Long) {
