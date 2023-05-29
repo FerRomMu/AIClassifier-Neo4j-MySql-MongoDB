@@ -192,28 +192,6 @@ class UbicacionRepositoryTest {
     }
 
     @Test
-    fun `al intentar obtener nombre de especie que esta infectando a mas vectores en una ubicacion inexistente falla` () {
-        val patogeno = Patogeno("patogenoSSS")
-
-        val vector1 = Vector(TipoDeVector.Insecto) ; vector1.ubicacion = ubicacion
-        val vector2 = Vector(TipoDeVector.Insecto) ; vector2.ubicacion = ubicacion
-        val vector3 = Vector(TipoDeVector.Insecto) ; vector3.ubicacion = ubicacion
-        val vector4 = Vector(TipoDeVector.Insecto) ; vector4.ubicacion = ubicacion
-        val vector5 = Vector(TipoDeVector.Insecto) ; vector5.ubicacion = ubicacion
-
-        val especie1 = Especie(patogeno, "especie111", "arg")
-        val especie2 = Especie(patogeno, "especie222", "arg")
-        val especie3 = Especie(patogeno, "especie333", "arg")
-
-        vector1.agregarEspecie(especie1) ; vector2.agregarEspecie(especie1); vector3.agregarEspecie(especie1)
-        vector4.agregarEspecie(especie2)
-
-        data.persistir(listOf(especie1, especie2, especie3, vector1, vector2, vector3, vector4, vector5, ubicacion, patogeno))
-
-        assertThrows(EmptyResultDataAccessException::class.java) { ubicacionRepository.nombreEspecieQueMasInfectaVectores("pepito") }
-    }
-
-    @Test
     fun `nombre de la especie que esta infectando a mas vectores`() {
         data.crearSetDeDatosIniciales()
         val patogeno = Patogeno("patogenoSSS")
@@ -233,7 +211,7 @@ class UbicacionRepositoryTest {
 
         data.persistir(listOf(especie1, especie2, especie3, vector1, vector2, vector3, vector4, vector5, ubicacion, patogeno))
 
-        val nombreEspecieQueMasInfecto = ubicacionRepository.nombreEspecieQueMasInfectaVectores(ubicacion.nombre)
+        val nombreEspecieQueMasInfecto = ubicacionRepository.nombreEspecieQueMasInfectaVectores(ubicacion.nombre).first()
 
         assertEquals(especie1.nombre, nombreEspecieQueMasInfecto)
     }
