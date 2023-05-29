@@ -2,7 +2,9 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.Randomizador
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
+import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
+import ar.edu.unq.eperdemic.modelo.Camino
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
@@ -82,8 +84,19 @@ class UbicacionServiceImpl(): UbicacionService {
         return ubicacionRepository.vectoresEn(id).toList()
     }
 
-    override fun conectar(nombreDeUbicacion1: String, nombreDeUbicacion2: String, tipoCamino: String) {
+    override fun conectar(nombreDeUbicacion1: String, nombreDeUbicacion2: String, tipoCamino: Camino.TipoDeCamino) {
+       try {
+           val ubicacion1 = ubicacionNeoRepository.findByNombre(nombreDeUbicacion1)
+           val ubicacion2 = ubicacionNeoRepository.findByNombre(nombreDeUbicacion2)
 
+           val camino = Camino(ubicacion2, tipoCamino)
+           ubicacion1.caminos.add(camino)
+
+           ubicacionNeoRepository.save(ubicacion1)
+           ubicacionNeoRepository.save(ubicacion2)
+       } catch (e: Exception) {
+           throw DataNotFoundException("No existe una ubicacion con el nombre dado")
+       }
     }
 
 }
