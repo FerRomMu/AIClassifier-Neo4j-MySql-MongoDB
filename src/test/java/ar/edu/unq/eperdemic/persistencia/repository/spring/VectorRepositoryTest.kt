@@ -135,7 +135,7 @@ class VectorRepositoryTest {
 
         data.persistir(listOf(ubicacion, otroLugar, vector, vector2, vector3, vectorOtroLado))
 
-        val vectorAleatorio = vectorRepository.vectorAleatorioEn(ubicacion.id!!)
+        val vectorAleatorio = vectorRepository.vectorAleatorioEn(ubicacion.id!!).first()
 
         assertTrue(vectorAleatorio.id == vector.id || vectorAleatorio.id == vector2.id || vectorAleatorio.id == vector3.id)
     }
