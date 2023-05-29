@@ -20,16 +20,17 @@ class UbicacionTest {
         ubicacion1 = Ubicacion("Cordoba")
         ubicacion2 = Ubicacion("Santa fe")
 
-        caminoTerrestre = Camino(ubicacion1,ubicacion2,TipoDeCamino.CaminoTerreste)
-        caminoAereo = Camino(ubicacion1,ubicacion2,TipoDeCamino.CaminoAereo)
-        caminoMaritimo = Camino(ubicacion1,ubicacion2,TipoDeCamino.CaminoMaritimo)
+        caminoTerrestre = Camino(ubicacion2,TipoDeCamino.CaminoTerreste)
+        caminoAereo = Camino(ubicacion2,TipoDeCamino.CaminoAereo)
+        caminoMaritimo = Camino(ubicacion2,TipoDeCamino.CaminoMaritimo)
 
         ubicacion1.caminos.add(caminoTerrestre)
         ubicacion1.caminos.add(caminoAereo)
         ubicacion1.caminos.add(caminoMaritimo)
     }
 
-    @Test
+    // ¿ Borrar desde aca a abajo, borrar test?
+
     fun `no hay caminos a ubicacion4`() {
         val ubicacion4 = Ubicacion("Chaco")
 
@@ -40,7 +41,7 @@ class UbicacionTest {
 
     @Test
     fun `caminos a ubicacion1`() {
-        val caminoAereo2 = Camino(ubicacion2,ubicacion1,TipoDeCamino.CaminoAereo)
+        val caminoAereo2 = Camino(ubicacion1,TipoDeCamino.CaminoAereo)
 
         ubicacion2.caminos.add(caminoAereo2)
         var caminosDisponibles = ubicacion2.caminosA(ubicacion1)
@@ -48,14 +49,14 @@ class UbicacionTest {
         assertEquals(1,caminosDisponibles.size)
 
         val caminoAVer = caminosDisponibles.toList()[0]
-        assertEquals(caminoAereo2.ubicacioOrigen,caminoAVer.ubicacioOrigen)
         assertEquals(caminoAereo2.ubicacioDestino,caminoAVer.ubicacioDestino)
         assertEquals(caminoAereo2.tipo,caminoAVer.tipo)
     }
+
     @Test
     fun `intentar agregar un camino que ya esta, no lo agrega`(){
         val ubicacion3 = Ubicacion("Santa fe")
-        val caminoTerrestre2 = Camino(ubicacion1,ubicacion3,TipoDeCamino.CaminoTerreste)
+        val caminoTerrestre2 = Camino(ubicacion3,TipoDeCamino.CaminoTerreste)
 
         assertEquals(3,ubicacion1.caminos.size)
 
@@ -68,7 +69,7 @@ class UbicacionTest {
     fun `intentar agregar un camino que no esta,lo agrega`(){
         assertEquals(0,ubicacion2.caminos.size)
 
-        val caminoTerrestreNuevo  = Camino(ubicacion2,ubicacion1,TipoDeCamino.CaminoTerreste)
+        val caminoTerrestreNuevo  = Camino(ubicacion1,TipoDeCamino.CaminoTerreste)
 
         ubicacion2.agregarCamino(caminoTerrestreNuevo)
 
@@ -76,7 +77,6 @@ class UbicacionTest {
 
         val caminoAVer = ubicacion2.caminos.toList()[0]
 
-        assertEquals(caminoTerrestreNuevo.ubicacioOrigen,caminoAVer.ubicacioOrigen)
         assertEquals(caminoTerrestreNuevo.ubicacioDestino,caminoAVer.ubicacioDestino)
         assertEquals(caminoTerrestreNuevo.tipo,caminoAVer.tipo)
     }

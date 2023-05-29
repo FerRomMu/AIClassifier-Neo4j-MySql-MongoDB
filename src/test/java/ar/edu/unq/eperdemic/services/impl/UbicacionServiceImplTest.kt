@@ -41,7 +41,7 @@ class UbicacionServiceImplTest {
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
         val chaco = ubicacionService.crearUbicacion("Chaco")
 
-        val caminoAChaco = Camino(cordoba,chaco, TipoDeCamino.CaminoTerreste)
+        val caminoAChaco = Camino(chaco,TipoDeCamino.CaminoTerreste)
         cordoba.agregarCamino(caminoAChaco)
         dataService.persistir(cordoba)
 
@@ -93,7 +93,7 @@ class UbicacionServiceImplTest {
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
         val chaco = ubicacionService.crearUbicacion("Chaco")
 
-        val caminoAChaco = Camino(cordoba,chaco, TipoDeCamino.CaminoTerreste)
+        val caminoAChaco = Camino(chaco, TipoDeCamino.CaminoTerreste)
         cordoba.agregarCamino(caminoAChaco)
         dataService.persistir(cordoba)
 
@@ -141,7 +141,7 @@ class UbicacionServiceImplTest {
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
         val chaco = ubicacionService.crearUbicacion("Chaco")
 
-        val caminoAChaco = Camino(cordoba,chaco, TipoDeCamino.CaminoTerreste)
+        val caminoAChaco = Camino(chaco, TipoDeCamino.CaminoTerreste)
         cordoba.agregarCamino(caminoAChaco)
         dataService.persistir(cordoba)
 

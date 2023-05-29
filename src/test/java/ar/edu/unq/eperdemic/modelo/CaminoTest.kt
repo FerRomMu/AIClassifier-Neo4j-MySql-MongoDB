@@ -28,10 +28,11 @@ class CaminoTest {
         ubicacion = Ubicacion("Cordoba")
         ubicacion2 = Ubicacion("Santa fe")
 
-        caminoTerrestre = Camino(ubicacion,ubicacion2,TipoDeCamino.CaminoTerreste)
-        caminoTerrestre2 = Camino(ubicacion,ubicacion2,TipoDeCamino.CaminoTerreste)
-        caminoAereo = Camino(ubicacion,ubicacion2,TipoDeCamino.CaminoAereo)
-        caminoMaritimo = Camino(ubicacion,ubicacion2,TipoDeCamino.CaminoMaritimo)
+        caminoTerrestre = Camino(ubicacion2,TipoDeCamino.CaminoTerreste)
+        caminoTerrestre2 = Camino(ubicacion2,TipoDeCamino.CaminoTerreste)
+        caminoAereo = Camino(ubicacion2,TipoDeCamino.CaminoAereo)
+        caminoMaritimo = Camino(ubicacion2,TipoDeCamino.CaminoMaritimo)
+
 
 
     }
@@ -100,7 +101,7 @@ class CaminoTest {
 
     @Test
     fun ` caminoTerrestre no es equals caminoTerrestre3`() {
-        val caminoTerrestre3 = Camino(ubicacion2,ubicacion,TipoDeCamino.CaminoTerreste)
+        val caminoTerrestre3 = Camino(ubicacion,TipoDeCamino.CaminoTerreste)
         assertTrue(caminoTerrestre.equals(caminoTerrestre))
     }
 
