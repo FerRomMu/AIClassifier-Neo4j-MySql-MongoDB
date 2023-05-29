@@ -41,7 +41,7 @@ class Vector(var tipo: TipoDeVector) {
     }
 
     private fun condicionParaInfectar(vectorAContagiar: Vector,especieAContagiar: Especie): Boolean{
-        return vectorAContagiar.puedoSerContagiadoPor(this) &&
+        return vectorAContagiar.puedoSerContagiadoPor(this,especieAContagiar) &&
                 this.haySuerte(especieAContagiar,vectorAContagiar.tipo) &&
                 !vectorAContagiar.sobrepasaPorMutaciones(especieAContagiar)
     }
@@ -57,19 +57,21 @@ class Vector(var tipo: TipoDeVector) {
         return numeroContagio >= numeroRuleta
     }
 
-    private fun puedoSerContagiadoPor(vectorQueMeIntentaContagiar :Vector): Boolean{
+    private fun puedoSerContagiadoPor(vectorQueMeIntentaContagiar :Vector, especieAContagiar: Especie): Boolean{
         return this.tipo.puedeContagiarme(vectorQueMeIntentaContagiar.tipo)  ||
-                vectorQueMeIntentaContagiar.tengoMutacionParaContagiarATipo(this.tipo)
+                vectorQueMeIntentaContagiar.tengoMutacionParaContagiarATipoCon(this.tipo,especieAContagiar)
     }
 
-    private fun tengoMutacionParaContagiarATipo (tipoAVer: TipoDeVector) : Boolean{
-        return this.mutacionesSufridas.stream().anyMatch { m -> m.permitoContagiarATipo(tipoAVer) }
+    private fun tengoMutacionParaContagiarATipoCon(tipoAVer: TipoDeVector, especieAContagiar: Especie) : Boolean{
+        return this.mutacionesSufridas.stream().anyMatch { m -> m.permitoContagiarATipo(tipoAVer) &&
+                                                                m.especie == especieAContagiar }
     }
 
     private fun intentarMutar(especieAMutar : Especie){
         val mutacionesPosibles = this.mutacionesNuevas(especieAMutar)
         if (this.haySuerteMutacion(especieAMutar) && mutacionesPosibles.isNotEmpty()){
             val mutacionAMutar=  mutacionesPosibles.random()
+            mutacionAMutar.especie = especieAMutar
             mutacionAMutar.surtirEfectoEn(this)
             this.mutacionesSufridas.add(mutacionAMutar)
         }

@@ -6,7 +6,10 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "mutacion")
-abstract class Mutacion {
+abstract class Mutacion(){
+
+    lateinit var especie: Especie
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id : Long? = null

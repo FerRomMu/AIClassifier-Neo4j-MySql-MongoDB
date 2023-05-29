@@ -46,6 +46,7 @@ class VectorTest {
 
         supresion = SupresionBiomecanica(50)
         bioalteracionAnimal = BioalteracionGenetica(TipoDeVector.Animal)
+        bioalteracionAnimal.especie = especie
 
     }
 
