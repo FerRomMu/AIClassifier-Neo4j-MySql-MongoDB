@@ -4,6 +4,7 @@ import ar.edu.unq.eperdemic.modelo.Randomizador
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.Ubicacion
+import ar.edu.unq.eperdemic.modelo.UbicacionNeo
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
@@ -61,8 +62,10 @@ class UbicacionServiceImpl(): UbicacionService {
     @Transactional(rollbackFor = [Exception::class], noRollbackFor = [DataIntegrityViolationException::class])
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
         val ubicacion = Ubicacion(nombreUbicacion)
+        val ubicacionNeo = UbicacionNeo(nombreUbicacion)
         try {
             ubicacionRepository.save(ubicacion)
+            ubicacionNeoRepository.save(ubicacionNeo)
             return ubicacion
         } catch (e: DataIntegrityViolationException) {  // ConstraintViolationException
             throw DataDuplicationException("Ya existe una ubicación con ese nombre.")
