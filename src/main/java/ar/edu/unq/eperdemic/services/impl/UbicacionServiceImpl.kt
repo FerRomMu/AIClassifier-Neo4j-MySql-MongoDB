@@ -89,4 +89,8 @@ class UbicacionServiceImpl(): UbicacionService {
 
     }
 
+    override fun conectados(nombreDeUbicacion:String): List<UbicacionNeo>{
+        return ubicacionNeoRepository.conectados(nombreDeUbicacion)
+    }
+
 }

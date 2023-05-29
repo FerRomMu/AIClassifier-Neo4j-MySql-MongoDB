@@ -16,4 +16,8 @@ class UbicacionNeo(var nombre: String) {
 
     @Relationship(type = "caminos")
     var caminos : MutableList<Camino> = mutableListOf()
+
+    fun agregarCamino(camino: Camino) {
+        this.caminos.add(camino)
+    }
 }
