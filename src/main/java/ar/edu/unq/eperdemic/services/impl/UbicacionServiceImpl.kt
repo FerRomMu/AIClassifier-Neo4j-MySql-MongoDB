@@ -45,22 +45,23 @@ class UbicacionServiceImpl(): UbicacionService {
 
     override fun mover(vectorId: Long, ubicacionid: Long){
         val vectorAMover = vectorRepository.findById(vectorId).get()
-        var ubicacionAMover =  ubicacionRepository.findById(ubicacionid).get()
-        var ubicacionesQueSePuedenLLegar = ubicacionNeoRepository.conectados(ubicacionAMover.nombre)
+        val ubicacionAMover =  ubicacionRepository.findById(ubicacionid).get()
+        val ubicacionesQueSePuedenLLegar = ubicacionNeoRepository.conectados(vectorAMover.ubicacion.nombre)
 
-        if(! ubicacionesQueSePuedenLLegar.any { uNeo -> uNeo.esLaUbicacion(ubicacionAMover.id!!) } ){
+        if(! ubicacionesQueSePuedenLLegar.any { uNeo -> uNeo.esLaUbicacion(ubicacionAMover.nombre) } ){
             throw UbicacionMuyLejana("no es posible llegar desde la actual ubicación del vector a la nueva por medio de un camino.")
         }
 
-        val caminosUbicacionNeo = ubicacionesQueSePuedenLLegar.find { uNeo -> uNeo.idUbicacion!! == ubicacionAMover.id!!}!!.caminos
-        if(this.puedoUsarAlgunCamino(vectorAMover,caminosUbicacionNeo)){
+        val caminosubicacionNEOOrigen =  ubicacionNeoRepository.findByNombre(vectorAMover.ubicacion.nombre).caminos.
+                                            filter{c -> c.ubicacioDestino.nombre == ubicacionAMover.nombre}.toMutableList()
+        if(this.puedoUsarAlgunCamino(vectorAMover,caminosubicacionNEOOrigen)){
             this.moverVector(vectorAMover,ubicacionAMover)
         }else{
             throw UbicacionNoAlcanzable("se intenta mover a un vector a través de un tipo de camino que no puede atravesar")
         }
     }
 
-    fun puedoUsarAlgunCamino(vector: Vector, caminosUbicacionNeo: MutableSet<Camino>): Boolean {
+    fun puedoUsarAlgunCamino(vector: Vector, caminosUbicacionNeo: MutableList<Camino>): Boolean {
         return caminosUbicacionNeo.any { c -> c.puedePasar(vector) }
     }
 

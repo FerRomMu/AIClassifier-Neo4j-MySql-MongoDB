@@ -6,7 +6,7 @@ import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Relationship
 
 @Node
-class UbicacionNeo() {
+class UbicacionNeo(name:String) {
 
     @Id
     @GeneratedValue
@@ -15,10 +15,12 @@ class UbicacionNeo() {
     var idUbicacion: Long? = null
 
     @Relationship(type = "caminos")
-    var caminos : MutableSet<Camino> = HashSet()
+    var caminos : MutableList<Camino> = mutableListOf()
 
-    fun esLaUbicacion(idUbicacion : Long):Boolean {
-        return this.idUbicacion == idUbicacion
+    var nombre: String = name
+
+    fun esLaUbicacion(name : String):Boolean {
+        return this.nombre == name
     }
 
 

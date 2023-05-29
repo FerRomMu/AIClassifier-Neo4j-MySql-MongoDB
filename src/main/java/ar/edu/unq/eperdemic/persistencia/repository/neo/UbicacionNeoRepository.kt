@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UbicacionNeoRepository : Neo4jRepository<UbicacionNeo, Long> {
 
+    fun findByNombre(nombre:String): UbicacionNeo
+
     fun conectados(nombreDeUbicacion:String): List<UbicacionNeo>
 
     fun moverMasCorto(vectorId:Long, nombreDeUbicacion:String)
