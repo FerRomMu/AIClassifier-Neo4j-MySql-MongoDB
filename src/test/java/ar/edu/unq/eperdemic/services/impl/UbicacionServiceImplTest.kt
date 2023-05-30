@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
+import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
@@ -264,6 +265,29 @@ class UbicacionServiceImplTest {
         val ubicaciones = ubicacionService.recuperarTodos()
 
         assertEquals(0, ubicaciones.size)
+    }
+
+    @Test
+    fun `se conectan dos ubicaciones existentes por medio terrestre`() {
+        val ubicacion1 = ubicacionService.crearUbicacion("ubicacion neo 1")
+        val ubicacion2 = ubicacionService.crearUbicacion("ubicacion neo 2")
+
+        ubicacionService.conectar(ubicacion1.nombre, ubicacion2.nombre, Camino.TipoDeCamino.CaminoTerreste)
+
+        val ubicacionNeo1 = ubicacionNeoRepository.findByNombre(ubicacion1.nombre)
+
+        assertEquals(ubicacionNeo1.caminos[0].tipo, Camino.TipoDeCamino.CaminoTerreste)
+        assertEquals(ubicacionNeo1.caminos[0].ubicacioDestino.nombre, ubicacion2.nombre)
+    }
+
+    @Test
+    fun `si intento conectar dos ubicaciones que no existen falla`() {
+
+       assertThrows(DataNotFoundException::class.java)
+            { ubicacionService.conectar("ubicacion inexistente 1",
+                                        "ubicacion inexistente 2",
+                                        Camino.TipoDeCamino.CaminoTerreste) }
+
     }
 
     @AfterEach
