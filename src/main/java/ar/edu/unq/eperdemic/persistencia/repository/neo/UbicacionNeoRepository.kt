@@ -10,6 +10,12 @@ interface UbicacionNeoRepository : Neo4jRepository<UbicacionNeo, Long> {
 
     fun findByNombre(nombre: String): UbicacionNeo
 
+    @Query("""
+        Match(u:UbicacionNeo)
+        Match(upartida:UbicacionNeo {nombre: ${'$'}nombreDeUbicacion })
+        Match(upartida)-[caminos]->(u)
+        return u
+    """)
     fun conectados(nombreDeUbicacion:String): List<UbicacionNeo>
 
    // fun moverMasCorto(vectorId:Long, nombreDeUbicacion:String)

@@ -93,7 +93,7 @@ class UbicacionServiceImpl(): UbicacionService {
            val ubicacion2 = ubicacionNeoRepository.findByNombre(nombreDeUbicacion2)
 
            val camino = Camino(ubicacion2, tipoCamino)
-           ubicacion1.caminos.add(camino)
+           ubicacion1.agregarCamino(camino)
 
            ubicacionNeoRepository.save(ubicacion1)
            ubicacionNeoRepository.save(ubicacion2)
