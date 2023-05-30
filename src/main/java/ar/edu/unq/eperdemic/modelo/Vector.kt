@@ -1,6 +1,5 @@
 package ar.edu.unq.eperdemic.modelo
 
-import org.aspectj.weaver.GeneratedReferenceTypeDelegate
 import javax.persistence.*
 import kotlin.streams.toList
 
@@ -64,14 +63,14 @@ class Vector(var tipo: TipoDeVector) {
 
     private fun tengoMutacionParaContagiarATipoCon(tipoAVer: TipoDeVector, especieAContagiar: Especie) : Boolean{
         return this.mutacionesSufridas.stream().anyMatch { m -> m.permitoContagiarATipo(tipoAVer) &&
-                                                                m.especie == especieAContagiar }
+                                                                m.especie!!.esMismaEspecie(especieAContagiar) }
     }
 
     private fun intentarMutar(especieAMutar : Especie){
         val mutacionesPosibles = this.mutacionesNuevas(especieAMutar)
         if (this.haySuerteMutacion(especieAMutar) && mutacionesPosibles.isNotEmpty()){
             val mutacionAMutar=  mutacionesPosibles.random()
-            mutacionAMutar.especie = especieAMutar
+            mutacionAMutar.definirEspecie(especieAMutar)
             mutacionAMutar.surtirEfectoEn(this)
             this.mutacionesSufridas.add(mutacionAMutar)
         }

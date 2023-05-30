@@ -8,7 +8,8 @@ import javax.persistence.*
 @Table(name = "mutacion")
 abstract class Mutacion(){
 
-    lateinit var especie: Especie
+    @OneToOne
+    var especie: Especie? = null
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,9 +32,14 @@ abstract class Mutacion(){
         return false
     }
 
+    fun definirEspecie(especie: Especie){
+        this.especie = especie
+    }
+
     abstract fun equals(mutacion: Mutacion) : Boolean
     abstract fun permitoContagiarATipo(tipo: TipoDeVector) : Boolean
     open fun surtirEfectoEn(vector: Vector) {}
+
 }
 
 @Entity
@@ -41,7 +47,8 @@ abstract class Mutacion(){
 class SupresionBiomecanica(val potencia: Int) : Mutacion() {
 
     override fun equals(mutacion: Mutacion) : Boolean{
-        return mutacion.compararPorPotencia(this)
+        return mutacion.compararPorPotencia(this) &&
+                this.especie!!.esMismaEspecie(mutacion.especie)
     }
 
     override fun compararPorPotencia(mutacion: Mutacion) : Boolean{
@@ -68,7 +75,8 @@ class SupresionBiomecanica(val potencia: Int) : Mutacion() {
 class BioalteracionGenetica(val tipoVectorContagiable: TipoDeVector) : Mutacion() {
 
     override fun equals(mutacion: Mutacion) : Boolean{
-        return mutacion.compararPorTipo(this)
+        return mutacion.compararPorTipo(this) &&
+                this.especie!!.esMismaEspecie(mutacion.especie)
     }
 
     override fun compararPorTipo(mutacion: Mutacion) : Boolean{

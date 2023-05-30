@@ -16,9 +16,9 @@ class MutacionServiceImpl: MutacionService {
 
     override fun agregarMutacion(especieId: Long, mutacion: Mutacion): Mutacion {
         try {
-            mutacionRepository.save(mutacion)
             val especie = especieRepository.findById(especieId).get()
             especie.agregarMutacion(mutacion)
+            mutacionRepository.save(mutacion)
             especieRepository.save(especie)
             return mutacion
         } catch (e: java.util.NoSuchElementException){

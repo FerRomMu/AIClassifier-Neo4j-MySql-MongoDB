@@ -106,6 +106,7 @@ internal class MutacionTest {
 
     @Test
     fun `Me fijo si son equivalentes 2 supresiones distintas de igual poder mediante el mensaje equals`(){
+        supresion1.definirEspecie(especie1); supresion3.definirEspecie(especie1)
         assertTrue(supresion1.equals(supresion3))
         assertTrue(supresion3.equals(supresion1))
     }
@@ -124,6 +125,9 @@ internal class MutacionTest {
 
     @Test
     fun `Me fijo si son equivalentes 2 Bioalteraciones del mismo tipo `(){
+        bioAlteracionAnimal.especie = especie1
+        bioAlteracionAnimal2.especie = especie1
+
         assertTrue(bioAlteracionAnimal.equals(bioAlteracionAnimal2))
         assertTrue(bioAlteracionAnimal2.equals(bioAlteracionAnimal))
     }
@@ -131,6 +135,10 @@ internal class MutacionTest {
     @Test
     fun `La mutacion esta en las mutaciones a ver`(){
      var mutaciones : MutableSet<Mutacion> = HashSet()
+        supresion1.definirEspecie(especie1)
+        supresion2.definirEspecie(especie1)
+        supresion3.definirEspecie(especie1)
+
         mutaciones.add(supresion1)
         mutaciones.add(supresion2)
         mutaciones.add(supresion3)

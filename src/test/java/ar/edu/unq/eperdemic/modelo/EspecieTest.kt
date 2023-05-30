@@ -111,6 +111,7 @@ class EspecieTest {
         mutacionAComparar as SupresionBiomecanica
 
         val mutacionEquivalente : Mutacion = SupresionBiomecanica(mutacionAComparar.potencia)
+        mutacionEquivalente.definirEspecie(especie)
         assertEquals(0,especie.mutacionesPosibles.size)
 
         especie.intentarAgregarMutacion(mutacionAComparar)

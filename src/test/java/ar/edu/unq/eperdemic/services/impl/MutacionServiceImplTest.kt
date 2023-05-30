@@ -45,13 +45,19 @@ class MutacionServiceImplTest {
 
         assertEquals(unaEspecie.mutacionesPosibles.size, 0)
 
-        mutacionService.agregarMutacion(unaEspecie.id!!, SupresionBiomecanica(21))
-        mutacionService.agregarMutacion(unaEspecie.id!!, BioalteracionGenetica(TipoDeVector.Persona))
+        val supresion = SupresionBiomecanica(21)
+        val bioalteracion = BioalteracionGenetica(TipoDeVector.Persona)
+
+        mutacionService.agregarMutacion(unaEspecie.id!!, supresion)
+        mutacionService.agregarMutacion(unaEspecie.id!!, bioalteracion)
 
         val especieActualizada = especieService.recuperarEspecie(unaEspecie.id!!)
 
-        assertTrue(especieActualizada.mutacionesPosibles.first{ it is SupresionBiomecanica }.equals(SupresionBiomecanica(21)))
-        assertTrue(especieActualizada.mutacionesPosibles.first{ it is BioalteracionGenetica }.equals(BioalteracionGenetica(TipoDeVector.Persona)))
+        supresion.definirEspecie(unaEspecie)
+        bioalteracion.definirEspecie(unaEspecie)
+
+        assertTrue(especieActualizada.mutacionesPosibles.first{ it is SupresionBiomecanica }.equals(supresion))
+        assertTrue(especieActualizada.mutacionesPosibles.first{ it is BioalteracionGenetica }.equals(bioalteracion))
         assertEquals(especieActualizada.mutacionesPosibles.size, 2)
     }
 
