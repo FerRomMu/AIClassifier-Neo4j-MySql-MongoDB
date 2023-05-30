@@ -1,8 +1,7 @@
 package ar.edu.unq.eperdemic.modelo
 
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -184,6 +183,19 @@ class VectorTest {
         vectorAnimal1.intentarInfectar(vectorAnimal2)
 
         assertTrue(vectorAnimal2.especiesContagiadas.contains(especie))
+    }
+
+    @Test
+    fun `si un vector animal con bioalteracion animal intenta infectar otro vector animal con una especie sin esa mutacion, no contagia`() {
+        val especieAInfectar = Especie(patogeno,"especie2", "Peru")
+
+        assertEquals(0, vectorAnimal2.especiesContagiadas.size)
+
+        vectorAnimal1.agregarEspecie(especieAInfectar)
+        vectorAnimal1.mutacionesSufridas.add(bioalteracionAnimal)
+        vectorAnimal1.intentarInfectar(vectorAnimal2)
+
+        assertFalse(vectorAnimal2.especiesContagiadas.contains(especie))
     }
 
     @Test
