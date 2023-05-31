@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
+import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
@@ -23,8 +24,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UbicacionServiceImplTest {
 
-
-
     @Autowired lateinit var vectorService: VectorService
 
     @Autowired lateinit var ubicacionService: UbicacionService
@@ -41,8 +40,12 @@ class UbicacionServiceImplTest {
 
     @Test
     fun  `mover vector a una ubicacion con un humano y un animal`() {
+
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
         val chaco = ubicacionService.crearUbicacion("Chaco")
+
+        ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
+        dataService.persistir(cordoba)
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
@@ -77,7 +80,6 @@ class UbicacionServiceImplTest {
         vectorVictima1 = vectorService.recuperarVector(vectorVictima1.id!!)
         vectorVictima2 =vectorService.recuperarVector(vectorVictima2.id!!)
 
-
         assertEquals(vectorAMover.especiesContagiadas.size,1)
         assertEquals(vectorAMover.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,1)
@@ -91,6 +93,9 @@ class UbicacionServiceImplTest {
 
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
         val chaco = ubicacionService.crearUbicacion("Chaco")
+
+        ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
+        dataService.persistir(cordoba)
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Insecto,cordoba.id!!)
 
@@ -133,8 +138,12 @@ class UbicacionServiceImplTest {
 
     @Test
     fun  `mover vector a ubicacion vacia`() {
+
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
         val chaco = ubicacionService.crearUbicacion("Chaco")
+
+        ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
+        dataService.persistir(cordoba)
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
@@ -155,12 +164,12 @@ class UbicacionServiceImplTest {
 
         vectorAMover = vectorService.recuperarVector(vectorAMover.id!!)
         assertEquals(vectorAMover.ubicacion.id,chaco.id)
+
     }
 
     @Test
     fun `Expandir en una ubicacion`() {
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
-
 
         var vectorLocal = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
         var vectorLocal2 = vectorService.crearVector(TipoDeVector.Animal,cordoba.id!!)
@@ -264,6 +273,62 @@ class UbicacionServiceImplTest {
         val ubicaciones = ubicacionService.recuperarTodos()
 
         assertEquals(0, ubicaciones.size)
+    }
+
+    @Test
+    fun `se conectan dos ubicaciones existentes por medio terrestre`() {
+        val ubicacion1 = ubicacionService.crearUbicacion("ubicacion neo 1")
+        val ubicacion2 = ubicacionService.crearUbicacion("ubicacion neo 2")
+
+        ubicacionService.conectar(ubicacion1.nombre, ubicacion2.nombre, Camino.TipoDeCamino.CaminoTerreste)
+
+        val ubicacionNeo1 = ubicacionNeoRepository.findByNombre(ubicacion1.nombre)
+
+        assertEquals(ubicacionNeo1.caminos[0].tipo, Camino.TipoDeCamino.CaminoTerreste)
+        assertEquals(ubicacionNeo1.caminos[0].ubicacioDestino.nombre, ubicacion2.nombre)
+    }
+
+    @Test
+    fun `si intento conectar dos ubicaciones que no existen falla`() {
+
+       assertThrows(DataNotFoundException::class.java)
+            { ubicacionService.conectar("ubicacion inexistente 1",
+                                        "ubicacion inexistente 2",
+                                        Camino.TipoDeCamino.CaminoTerreste) }
+
+    }
+
+    @Test
+    fun `si pido los caminos conectados a la Ubicacion con nombre Quilmes me los devuelve` () {
+        ubicacionService.crearUbicacion("Ubicacion1")
+        ubicacionService.crearUbicacion("Ubicacion2")
+        ubicacionService.crearUbicacion("Ubicacion3")
+        ubicacionService.crearUbicacion("Ubicacion4")
+        ubicacionService.crearUbicacion("Ubicacion5")
+
+        ubicacionService.conectar("Ubicacion2", "Ubicacion1", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
+
+        ubicacionService.conectar("Ubicacion3", "Ubicacion4", Camino.TipoDeCamino.CaminoAereo)
+        ubicacionService.conectar("Ubicacion4", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
+        ubicacionService.conectar("Ubicacion1", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
+        ubicacionService.conectar("Ubicacion4", "Ubicacion5", Camino.TipoDeCamino.CaminoAereo)
+
+        val ubicacionesConectadas = ubicacionService.conectados("Ubicacion2")
+
+        val ubicacion2 = ubicacionNeoRepository.findByNombre("Ubicacion2")
+
+        assertEquals(ubicacion2.caminos.size, ubicacionesConectadas.size)
+
+        val nombreUbicacionesConectadas = ubicacionesConectadas.map { u -> u.nombre}
+        assertTrue(nombreUbicacionesConectadas.contains("Ubicacion3"))
+        assertTrue(nombreUbicacionesConectadas.contains("Ubicacion1"))
+    }
+
+    @Test
+    fun `si pido los caminos conectados a la Ubicacion que no existe devuelve una lista vacia` () {
+
+        assertEquals(0, ubicacionService.conectados("ubicacion inexistente 1").size)
     }
 
     @AfterEach
