@@ -290,6 +290,39 @@ class UbicacionServiceImplTest {
 
     }
 
+    @Test
+    fun `si pido los caminos conectados a la Ubicacion con nombre Quilmes me los devuelve` () {
+        ubicacionService.crearUbicacion("Ubicacion1")
+        ubicacionService.crearUbicacion("Ubicacion2")
+        ubicacionService.crearUbicacion("Ubicacion3")
+        ubicacionService.crearUbicacion("Ubicacion4")
+        ubicacionService.crearUbicacion("Ubicacion5")
+
+        ubicacionService.conectar("Ubicacion2", "Ubicacion1", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
+
+        ubicacionService.conectar("Ubicacion3", "Ubicacion4", Camino.TipoDeCamino.CaminoAereo)
+        ubicacionService.conectar("Ubicacion4", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
+        ubicacionService.conectar("Ubicacion1", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
+        ubicacionService.conectar("Ubicacion4", "Ubicacion5", Camino.TipoDeCamino.CaminoAereo)
+
+        val ubicacionesConectadas = ubicacionService.conectados("Ubicacion2")
+
+        val ubicacion2 = ubicacionNeoRepository.findByNombre("Ubicacion2")
+
+        assertEquals(ubicacion2.caminos.size, ubicacionesConectadas.size)
+
+        val nombreUbicacionesConectadas = ubicacionesConectadas.map { u -> u.nombre}
+        assertTrue(nombreUbicacionesConectadas.contains("Ubicacion3"))
+        assertTrue(nombreUbicacionesConectadas.contains("Ubicacion1"))
+    }
+
+    @Test
+    fun `si pido los caminos conectados a la Ubicacion que no existe devuelve una lista vacia` () {
+
+        assertEquals(0, ubicacionService.conectados("ubicacion inexistente 1").size)
+    }
+
     @AfterEach
     fun tearDown() {
         dataService.eliminarTodo()
