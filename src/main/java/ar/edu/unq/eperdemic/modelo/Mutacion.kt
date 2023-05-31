@@ -47,8 +47,7 @@ abstract class Mutacion(){
 class SupresionBiomecanica(val potencia: Int) : Mutacion() {
 
     override fun equals(mutacion: Mutacion) : Boolean{
-        return mutacion.compararPorPotencia(this) &&
-                this.especie!!.esMismaEspecie(mutacion.especie)
+        return mutacion.compararPorPotencia(this)
     }
 
     override fun compararPorPotencia(mutacion: Mutacion) : Boolean{
