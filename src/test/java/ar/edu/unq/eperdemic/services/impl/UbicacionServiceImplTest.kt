@@ -40,12 +40,11 @@ class UbicacionServiceImplTest {
 
     @Test
     fun  `mover vector a una ubicacion con un humano y un animal`() {
-        /*
+
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
         val chaco = ubicacionService.crearUbicacion("Chaco")
 
-        val caminoAChaco = Camino(chaco,Camino.TipoDeCamino.CaminoTerreste)
-        cordoba.agregarCamino(caminoAChaco)
+        ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
         dataService.persistir(cordoba)
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
@@ -81,23 +80,21 @@ class UbicacionServiceImplTest {
         vectorVictima1 = vectorService.recuperarVector(vectorVictima1.id!!)
         vectorVictima2 =vectorService.recuperarVector(vectorVictima2.id!!)
 
-
         assertEquals(vectorAMover.especiesContagiadas.size,1)
         assertEquals(vectorAMover.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,1)
         assertEquals(vectorVictima1.especiesContagiadas.first().id, especieAContagiar.id)
-        assertEquals(vectorVictima2.especiesContagiadas.size,0)*/
+        assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
     }
 
     @Test
     fun  `mover vector insecto a una ubicacion con solo insectos`() {
-/*
+
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
         val chaco = ubicacionService.crearUbicacion("Chaco")
 
-        val caminoAChaco = Camino(chaco, TipoDeCamino.CaminoTerreste)
-        cordoba.agregarCamino(caminoAChaco)
+        ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
         dataService.persistir(cordoba)
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Insecto,cordoba.id!!)
@@ -136,17 +133,16 @@ class UbicacionServiceImplTest {
         assertEquals(vectorAMover.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
-*/
+
     }
 
     @Test
     fun  `mover vector a ubicacion vacia`() {
-        /*
+
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
         val chaco = ubicacionService.crearUbicacion("Chaco")
 
-        val caminoAChaco = Camino(chaco, TipoDeCamino.CaminoTerreste)
-        cordoba.agregarCamino(caminoAChaco)
+        ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
         dataService.persistir(cordoba)
 
         var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
@@ -168,13 +164,12 @@ class UbicacionServiceImplTest {
 
         vectorAMover = vectorService.recuperarVector(vectorAMover.id!!)
         assertEquals(vectorAMover.ubicacion.id,chaco.id)
-        */
+
     }
 
     @Test
     fun `Expandir en una ubicacion`() {
         val cordoba = ubicacionService.crearUbicacion("Cordoba")
-
 
         var vectorLocal = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
         var vectorLocal2 = vectorService.crearVector(TipoDeVector.Animal,cordoba.id!!)

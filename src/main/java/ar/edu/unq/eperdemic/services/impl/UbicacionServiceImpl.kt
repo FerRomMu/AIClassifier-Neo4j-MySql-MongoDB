@@ -89,7 +89,7 @@ class UbicacionServiceImpl(): UbicacionService {
             ubicacionRepository.save(ubicacion)
             ubicacionNeoRepository.save(ubicacionNeo)
             return ubicacion
-        } catch (e: DataIntegrityViolationException) {  // ConstraintViolationException
+        } catch (e: DataIntegrityViolationException) {
             throw DataDuplicationException("Ya existe una ubicación con ese nombre.")
         }
     }
