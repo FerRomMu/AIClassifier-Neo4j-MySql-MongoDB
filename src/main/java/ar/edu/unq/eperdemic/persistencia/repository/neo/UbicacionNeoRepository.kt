@@ -18,5 +18,6 @@ interface UbicacionNeoRepository : Neo4jRepository<UbicacionNeo, Long> {
     """)
     fun conectados(nombreDeUbicacion:String): List<UbicacionNeo>
 
-   // fun moverMasCorto(vectorId:Long, nombreDeUbicacion:String)
+    //fun moverMasCorto(vectorId:Long, nombreDeUbicacion:String)
+
 }

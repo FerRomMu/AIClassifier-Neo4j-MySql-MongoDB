@@ -21,4 +21,9 @@ class Camino(@TargetNode var ubicacioDestino: UbicacionNeo, val tipo: TipoDeCami
             }
         }
     }
+
+    fun puedePasar(vector: Vector) : Boolean{
+        return this.tipo.puedeTransitar(vector.tipo)
+    }
+
 }
