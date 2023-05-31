@@ -1,17 +1,19 @@
 package ar.edu.unq.eperdemic.services.impl
 
-import ar.edu.unq.eperdemic.modelo.Randomizador
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
+import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
-import ar.edu.unq.eperdemic.exceptions.UbicacionMuyLejana
-import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
 import ar.edu.unq.eperdemic.modelo.Camino
 import ar.edu.unq.eperdemic.modelo.Ubicacion
+import ar.edu.unq.eperdemic.modelo.UbicacionNeo
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.exceptions.UbicacionMuyLejana
+import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
+import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.VectorRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
-import org.hibernate.exception.ConstraintViolationException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
@@ -22,8 +24,8 @@ import kotlin.jvm.optionals.getOrNull
 @Service
 class UbicacionServiceImpl(): UbicacionService {
 
+    @Autowired lateinit var ubicacionNeoRepository: UbicacionNeoRepository
     @Autowired lateinit var ubicacionRepository : UbicacionRepository
-
     @Autowired lateinit var vectorRepository : VectorRepository
 
      fun moverVector(vectorAMover: Vector, ubicacionAMover: Ubicacion) {
@@ -45,22 +47,24 @@ class UbicacionServiceImpl(): UbicacionService {
 
     override fun mover(vectorId: Long, ubicacionid: Long){
         val vectorAMover = vectorRepository.findById(vectorId).get()
-        val ubicacionOrigen = vectorAMover.ubicacion
-        var ubicacionAMover =  ubicacionRepository.findById(ubicacionid).get()
-        var caminosDisponibles = ubicacionOrigen.caminosA(ubicacionAMover)
+        val ubicacionAMover =  ubicacionRepository.findById(ubicacionid).get()
+        val ubicacionesQueSePuedenLLegar = ubicacionNeoRepository.conectados(vectorAMover.ubicacion.nombre)
 
-        if(caminosDisponibles.isEmpty() ){
+        if(! ubicacionesQueSePuedenLLegar.any { uNeo -> uNeo.esLaUbicacion(ubicacionAMover.nombre) } ){
             throw UbicacionMuyLejana("no es posible llegar desde la actual ubicación del vector a la nueva por medio de un camino.")
         }
-        if(this.puedoUsarAlgunCamino(vectorAMover,caminosDisponibles)){
+
+        val caminosubicacionNEOOrigen =  ubicacionNeoRepository.findByNombre(vectorAMover.ubicacion.nombre).caminos.
+                                            filter{c -> c.ubicacioDestino.nombre == ubicacionAMover.nombre}.toMutableList()
+        if(this.puedoUsarAlgunCamino(vectorAMover,caminosubicacionNEOOrigen)){
             this.moverVector(vectorAMover,ubicacionAMover)
         }else{
             throw UbicacionNoAlcanzable("se intenta mover a un vector a través de un tipo de camino que no puede atravesar")
         }
     }
 
-    fun puedoUsarAlgunCamino(vector: Vector, caminosDisponibles: MutableSet<Camino>): Boolean {
-        return caminosDisponibles.any { c -> c.puedePasar(vector) }
+    fun puedoUsarAlgunCamino(vector: Vector, caminosUbicacionNeo: MutableList<Camino>): Boolean {
+        return caminosUbicacionNeo.any { c -> c.puedePasar(vector) }
     }
 
     override fun expandir(ubicacionId: Long) {
@@ -80,10 +84,12 @@ class UbicacionServiceImpl(): UbicacionService {
     @Transactional(rollbackFor = [Exception::class], noRollbackFor = [DataIntegrityViolationException::class])
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
         val ubicacion = Ubicacion(nombreUbicacion)
+        val ubicacionNeo = UbicacionNeo(nombreUbicacion)
         try {
             ubicacionRepository.save(ubicacion)
+            ubicacionNeoRepository.save(ubicacionNeo)
             return ubicacion
-        } catch (e: DataIntegrityViolationException) {  // ConstraintViolationException
+        } catch (e: DataIntegrityViolationException) {
             throw DataDuplicationException("Ya existe una ubicación con ese nombre.")
         }
     }
@@ -99,6 +105,25 @@ class UbicacionServiceImpl(): UbicacionService {
 
     override fun vectoresEn(id: Long): List<Vector> {
         return ubicacionRepository.vectoresEn(id).toList()
+    }
+
+    override fun conectar(nombreDeUbicacion1: String, nombreDeUbicacion2: String, tipoCamino: Camino.TipoDeCamino) {
+       try {
+           val ubicacion1 = ubicacionNeoRepository.findByNombre(nombreDeUbicacion1)
+           val ubicacion2 = ubicacionNeoRepository.findByNombre(nombreDeUbicacion2)
+
+           val camino = Camino(ubicacion2, tipoCamino)
+           ubicacion1.agregarCamino(camino)
+
+           ubicacionNeoRepository.save(ubicacion1)
+           ubicacionNeoRepository.save(ubicacion2)
+       } catch (e: Exception) {
+           throw DataNotFoundException("No existe una ubicacion con el nombre dado")
+       }
+    }
+
+    override fun conectados(nombreDeUbicacion:String): List<UbicacionNeo>{
+        return ubicacionNeoRepository.conectados(nombreDeUbicacion)
     }
 
 }

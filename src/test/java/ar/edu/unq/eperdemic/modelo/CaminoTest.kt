@@ -16,8 +16,8 @@ class CaminoTest {
     lateinit var vectorAnimal: Vector
     lateinit var vectorInsecto: Vector
 
-    lateinit var ubicacion: Ubicacion
-    lateinit var ubicacion2: Ubicacion
+    lateinit var ubicacion: UbicacionNeo
+    lateinit var ubicacion2: UbicacionNeo
 
     @BeforeEach
     fun setUp() {
@@ -25,14 +25,13 @@ class CaminoTest {
         vectorAnimal = Vector(TipoDeVector.Animal)
         vectorInsecto = Vector(TipoDeVector.Insecto)
 
-        ubicacion = Ubicacion("Cordoba")
-        ubicacion2 = Ubicacion("Santa fe")
+        ubicacion = UbicacionNeo("Cordoba")
+        ubicacion2 = UbicacionNeo("Santa fe")
 
-        caminoTerrestre = Camino(ubicacion,ubicacion2,TipoDeCamino.CaminoTerreste)
-        caminoTerrestre2 = Camino(ubicacion,ubicacion2,TipoDeCamino.CaminoTerreste)
-        caminoAereo = Camino(ubicacion,ubicacion2,TipoDeCamino.CaminoAereo)
-        caminoMaritimo = Camino(ubicacion,ubicacion2,TipoDeCamino.CaminoMaritimo)
-
+        caminoTerrestre = Camino(ubicacion2, Camino.TipoDeCamino.CaminoTerreste)
+        caminoTerrestre2 = Camino(ubicacion2, Camino.TipoDeCamino.CaminoTerreste)
+        caminoAereo = Camino(ubicacion2, Camino.TipoDeCamino.CaminoAereo)
+        caminoMaritimo = Camino(ubicacion2, Camino.TipoDeCamino.CaminoMaritimo)
 
     }
 
@@ -79,29 +78,6 @@ class CaminoTest {
     @Test
     fun `El vector Insecto puede pasar por el camino Aereo`() {
         assertTrue(caminoAereo.puedePasar(vectorInsecto))
-    }
-
-
-    @Test
-    fun `caminoTerrestre llega a ubicacion2`() {
-        assertTrue(caminoTerrestre.llegaA(ubicacion2))
-    }
-
-    @Test
-    fun `caminoTerrestre no llega a ubicacion3`() {
-        val ubicacion3 = Ubicacion("Jujuy")
-        assertFalse(caminoTerrestre.llegaA(ubicacion3))
-    }
-
-    @Test
-    fun ` caminoTerrestre equals caminoTerrestre2`() {
-        assertTrue(caminoTerrestre.equals(caminoTerrestre2))
-    }
-
-    @Test
-    fun ` caminoTerrestre no es equals caminoTerrestre3`() {
-        val caminoTerrestre3 = Camino(ubicacion2,ubicacion,TipoDeCamino.CaminoTerreste)
-        assertTrue(caminoTerrestre.equals(caminoTerrestre))
     }
 
     @AfterEach
