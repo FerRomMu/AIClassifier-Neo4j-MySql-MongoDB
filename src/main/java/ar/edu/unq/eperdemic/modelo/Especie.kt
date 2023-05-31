@@ -23,7 +23,7 @@ class Especie(patogenoParam: Patogeno,
         inverseJoinColumns = [JoinColumn(name = "vector_id")])
     val vectores: MutableSet<Vector> = HashSet()
 
-    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var mutacionesPosibles : MutableSet<Mutacion> = HashSet()
 
 

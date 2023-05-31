@@ -8,7 +8,7 @@ import javax.persistence.*
 @Table(name = "mutacion")
 abstract class Mutacion(){
 
-    @OneToOne
+    @ManyToOne
     var especie: Especie? = null
 
     @Id
