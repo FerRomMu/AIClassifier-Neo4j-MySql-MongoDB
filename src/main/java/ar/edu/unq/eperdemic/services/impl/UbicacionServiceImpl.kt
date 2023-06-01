@@ -116,12 +116,10 @@ class UbicacionServiceImpl(): UbicacionService {
            ubicacion1.agregarCamino(camino)
 
            ubicacionNeoRepository.save(ubicacion1)
-           ubicacionNeoRepository.save(ubicacion2)
        } catch (e: Exception) {
            throw DataNotFoundException("No existe una ubicacion con el nombre dado")
        }
     }
-
     override fun conectados(nombreDeUbicacion:String): List<UbicacionNeo>{
         return ubicacionNeoRepository.conectados(nombreDeUbicacion)
     }
