@@ -126,4 +126,26 @@ class UbicacionServiceImpl(): UbicacionService {
         return ubicacionNeoRepository.conectados(nombreDeUbicacion)
     }
 
+    override fun moverMasCorto(vectorId: Long, nombreDeUbicacion: String){
+        try {
+            val vector = vectorRepository.findById(vectorId).get()
+            val tipo1 = vector.tipo.puedeIrPor()[0]
+            val tipo2 = vector.tipo.puedeIrPor()[1]
+            val ubicacionesAMover =
+                ubicacionNeoRepository.caminoMasCorto(nombreDeUbicacion, vector.ubicacion.nombre, tipo1, tipo2)
+
+            if (ubicacionesAMover.isEmpty()) {
+                throw throw UbicacionNoAlcanzable("no hay forma de llegar al destino dado")
+            }
+
+            ubicacionesAMover.toMutableList().removeFirst()
+
+            for (ubicacionNeo in ubicacionesAMover) {
+                val ubicacion = ubicacionRepository.findByNombre(ubicacionNeo.nombre)
+                this.moverVector(vector, ubicacion)
+            }
+        } catch (e: Exception) {
+            throw IdNotFoundException("No existe un vector con el id dado")
+        }
+    }
 }

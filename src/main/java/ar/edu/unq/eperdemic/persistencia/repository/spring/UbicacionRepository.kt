@@ -34,4 +34,5 @@ interface UbicacionRepository : CrudRepository<Ubicacion, Long> {
             "group by es.nombre " +
             "order by count(v) desc")
     fun nombreEspecieQueMasInfectaVectores(@Param("nombreUbicacion") nombreDeLaUbicacion: String, pageable: Pageable = PageRequest.of(0, 1)) : List<String>
+    fun findByNombre(nombre: String): Ubicacion
 }
