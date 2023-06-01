@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
+import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
@@ -368,6 +369,113 @@ class UbicacionServiceImplTest {
         ubicacionService.conectar("Bera", "Quilmes", Camino.TipoDeCamino.CaminoTerreste)
 
 
+
+    }
+
+    @Test
+    fun `Mover mas corto pero no hay camino` () {
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
+        ubicacionService.crearUbicacion("Ubicacion2")
+        ubicacionService.crearUbicacion("Ubicacion3")
+        ubicacionService.crearUbicacion("Ubicacion4")
+
+        ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoTerreste)
+
+        val vectorAMover = vectorService.crearVector(TipoDeVector.Persona,ubicacion1.id!!)
+
+        assertThrows(UbicacionNoAlcanzable::class.java) { ubicacionService.moverMasCorto(vectorAMover.id!!,"Ubicacion4") }
+    }
+
+    @Test
+    fun `Mover mas corto hay camino pero no lo puede recorrer` () {
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
+        ubicacionService.crearUbicacion("Ubicacion2")
+        ubicacionService.crearUbicacion("Ubicacion3")
+
+        ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
+
+        val vectorAMover = vectorService.crearVector(TipoDeVector.Persona,ubicacion1.id!!)
+
+        assertThrows(UbicacionNoAlcanzable::class.java) { ubicacionService.moverMasCorto(vectorAMover.id!!,"Ubicacion4") }
+    }
+
+    @Test
+    fun `Mover mas corto hay mas de un camino que puede recorre y elije el mas corto y infecta` () {
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
+        val ubicacion2 = ubicacionService.crearUbicacion("Ubicacion2")
+        val ubicacion3 = ubicacionService.crearUbicacion("Ubicacion3")
+        val ubicacion4 = ubicacionService.crearUbicacion("Ubicacion4")
+        val ubicacion5 = ubicacionService.crearUbicacion("Ubicacion5")
+
+        ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion1", "Ubicacion4", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion2", "Ubicacion4", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion3", "Ubicacion5", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion4", "Ubicacion5", Camino.TipoDeCamino.CaminoTerreste)
+
+        val vectorAMover = vectorService.crearVector(TipoDeVector.Persona,ubicacion1.id!!)
+
+        val vector1 = vectorService.crearVector(TipoDeVector.Persona,ubicacion2.id!!)
+        val vector2 = vectorService.crearVector(TipoDeVector.Persona,ubicacion2.id!!)
+        val vector3 = vectorService.crearVector(TipoDeVector.Persona,ubicacion3.id!!)
+        val vector4 = vectorService.crearVector(TipoDeVector.Persona,ubicacion4.id!!)
+        val vector5 = vectorService.crearVector(TipoDeVector.Persona,ubicacion4.id!!)
+        val vector6 = vectorService.crearVector(TipoDeVector.Persona,ubicacion5.id!!)
+
+        val patogeno1 = Patogeno("patogeno1")
+        val especie1 =  patogeno1.crearEspecie("especie1","P.ORIGEN")
+
+        patogeno1.setCapacidadDeContagioAnimal(100)
+        patogeno1.setCapacidadDeContagioAnimal(100)
+        patogeno1.setCapacidadDeContagioAnimal(100)
+
+        dataService.persistir(patogeno1)
+        dataService.persistir(especie1)
+        vectorService.infectar(vectorAMover,especie1)
+
+        // ----- //
+
+        assertEquals(0,vector1.especiesContagiadas.size)
+        assertEquals(0,vector2.especiesContagiadas.size)
+        assertEquals(0,vector3.especiesContagiadas.size)
+        assertEquals(0,vector4.especiesContagiadas.size)
+        assertEquals(0,vector5.especiesContagiadas.size)
+        assertEquals(0,vector6.especiesContagiadas.size)
+
+        assertEquals(1,vectorAMover.especiesContagiadas.size)
+        assertEquals(especie1.patogeno.tipo,vectorAMover.especiesContagiadas.toList()[0].paisDeOrigen)
+        assertEquals(especie1.nombre,vectorAMover.especiesContagiadas.toList()[0].nombre)
+        assertEquals(especie1.paisDeOrigen,vectorAMover.especiesContagiadas.toList()[0].paisDeOrigen)
+
+        assertEquals(ubicacion1.nombre,vectorAMover.ubicacion.nombre)
+
+        ubicacionService.moverMasCorto(vectorAMover.id!!,"Ubicacion5")
+
+        // ----- //
+
+        assertEquals(0,vector1.especiesContagiadas.size)
+        assertEquals(0,vector2.especiesContagiadas.size)
+        assertEquals(0,vector3.especiesContagiadas.size)
+        assertEquals(0,vector5.especiesContagiadas.size)
+
+        assertEquals(1,vector4.especiesContagiadas.size)
+        assertEquals(especie1.patogeno.tipo,vector4.especiesContagiadas.toList()[0].paisDeOrigen)
+        assertEquals(especie1.nombre,vector4.especiesContagiadas.toList()[0].nombre)
+        assertEquals(especie1.paisDeOrigen,vector4.especiesContagiadas.toList()[0].paisDeOrigen)
+
+        assertEquals(1,vector6.especiesContagiadas.size)
+        assertEquals(especie1.patogeno.tipo,vector6.especiesContagiadas.toList()[0].paisDeOrigen)
+        assertEquals(especie1.nombre,vector6.especiesContagiadas.toList()[0].nombre)
+        assertEquals(especie1.paisDeOrigen,vector6.especiesContagiadas.toList()[0].paisDeOrigen)
+
+        assertEquals(1,vectorAMover.especiesContagiadas.size)
+        assertEquals(especie1.patogeno.tipo,vectorAMover.especiesContagiadas.toList()[0].paisDeOrigen)
+        assertEquals(especie1.nombre,vectorAMover.especiesContagiadas.toList()[0].nombre)
+        assertEquals(especie1.paisDeOrigen,vectorAMover.especiesContagiadas.toList()[0].paisDeOrigen)
+        assertEquals(ubicacion5.nombre,vectorAMover.ubicacion.nombre)
 
     }
 
