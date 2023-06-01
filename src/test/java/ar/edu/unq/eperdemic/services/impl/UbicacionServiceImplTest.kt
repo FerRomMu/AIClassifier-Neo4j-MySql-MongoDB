@@ -289,6 +289,23 @@ class UbicacionServiceImplTest {
     }
 
     @Test
+    fun `se establecen 2 conexiones unidireccionales entre dos ubicaciones`() {
+        val ubicacion1 = ubicacionService.crearUbicacion("ubicacion neo 1")
+        val ubicacion2 = ubicacionService.crearUbicacion("ubicacion neo 2")
+
+        ubicacionService.conectar(ubicacion1.nombre, ubicacion2.nombre, Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar(ubicacion2.nombre, ubicacion1.nombre, Camino.TipoDeCamino.CaminoAereo)
+
+        val ubicacionNeo1 = ubicacionNeoRepository.findByNombre(ubicacion1.nombre)
+        val ubicacionNeo2 = ubicacionNeoRepository.findByNombre(ubicacion2.nombre)
+
+        assertEquals(ubicacionNeo1.caminos[0].tipo, Camino.TipoDeCamino.CaminoTerreste)
+        assertEquals(ubicacionNeo1.caminos[0].ubicacioDestino.nombre, ubicacion2.nombre)
+        assertEquals(ubicacionNeo2.caminos[0].tipo, Camino.TipoDeCamino.CaminoAereo)
+        assertEquals(ubicacionNeo2.caminos[0].ubicacioDestino.nombre, ubicacion1.nombre)
+    }
+
+    @Test
     fun `si intento conectar dos ubicaciones que no existen falla`() {
 
        assertThrows(DataNotFoundException::class.java)
@@ -299,7 +316,7 @@ class UbicacionServiceImplTest {
     }
 
     @Test
-    fun `si pido los caminos conectados a la Ubicacion con nombre Quilmes me los devuelve` () {
+    fun `si pido los caminos conectados a la Ubicacion con nombre Ubicacion 2 me los devuelve` () {
         ubicacionService.crearUbicacion("Ubicacion1")
         ubicacionService.crearUbicacion("Ubicacion2")
         ubicacionService.crearUbicacion("Ubicacion3")
