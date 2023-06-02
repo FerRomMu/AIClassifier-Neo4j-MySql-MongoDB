@@ -58,8 +58,8 @@ class UbicacionControllerREST {
     }
 
     @PutMapping("/conectar/{nombreDeUbicacion1}/{nombreDeUbicacion2}")
-    fun conectar(@PathVariable nombreDeUbicacion1: String,
-                 @PathVariable nombreDeUbicacion2: String,
+    fun conectar(@PathVariable("nombreDeUbicacion1") nombreDeUbicacion1: String,
+                 @PathVariable("nombreDeUbicacion2") nombreDeUbicacion2: String,
                  @RequestBody  tipoDeCaminoWrapper: TipoDeCaminoWrapper) {
 
         val tipoDeCamino = when (tipoDeCaminoWrapper.tipoDeCamino) {
@@ -72,11 +72,13 @@ class UbicacionControllerREST {
     }
 
     @GetMapping("/conectados/{nombreDeUbicacion}")
-    fun conectados(@PathVariable nombreDeUbicacion: String): List<UbicacionDTO>
+    fun conectados(@PathVariable("nombreDeUbicacion") nombreDeUbicacion: String): List<UbicacionDTO>
         = ubicacionService.conectados(nombreDeUbicacion).map { u -> UbicacionDTO.desdeModelo(u) }
 
+
     @PutMapping("/moverMasCorto/{vectorId}/{nombreDeUbicacion}")
-    fun moverMasCorto(@PathVariable vectorId: Long, @PathVariable nombreDeUbicacion: String)
+    fun moverMasCorto(@PathVariable("vectorId") vectorId: Long,
+                      @PathVariable("nombreDeUbicacion") nombreDeUbicacion: String)
         = ubicacionService.moverMasCorto(vectorId,nombreDeUbicacion)
 }
 

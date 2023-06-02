@@ -4,6 +4,7 @@ import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
+import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.utils.DataService
@@ -28,6 +29,7 @@ class UbicacionServiceImplTest {
 
     @Autowired lateinit var ubicacionService: UbicacionService
     @Autowired lateinit var ubicacionNeoRepository: UbicacionNeoRepository
+    @Autowired lateinit var ubicacionRepository: UbicacionRepository
     @Autowired lateinit var dataService: DataService
 
     lateinit var dado: Randomizador
@@ -367,7 +369,7 @@ class UbicacionServiceImplTest {
         ubicacionService.conectar("Solano", "Quilmes", Camino.TipoDeCamino.CaminoTerreste)
         ubicacionService.conectar("Bera", "Quilmes", Camino.TipoDeCamino.CaminoTerreste)
 
-
+        val ubicacionNeo = ubicacionNeoRepository.findByNombre("Quilmes")
 
     }
 
@@ -376,7 +378,7 @@ class UbicacionServiceImplTest {
     @AfterEach
     fun tearDown() {
         dataService.eliminarTodo()
-        ubicacionNeoRepository.deleteAll()
+        //ubicacionNeoRepository.deleteAll()
     }
 
 }
