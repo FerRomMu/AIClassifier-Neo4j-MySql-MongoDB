@@ -213,6 +213,40 @@ class UbicacionRepositoryNeoTest {
         Assertions.assertEquals(caminoMasCorto[2].nombre, bernal.nombre)
     }
 
+    @Test
+    fun `si se quiere llegar a una ubicacion y hay 2 caminos cortos elige el primero que encuentra`() {
+        val bera = UbicacionNeo("bera")
+        val quilmes = UbicacionNeo("quilmes")
+        val varela = UbicacionNeo("varela")
+        val bernal = UbicacionNeo("bernal")
+        val solano = UbicacionNeo("solano")
+
+        val caminoABeraMaritimo = Camino(bera, Camino.TipoDeCamino.CaminoMaritimo)
+        val caminoAVarelaAereo = Camino(varela, Camino.TipoDeCamino.CaminoAereo)
+        val caminoAVarelaTerrestre = Camino(varela, Camino.TipoDeCamino.CaminoTerreste)
+        val caminoABernalAereo = Camino(bernal, Camino.TipoDeCamino.CaminoAereo)
+        val caminoASolanoTerrestre = Camino(solano, Camino.TipoDeCamino.CaminoTerreste)
+        val caminoAQuilmesTerrestre = Camino(quilmes, Camino.TipoDeCamino.CaminoTerreste)
+
+        bera.agregarCamino(caminoASolanoTerrestre)
+        varela.agregarCamino(caminoAQuilmesTerrestre)
+        solano.agregarCamino(caminoAQuilmesTerrestre)
+        quilmes.agregarCamino(caminoAVarelaAereo)
+        varela.agregarCamino(caminoABernalAereo)
+        bernal.agregarCamino(caminoAVarelaTerrestre)
+        bernal.agregarCamino(caminoASolanoTerrestre)
+        quilmes.agregarCamino(caminoABeraMaritimo)
+
+        ubicacionNeoRepository.save(bera)
+
+        val caminoMasCorto = ubicacionNeoRepository.caminoMasCorto(bernal.nombre, quilmes.nombre, Camino.TipoDeCamino.CaminoAereo, Camino.TipoDeCamino.CaminoMaritimo)
+
+        Assertions.assertEquals(caminoMasCorto.size, 3)
+        Assertions.assertEquals(caminoMasCorto[0].nombre, bernal.nombre)
+        Assertions.assertEquals(caminoMasCorto[1].nombre, solano.nombre)
+        Assertions.assertEquals(caminoMasCorto[2].nombre, quilmes.nombre)
+    }
+
     @AfterEach
     fun tearDown() {
         ubicacionNeoRepository.deleteAll()
