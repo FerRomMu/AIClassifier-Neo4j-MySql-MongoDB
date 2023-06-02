@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
+import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
@@ -351,25 +352,106 @@ class UbicacionServiceImplTest {
     }
 
     @Test
-    fun `Mover mas corto test` () {
-        ubicacionService.crearUbicacion("Bera")
-        ubicacionService.crearUbicacion("Quilmes")
-        ubicacionService.crearUbicacion("Varela")
-        ubicacionService.crearUbicacion("Bernal")
-        ubicacionService.crearUbicacion("Solano")
+    fun `Mover mas corto pero no hay camino` () {
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
+        ubicacionService.crearUbicacion("Ubicacion2")
+        ubicacionService.crearUbicacion("Ubicacion3")
+        ubicacionService.crearUbicacion("Ubicacion4")
 
-        ubicacionService.conectar("Quilmes", "Bera", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Quilmes", "Varela", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoTerreste)
 
-        ubicacionService.conectar("Varela", "Bernal", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Bernal", "Varela", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Bera", "Varela", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Bernal", "Solano", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Varela", "Solano", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Solano", "Quilmes", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Bera", "Quilmes", Camino.TipoDeCamino.CaminoTerreste)
+        val vectorAMover = vectorService.crearVector(TipoDeVector.Persona,ubicacion1.id!!)
 
-        val ubicacionNeo = ubicacionNeoRepository.findByNombre("Quilmes")
+        assertThrows(UbicacionNoAlcanzable::class.java) { ubicacionService.moverMasCorto(vectorAMover.id!!,"Ubicacion4") }
+    }
+
+    @Test
+    fun `Mover mas corto hay camino pero no lo puede recorrer` () {
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
+        ubicacionService.crearUbicacion("Ubicacion2")
+        ubicacionService.crearUbicacion("Ubicacion3")
+
+        ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
+
+        val vectorAMover = vectorService.crearVector(TipoDeVector.Persona,ubicacion1.id!!)
+
+        assertThrows(UbicacionNoAlcanzable::class.java) { ubicacionService.moverMasCorto(vectorAMover.id!!,"Ubicacion4") }
+    }
+
+    @Test
+    fun `Mover mas corto hay mas de un camino que puede recorre y elije el mas corto y infecta` () {
+
+        // Setup //
+
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
+        val ubicacion2 = ubicacionService.crearUbicacion("Ubicacion2")
+        val ubicacion3 = ubicacionService.crearUbicacion("Ubicacion3")
+        val ubicacion4 = ubicacionService.crearUbicacion("Ubicacion4")
+        val ubicacion5 = ubicacionService.crearUbicacion("Ubicacion5")
+
+        ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion1", "Ubicacion4", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion2", "Ubicacion4", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion3", "Ubicacion5", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion4", "Ubicacion5", Camino.TipoDeCamino.CaminoTerreste)
+
+        val vectorAMover = vectorService.crearVector(TipoDeVector.Persona,ubicacion1.id!!)
+
+        var vector1 = vectorService.crearVector(TipoDeVector.Persona,ubicacion2.id!!)
+        var vector2 = vectorService.crearVector(TipoDeVector.Persona,ubicacion2.id!!)
+        var vector3 = vectorService.crearVector(TipoDeVector.Persona,ubicacion3.id!!)
+        var vector4 = vectorService.crearVector(TipoDeVector.Persona,ubicacion4.id!!)
+        var vector5 = vectorService.crearVector(TipoDeVector.Animal,ubicacion4.id!!)
+        var vector6 = vectorService.crearVector(TipoDeVector.Persona,ubicacion5.id!!)
+
+        val patogeno1 = Patogeno("patogeno1")
+        val especie1 =  patogeno1.crearEspecie("especie1","P.ORIGEN")
+
+        patogeno1.setCapacidadDeContagioHumano(100)
+        patogeno1.setCapacidadDeContagioInsecto(100)
+        patogeno1.setCapacidadDeContagioAnimal(0)
+
+        dataService.persistir(patogeno1)
+        dataService.persistir(especie1)
+        vectorService.infectar(vectorAMover,especie1)
+
+        // Excercise //
+
+        ubicacionService.moverMasCorto(vectorAMover.id!!,"Ubicacion5")
+
+        val vectorMovido = vectorService.recuperarVector(vectorAMover.id!!)
+        vector1 = vectorService.recuperarVector(vector1.id!!)
+        vector2 = vectorService.recuperarVector(vector2.id!!)
+        vector3 = vectorService.recuperarVector(vector3.id!!)
+        vector4 = vectorService.recuperarVector(vector4.id!!)
+        vector5 = vectorService.recuperarVector(vector5.id!!)
+        vector6 = vectorService.recuperarVector(vector6.id!!)
+
+        // Verify //
+
+        assertEquals(0,vector1.especiesContagiadas.size)
+        assertEquals(0,vector2.especiesContagiadas.size)
+        assertEquals(0,vector3.especiesContagiadas.size)
+        assertEquals(0,vector5.especiesContagiadas.size)
+
+        assertEquals(1,vector4.especiesContagiadas.size)
+        assertEquals(especie1.patogeno.tipo,vector4.especiesContagiadas.toList()[0].patogeno.tipo)
+        assertEquals(especie1.nombre,vector4.especiesContagiadas.toList()[0].nombre)
+        assertEquals(especie1.paisDeOrigen,vector4.especiesContagiadas.toList()[0].paisDeOrigen)
+
+        assertEquals(1,vector6.especiesContagiadas.size)
+        assertEquals(especie1.patogeno.tipo,vector6.especiesContagiadas.toList()[0].patogeno.tipo)
+        assertEquals(especie1.nombre,vector6.especiesContagiadas.toList()[0].nombre)
+        assertEquals(especie1.paisDeOrigen,vector6.especiesContagiadas.toList()[0].paisDeOrigen)
+
+        assertEquals(1,vectorMovido.especiesContagiadas.size)
+        assertEquals(especie1.patogeno.tipo,vectorMovido.especiesContagiadas.toList()[0].patogeno.tipo)
+        assertEquals(especie1.nombre,vectorMovido.especiesContagiadas.toList()[0].nombre)
+        assertEquals(especie1.paisDeOrigen,vectorMovido.especiesContagiadas.toList()[0].paisDeOrigen)
+        assertEquals(ubicacion5.nombre,vectorMovido.ubicacion.nombre)
 
     }
 
@@ -378,7 +460,7 @@ class UbicacionServiceImplTest {
     @AfterEach
     fun tearDown() {
         dataService.eliminarTodo()
-        //ubicacionNeoRepository.deleteAll()
+        ubicacionNeoRepository.deleteAll()
     }
 
 }

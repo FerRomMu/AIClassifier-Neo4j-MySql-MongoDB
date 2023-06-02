@@ -32,17 +32,13 @@ class UbicacionServiceImpl(): UbicacionService {
             val listaDeVectores = ubicacionRepository.vectoresEn(ubicacionAMover.id).toList()
 
              if(listaDeVectores.isNotEmpty()){
-                 vectorAMover.ubicacion = listaDeVectores[0].ubicacion
-
                  for (vector in listaDeVectores){
                      vectorAMover.intentarInfectar(vector)
                      vectorRepository.save(vector)
                  }
-                 vectorRepository.save(vectorAMover)
-             }else{
-                 vectorAMover.ubicacion = ubicacionAMover
-                 vectorRepository.save(vectorAMover)
              }
+             vectorAMover.ubicacion = ubicacionAMover
+             vectorRepository.save(vectorAMover)
     }
 
     override fun mover(vectorId: Long, ubicacionid: Long){
@@ -125,25 +121,28 @@ class UbicacionServiceImpl(): UbicacionService {
     }
 
     override fun moverMasCorto(vectorId: Long, nombreDeUbicacion: String){
+        lateinit var ubicacionesAMover: List<UbicacionNeo>
+        lateinit var vector: Vector
         try {
-            val vector = vectorRepository.findById(vectorId).get()
-            val tipo1 = vector.tipo.puedeIrPor()[0]
-            val tipo2 = vector.tipo.puedeIrPor()[1]
-            val ubicacionesAMover =
-                ubicacionNeoRepository.caminoMasCorto(vector.ubicacion.nombre, nombreDeUbicacion ,tipo1, tipo2)
-
-            if (ubicacionesAMover.isEmpty()) {
-                throw throw UbicacionNoAlcanzable("no hay forma de llegar al destino dado")
-            }
-
-            ubicacionesAMover.toMutableList().removeFirst()
-
-            for (ubicacionNeo in ubicacionesAMover) {
-                val ubicacion = ubicacionRepository.findByNombre(ubicacionNeo.nombre)
-                this.moverVector(vector, ubicacion)
-            }
+            vector = vectorRepository.findById(vectorId).get()
         } catch (e: Exception) {
             throw IdNotFoundException("No existe un vector con el id dado")
+        }
+        val tipo1 = vector.tipo.puedeIrPor()[0]
+        val tipo2 = vector.tipo.puedeIrPor()[1]
+        ubicacionesAMover =
+            ubicacionNeoRepository.caminoMasCorto(vector.ubicacion.nombre, nombreDeUbicacion, tipo1, tipo2)
+
+        if (ubicacionesAMover.isEmpty()) {
+            throw throw UbicacionNoAlcanzable("no hay forma de llegar al destino dado")
+        }
+
+        val ubicacionesAIr = ubicacionesAMover.toMutableList()
+        ubicacionesAIr.removeFirst()
+
+        for (ubicacionNeo in ubicacionesAIr) {
+            val ubicacion = ubicacionRepository.findByNombre(ubicacionNeo.nombre)
+            this.moverVector(vector, ubicacion)
         }
     }
 }
