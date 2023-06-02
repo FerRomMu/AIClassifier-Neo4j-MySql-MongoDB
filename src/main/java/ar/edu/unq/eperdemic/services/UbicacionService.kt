@@ -16,5 +16,6 @@ interface UbicacionService {
     fun vectoresEn(id: Long): List<Vector>
     fun conectar(nombreDeUbicacion1:String, nombreDeUbicacion2:String, tipoCamino:Camino.TipoDeCamino)
     fun conectados(nombreDeUbicacion:String): List<UbicacionNeo>
+    fun moverMasCorto(vectorId: Long, nombreDeUbicacion: String)
 
 }
