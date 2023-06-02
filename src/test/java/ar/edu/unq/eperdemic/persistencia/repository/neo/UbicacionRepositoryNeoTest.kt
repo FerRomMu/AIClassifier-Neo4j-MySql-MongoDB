@@ -21,7 +21,7 @@ class UbicacionRepositoryNeoTest {
     }
 
     @Test
-    fun `llegar a la ubicacion por camino mas corto por vía terrestre o marítimo siendo terrestre el mas corto`() {
+    fun `Si pido el camino mas corto y es completamente terreste trae ese`() {
         val bera = UbicacionNeo("bera")
         val quilmes = UbicacionNeo("quilmes")
         val varela = UbicacionNeo("varela")
@@ -52,7 +52,7 @@ class UbicacionRepositoryNeoTest {
     }
 
     @Test
-    fun `si se quiere llegar por camino mas corto a la ubicacion por vía terrestre o maritimo y solo tiene un camino largo marítimo elegirá ese`() {
+    fun `si se quiere llegar por camino terrestre o maritimo y el mas corto es aereo, trae el mas corto que sea terreste y marítimo`() {
         val bera = UbicacionNeo("bera")
         val quilmes = UbicacionNeo("quilmes")
         val varela = UbicacionNeo("varela")
@@ -86,7 +86,7 @@ class UbicacionRepositoryNeoTest {
     }
 
     @Test
-    fun `si se quiere llegar por camino corto a una ubicacion por caminos maritimos o terrestres pero no existen el camino mas corto da vacio`() {
+    fun `si se pide el camino mas corto a una ubicacion por caminos maritimos o terrestres pero no existe un camino así da vacio`() {
         val bera = UbicacionNeo("bera")
         val quilmes = UbicacionNeo("quilmes")
         val varela = UbicacionNeo("varela")
@@ -116,7 +116,7 @@ class UbicacionRepositoryNeoTest {
     }
 
     @Test
-    fun `si se quiere llegar por camino corto a la ubicacion por vía terrestre o aereo y solo tiene camino largo aéreo elegirá ese`() {
+    fun `si se quiere llegar por camino terrestre o aereo y el mas corto es maritimo, trae el mas corto que sea terreste y aereo`(){
         val bera = UbicacionNeo("bera")
         val quilmes = UbicacionNeo("quilmes")
         val varela = UbicacionNeo("varela")
@@ -151,7 +151,7 @@ class UbicacionRepositoryNeoTest {
     }
 
     @Test
-    fun `si se quiere llegar por camino mas corto a la ubicacion por vía aérea o terrestre pero no existen entonces da vacío`() {
+    fun `si se pide el camino mas corto a una ubicacion por caminos aereos o terrestres pero no existe un camino así da vacio`(){
         val bera = UbicacionNeo("bera")
         val quilmes = UbicacionNeo("quilmes")
         val varela = UbicacionNeo("varela")
@@ -214,7 +214,7 @@ class UbicacionRepositoryNeoTest {
     }
 
     @Test
-    fun `si se quiere llegar a una ubicacion y hay 2 caminos cortos elige el primero que encuentra`() {
+    fun `si se quiere llegar a una ubicacion y hay 2 caminos igual de cortos elige el primero que encuentra`() {
         val bera = UbicacionNeo("bera")
         val quilmes = UbicacionNeo("quilmes")
         val varela = UbicacionNeo("varela")
