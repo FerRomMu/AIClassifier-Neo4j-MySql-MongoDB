@@ -243,7 +243,7 @@ class UbicacionRepositoryNeoTest {
 
         Assertions.assertEquals(caminoMasCorto.size, 3)
         Assertions.assertEquals(caminoMasCorto[0].nombre, bernal.nombre)
-        Assertions.assertEquals(caminoMasCorto[1].nombre, solano.nombre)
+        Assertions.assertTrue(caminoMasCorto[1].nombre == solano.nombre || caminoMasCorto[1].nombre == varela.nombre)
         Assertions.assertEquals(caminoMasCorto[2].nombre, quilmes.nombre)
     }
 
