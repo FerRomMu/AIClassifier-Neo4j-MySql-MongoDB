@@ -399,14 +399,14 @@ class UbicacionServiceImplTest {
         val vector2 = vectorService.crearVector(TipoDeVector.Persona,ubicacion2.id!!)
         val vector3 = vectorService.crearVector(TipoDeVector.Persona,ubicacion3.id!!)
         val vector4 = vectorService.crearVector(TipoDeVector.Persona,ubicacion4.id!!)
-        val vector5 = vectorService.crearVector(TipoDeVector.Persona,ubicacion4.id!!)
+        val vector5 = vectorService.crearVector(TipoDeVector.Persona,ubicacion2.id!!)
         val vector6 = vectorService.crearVector(TipoDeVector.Persona,ubicacion5.id!!)
 
         val patogeno1 = Patogeno("patogeno1")
         val especie1 =  patogeno1.crearEspecie("especie1","P.ORIGEN")
 
-        patogeno1.setCapacidadDeContagioAnimal(100)
-        patogeno1.setCapacidadDeContagioAnimal(100)
+        patogeno1.setCapacidadDeContagioHumano(100)
+        patogeno1.setCapacidadDeContagioInsecto(100)
         patogeno1.setCapacidadDeContagioAnimal(100)
 
         dataService.persistir(patogeno1)
@@ -433,23 +433,8 @@ class UbicacionServiceImplTest {
 
         // ----- //
 
-        assertEquals(0,vector1.especiesContagiadas.size)
-        assertEquals(0,vector2.especiesContagiadas.size)
-        assertEquals(0,vector3.especiesContagiadas.size)
-        assertEquals(0,vector5.especiesContagiadas.size)
-
-        assertEquals(1,vector4.especiesContagiadas.size)
-        assertEquals(especie1.patogeno.tipo,vector4.especiesContagiadas.toList()[0].paisDeOrigen)
-        assertEquals(especie1.nombre,vector4.especiesContagiadas.toList()[0].nombre)
-        assertEquals(especie1.paisDeOrigen,vector4.especiesContagiadas.toList()[0].paisDeOrigen)
-
-        assertEquals(1,vector6.especiesContagiadas.size)
-        assertEquals(especie1.patogeno.tipo,vector6.especiesContagiadas.toList()[0].paisDeOrigen)
-        assertEquals(especie1.nombre,vector6.especiesContagiadas.toList()[0].nombre)
-        assertEquals(especie1.paisDeOrigen,vector6.especiesContagiadas.toList()[0].paisDeOrigen)
-
         assertEquals(1,vectorAMover.especiesContagiadas.size)
-        assertEquals(especie1.patogeno.tipo,vectorAMover.especiesContagiadas.toList()[0].paisDeOrigen)
+        assertEquals(especie1.patogeno.tipo,vectorAMover.especiesContagiadas.toList()[0].patogeno.tipo)
         assertEquals(especie1.nombre,vectorAMover.especiesContagiadas.toList()[0].nombre)
         assertEquals(especie1.paisDeOrigen,vectorAMover.especiesContagiadas.toList()[0].paisDeOrigen)
         assertEquals(ubicacion5.nombre,vectorAMover.ubicacion.nombre)

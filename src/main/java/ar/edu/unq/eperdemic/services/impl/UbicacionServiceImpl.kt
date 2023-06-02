@@ -141,9 +141,10 @@ class UbicacionServiceImpl(): UbicacionService {
             throw throw UbicacionNoAlcanzable("no hay forma de llegar al destino dado")
         }
 
-        ubicacionesAMover.toMutableList().removeFirst()
+        val ubicacionesAIr = ubicacionesAMover.toMutableList()
+        ubicacionesAIr.removeFirst()
 
-        for (ubicacionNeo in ubicacionesAMover) {
+        for (ubicacionNeo in ubicacionesAIr) {
             val ubicacion = ubicacionRepository.findByNombre(ubicacionNeo.nombre)
             this.moverVector(vector, ubicacion)
         }
