@@ -380,6 +380,9 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `Mover mas corto hay mas de un camino que puede recorre y elije el mas corto y infecta` () {
+
+        // Setup //
+
         val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
         val ubicacion2 = ubicacionService.crearUbicacion("Ubicacion2")
         val ubicacion3 = ubicacionService.crearUbicacion("Ubicacion3")
@@ -395,43 +398,53 @@ class UbicacionServiceImplTest {
 
         val vectorAMover = vectorService.crearVector(TipoDeVector.Persona,ubicacion1.id!!)
 
-        val vector1 = vectorService.crearVector(TipoDeVector.Persona,ubicacion2.id!!)
-        val vector2 = vectorService.crearVector(TipoDeVector.Persona,ubicacion2.id!!)
-        val vector3 = vectorService.crearVector(TipoDeVector.Persona,ubicacion3.id!!)
-        val vector4 = vectorService.crearVector(TipoDeVector.Persona,ubicacion4.id!!)
-        val vector5 = vectorService.crearVector(TipoDeVector.Persona,ubicacion2.id!!)
-        val vector6 = vectorService.crearVector(TipoDeVector.Persona,ubicacion5.id!!)
+        var vector1 = vectorService.crearVector(TipoDeVector.Persona,ubicacion2.id!!)
+        var vector2 = vectorService.crearVector(TipoDeVector.Persona,ubicacion2.id!!)
+        var vector3 = vectorService.crearVector(TipoDeVector.Persona,ubicacion3.id!!)
+        var vector4 = vectorService.crearVector(TipoDeVector.Persona,ubicacion4.id!!)
+        var vector5 = vectorService.crearVector(TipoDeVector.Animal,ubicacion4.id!!)
+        var vector6 = vectorService.crearVector(TipoDeVector.Persona,ubicacion5.id!!)
 
         val patogeno1 = Patogeno("patogeno1")
         val especie1 =  patogeno1.crearEspecie("especie1","P.ORIGEN")
 
         patogeno1.setCapacidadDeContagioHumano(100)
         patogeno1.setCapacidadDeContagioInsecto(100)
-        patogeno1.setCapacidadDeContagioAnimal(100)
+        patogeno1.setCapacidadDeContagioAnimal(0)
 
         dataService.persistir(patogeno1)
         dataService.persistir(especie1)
         vectorService.infectar(vectorAMover,especie1)
 
-        // ----- //
+        // Excercise //
+
+        ubicacionService.moverMasCorto(vectorAMover.id!!,"Ubicacion5")
+
+        val vectorMovido = vectorService.recuperarVector(vectorAMover.id!!)
+        vector1 = vectorService.recuperarVector(vector1.id!!)
+        vector2 = vectorService.recuperarVector(vector2.id!!)
+        vector3 = vectorService.recuperarVector(vector3.id!!)
+        vector4 = vectorService.recuperarVector(vector4.id!!)
+        vector5 = vectorService.recuperarVector(vector5.id!!)
+        vector6 = vectorService.recuperarVector(vector6.id!!)
+
+        // Verify //
 
         assertEquals(0,vector1.especiesContagiadas.size)
         assertEquals(0,vector2.especiesContagiadas.size)
         assertEquals(0,vector3.especiesContagiadas.size)
-        assertEquals(0,vector4.especiesContagiadas.size)
         assertEquals(0,vector5.especiesContagiadas.size)
-        assertEquals(0,vector6.especiesContagiadas.size)
 
-        assertEquals(1,vectorAMover.especiesContagiadas.size)
-        assertEquals(especie1.patogeno.tipo,vectorAMover.especiesContagiadas.toList()[0].patogeno.tipo)
-        assertEquals(especie1.nombre,vectorAMover.especiesContagiadas.toList()[0].nombre)
-        assertEquals(especie1.paisDeOrigen,vectorAMover.especiesContagiadas.toList()[0].paisDeOrigen)
+        assertEquals(1,vector4.especiesContagiadas.size)
+        assertEquals(especie1.patogeno.tipo,vector4.especiesContagiadas.toList()[0].patogeno.tipo)
+        assertEquals(especie1.nombre,vector4.especiesContagiadas.toList()[0].nombre)
+        assertEquals(especie1.paisDeOrigen,vector4.especiesContagiadas.toList()[0].paisDeOrigen)
 
-        assertEquals(ubicacion1.nombre,vectorAMover.ubicacion.nombre)
+        assertEquals(1,vector6.especiesContagiadas.size)
+        assertEquals(especie1.patogeno.tipo,vector6.especiesContagiadas.toList()[0].patogeno.tipo)
+        assertEquals(especie1.nombre,vector6.especiesContagiadas.toList()[0].nombre)
+        assertEquals(especie1.paisDeOrigen,vector6.especiesContagiadas.toList()[0].paisDeOrigen)
 
-        ubicacionService.moverMasCorto(vectorAMover.id!!,"Ubicacion5")
-        val vectorMovido = vectorService.recuperarVector(vectorAMover.id!!)
-        // ----- //
         assertEquals(1,vectorMovido.especiesContagiadas.size)
         assertEquals(especie1.patogeno.tipo,vectorMovido.especiesContagiadas.toList()[0].patogeno.tipo)
         assertEquals(especie1.nombre,vectorMovido.especiesContagiadas.toList()[0].nombre)
