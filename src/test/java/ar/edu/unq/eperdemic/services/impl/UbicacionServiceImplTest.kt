@@ -446,7 +446,7 @@ class UbicacionServiceImplTest {
         assertEquals(0,vector6.especiesContagiadas.size)
 
         assertEquals(1,vectorAMover.especiesContagiadas.size)
-        assertEquals(especie1.patogeno.tipo,vectorAMover.especiesContagiadas.toList()[0].paisDeOrigen)
+        assertEquals(especie1.patogeno.tipo,vectorAMover.especiesContagiadas.toList()[0].patogeno.tipo)
         assertEquals(especie1.nombre,vectorAMover.especiesContagiadas.toList()[0].nombre)
         assertEquals(especie1.paisDeOrigen,vectorAMover.especiesContagiadas.toList()[0].paisDeOrigen)
 
