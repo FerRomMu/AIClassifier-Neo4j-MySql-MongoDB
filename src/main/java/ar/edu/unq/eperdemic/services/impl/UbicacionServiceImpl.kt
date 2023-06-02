@@ -135,7 +135,7 @@ class UbicacionServiceImpl(): UbicacionService {
         val tipo1 = vector.tipo.puedeIrPor()[0]
         val tipo2 = vector.tipo.puedeIrPor()[1]
         ubicacionesAMover =
-            ubicacionNeoRepository.caminoMasCorto(nombreDeUbicacion, vector.ubicacion.nombre, tipo1, tipo2)
+            ubicacionNeoRepository.caminoMasCorto(vector.ubicacion.nombre, nombreDeUbicacion, tipo1, tipo2)
 
         if (ubicacionesAMover.isEmpty()) {
             throw throw UbicacionNoAlcanzable("no hay forma de llegar al destino dado")
