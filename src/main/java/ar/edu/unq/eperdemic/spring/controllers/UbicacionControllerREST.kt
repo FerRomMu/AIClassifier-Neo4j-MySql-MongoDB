@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.spring.controllers;
 
 import ar.edu.unq.eperdemic.modelo.Camino
 import ar.edu.unq.eperdemic.modelo.Ubicacion;
+import ar.edu.unq.eperdemic.modelo.UbicacionNeo
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.services.UbicacionService;
 import ar.edu.unq.eperdemic.services.VectorService;
@@ -69,6 +70,10 @@ class UbicacionControllerREST {
         }
         ubicacionService.conectar(nombreDeUbicacion1,nombreDeUbicacion2,tipoDeCamino)
     }
+
+    @GetMapping("/conectados/{nombreDeUbicacion}")
+    fun conectados(@PathVariable nombreDeUbicacion: String): List<UbicacionDTO>
+        = ubicacionService.conectados(nombreDeUbicacion).map { u -> UbicacionDTO.desdeModelo(u) }
 
 }
 

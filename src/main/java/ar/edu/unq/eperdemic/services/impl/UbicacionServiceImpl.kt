@@ -120,8 +120,8 @@ class UbicacionServiceImpl(): UbicacionService {
            throw DataNotFoundException("No existe una ubicacion con el nombre dado")
        }
     }
-    override fun conectados(nombreDeUbicacion:String): List<UbicacionNeo>{
-        return ubicacionNeoRepository.conectados(nombreDeUbicacion)
+    override fun conectados(nombreDeUbicacion:String): List<Ubicacion>{
+        return ubicacionNeoRepository.conectados(nombreDeUbicacion).map { uNeo -> ubicacionRepository.findByNombre(uNeo.nombre) }
     }
 
 }
