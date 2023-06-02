@@ -350,29 +350,6 @@ class UbicacionServiceImplTest {
     }
 
     @Test
-    fun `Mover mas corto test` () {
-        ubicacionService.crearUbicacion("Bera")
-        ubicacionService.crearUbicacion("Quilmes")
-        ubicacionService.crearUbicacion("Varela")
-        ubicacionService.crearUbicacion("Bernal")
-        ubicacionService.crearUbicacion("Solano")
-
-        ubicacionService.conectar("Quilmes", "Bera", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Quilmes", "Varela", Camino.TipoDeCamino.CaminoTerreste)
-
-        ubicacionService.conectar("Varela", "Bernal", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Bernal", "Varela", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Bera", "Varela", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Bernal", "Solano", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Varela", "Solano", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Solano", "Quilmes", Camino.TipoDeCamino.CaminoTerreste)
-        ubicacionService.conectar("Bera", "Quilmes", Camino.TipoDeCamino.CaminoTerreste)
-
-
-
-    }
-
-    @Test
     fun `Mover mas corto pero no hay camino` () {
         val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
         ubicacionService.crearUbicacion("Ubicacion2")
