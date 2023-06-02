@@ -15,7 +15,7 @@ interface UbicacionService {
     fun recuperarTodos(): List<Ubicacion>
     fun vectoresEn(id: Long): List<Vector>
     fun conectar(nombreDeUbicacion1:String, nombreDeUbicacion2:String, tipoCamino:Camino.TipoDeCamino)
-    fun conectados(nombreDeUbicacion:String): List<UbicacionNeo>
+    fun conectados(nombreDeUbicacion:String): List<Ubicacion>
     fun moverMasCorto(vectorId: Long, nombreDeUbicacion: String)
 
 }

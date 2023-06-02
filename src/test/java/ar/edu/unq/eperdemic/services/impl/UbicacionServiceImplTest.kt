@@ -5,6 +5,7 @@ import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
+import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.utils.DataService
@@ -29,6 +30,7 @@ class UbicacionServiceImplTest {
 
     @Autowired lateinit var ubicacionService: UbicacionService
     @Autowired lateinit var ubicacionNeoRepository: UbicacionNeoRepository
+    @Autowired lateinit var ubicacionRepository: UbicacionRepository
     @Autowired lateinit var dataService: DataService
 
     lateinit var dado: Randomizador
