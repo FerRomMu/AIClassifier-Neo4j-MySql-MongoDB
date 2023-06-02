@@ -44,7 +44,7 @@ class PatogenoServiceImpl() : PatogenoService {
 
     override fun agregarEspecie(id: Long, nombre: String, ubicacionId: Long): Especie {
         try {
-            val vectorAInfectar = vectorRepository.vectorAleatorioEn(ubicacionId)
+            val vectorAInfectar = vectorRepository.vectorAleatorioEn(ubicacionId).first()
             val patogeno = this.recuperarPatogeno(id)
             val especieNueva = patogeno.crearEspecie(nombre, vectorAInfectar.ubicacion.nombre)
 
@@ -55,22 +55,14 @@ class PatogenoServiceImpl() : PatogenoService {
             especieRepository.save(especieNueva)
 
             return especieNueva
-        } catch (e : EmptyResultDataAccessException){
+        } catch (e : NoSuchElementException){
             throw DataNotFoundException("No existe un vector aleatorio en la ubicacion dada.")
         }
 
     }
 
-    override fun cantidadDeInfectados(especieId: Long): Int {
-        TODO("Not yet implemented")
-    }
-
     override fun esPandemia(especieId: Long): Boolean {
         return patogenoRepository.esPandemia(especieId)
-    }
-
-    override fun recuperarEspecie(id: Long): Especie {
-        TODO("Not yet implemented")
     }
 
     override fun especiesDePatogeno(id: Long): List<Especie> {

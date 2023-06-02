@@ -23,7 +23,7 @@ class Especie(patogenoParam: Patogeno,
         inverseJoinColumns = [JoinColumn(name = "vector_id")])
     val vectores: MutableSet<Vector> = HashSet()
 
-    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var mutacionesPosibles : MutableSet<Mutacion> = HashSet()
 
 
@@ -36,6 +36,7 @@ class Especie(patogenoParam: Patogeno,
 
     fun agregarMutacion(mutacion:Mutacion){
         this.mutacionesPosibles.add(mutacion)
+        mutacion.definirEspecie(this)
     }
 
     fun intentarAgregarMutacion(mutacionAAgregar:Mutacion){
@@ -47,6 +48,10 @@ class Especie(patogenoParam: Patogeno,
 
     fun capacidadDeBiomecanizacion() : Int {
         return this.patogeno.getCapacidadDeBiomecanizacion()
+    }
+
+    fun esMismaEspecie(especie: Especie?): Boolean{
+        return this.nombre == especie!!.nombre
     }
 
     fun defensa(): Int{
