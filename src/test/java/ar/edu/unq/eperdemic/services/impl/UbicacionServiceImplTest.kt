@@ -277,12 +277,12 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `se conectan dos ubicaciones existentes por medio terrestre`() {
-        val ubicacion1 = ubicacionService.crearUbicacion("ubicacion neo 1")
+        val Bera = ubicacionService.crearUbicacion("ubicacion neo 1")
         val ubicacion2 = ubicacionService.crearUbicacion("ubicacion neo 2")
 
-        ubicacionService.conectar(ubicacion1.nombre, ubicacion2.nombre, Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar(Bera.nombre, ubicacion2.nombre, Camino.TipoDeCamino.CaminoTerreste)
 
-        val ubicacionNeo1 = ubicacionNeoRepository.findByNombre(ubicacion1.nombre)
+        val ubicacionNeo1 = ubicacionNeoRepository.findByNombre(Bera.nombre)
 
         assertEquals(ubicacionNeo1.caminos[0].tipo, Camino.TipoDeCamino.CaminoTerreste)
         assertEquals(ubicacionNeo1.caminos[0].ubicacioDestino.nombre, ubicacion2.nombre)
@@ -316,19 +316,19 @@ class UbicacionServiceImplTest {
     }
 
     @Test
-    fun `si pido los caminos conectados a la Ubicacion con nombre Ubicacion 2 me los devuelve` () {
-        ubicacionService.crearUbicacion("Ubicacion1")
+    fun `si pido los caminos conectados a la Ubicacion con nombre Quilmes me los devuelve` () {
+        ubicacionService.crearUbicacion("Bera")
         ubicacionService.crearUbicacion("Ubicacion2")
         ubicacionService.crearUbicacion("Ubicacion3")
         ubicacionService.crearUbicacion("Ubicacion4")
         ubicacionService.crearUbicacion("Ubicacion5")
 
-        ubicacionService.conectar("Ubicacion2", "Ubicacion1", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Ubicacion2", "Bera", Camino.TipoDeCamino.CaminoTerreste)
         ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
 
         ubicacionService.conectar("Ubicacion3", "Ubicacion4", Camino.TipoDeCamino.CaminoAereo)
         ubicacionService.conectar("Ubicacion4", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
-        ubicacionService.conectar("Ubicacion1", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
+        ubicacionService.conectar("Bera", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
         ubicacionService.conectar("Ubicacion4", "Ubicacion5", Camino.TipoDeCamino.CaminoAereo)
 
         val ubicacionesConectadas = ubicacionService.conectados("Ubicacion2")
@@ -339,7 +339,7 @@ class UbicacionServiceImplTest {
 
         val nombreUbicacionesConectadas = ubicacionesConectadas.map { u -> u.nombre}
         assertTrue(nombreUbicacionesConectadas.contains("Ubicacion3"))
-        assertTrue(nombreUbicacionesConectadas.contains("Ubicacion1"))
+        assertTrue(nombreUbicacionesConectadas.contains("Bera"))
     }
 
     @Test
@@ -347,6 +347,31 @@ class UbicacionServiceImplTest {
 
         assertEquals(0, ubicacionService.conectados("ubicacion inexistente 1").size)
     }
+
+    @Test
+    fun `Mover mas corto test` () {
+        ubicacionService.crearUbicacion("Bera")
+        ubicacionService.crearUbicacion("Quilmes")
+        ubicacionService.crearUbicacion("Varela")
+        ubicacionService.crearUbicacion("Bernal")
+        ubicacionService.crearUbicacion("Solano")
+
+        ubicacionService.conectar("Quilmes", "Bera", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Quilmes", "Varela", Camino.TipoDeCamino.CaminoTerreste)
+
+        ubicacionService.conectar("Varela", "Bernal", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Bernal", "Varela", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Bera", "Varela", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Bernal", "Solano", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Varela", "Solano", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Solano", "Quilmes", Camino.TipoDeCamino.CaminoTerreste)
+        ubicacionService.conectar("Bera", "Quilmes", Camino.TipoDeCamino.CaminoTerreste)
+
+
+
+    }
+
+
 
     @AfterEach
     fun tearDown() {

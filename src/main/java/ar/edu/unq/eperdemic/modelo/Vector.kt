@@ -109,7 +109,22 @@ class Vector(var tipo: TipoDeVector) {
 }
 
 enum class TipoDeVector {
+
     Persona, Insecto, Animal;
+
+    fun puedeIrPor(): List<Camino.TipoDeCamino>{
+        return when(this){
+            Persona -> listOf(Camino.TipoDeCamino.CaminoMaritimo,
+                              Camino.TipoDeCamino.CaminoTerreste)
+
+            Insecto -> listOf(Camino.TipoDeCamino.CaminoAereo,
+                              Camino.TipoDeCamino.CaminoTerreste)
+
+            Animal  -> listOf(Camino.TipoDeCamino.CaminoMaritimo,
+                              Camino.TipoDeCamino.CaminoAereo,
+                              Camino.TipoDeCamino.CaminoTerreste)
+        }
+    }
 
     fun puedeContagiarme(tipo: TipoDeVector) : Boolean {
         return when(this){
