@@ -57,7 +57,7 @@ class UbicacionControllerREST {
         return ubicacionService.vectoresEn(id).map { vector -> VectorDTO.desdeModelo(vector) }
     }
 
-    @PostMapping("/conectar/{nombreDeUbicacion1}/{nombreDeUbicacion2}")
+    @PutMapping("/conectar/{nombreDeUbicacion1}/{nombreDeUbicacion2}")
     fun conectar(@PathVariable nombreDeUbicacion1: String,
                  @PathVariable nombreDeUbicacion2: String,
                  @RequestBody  tipoDeCaminoWrapper: TipoDeCaminoWrapper) {
@@ -75,6 +75,9 @@ class UbicacionControllerREST {
     fun conectados(@PathVariable nombreDeUbicacion: String): List<UbicacionDTO>
         = ubicacionService.conectados(nombreDeUbicacion).map { u -> UbicacionDTO.desdeModelo(u) }
 
+    @PutMapping("/moverMasCorto/{vectorId}/{nombreDeUbicacion}")
+    fun moverMasCorto(@PathVariable vectorId: Long, @PathVariable nombreDeUbicacion: String)
+        = ubicacionService.moverMasCorto(vectorId,nombreDeUbicacion)
 }
 
 data class TipoDeCaminoWrapper(val tipoDeCamino: String)
