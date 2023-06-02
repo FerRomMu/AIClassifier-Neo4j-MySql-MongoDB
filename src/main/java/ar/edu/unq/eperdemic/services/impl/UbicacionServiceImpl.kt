@@ -32,17 +32,13 @@ class UbicacionServiceImpl(): UbicacionService {
             val listaDeVectores = ubicacionRepository.vectoresEn(ubicacionAMover.id).toList()
 
              if(listaDeVectores.isNotEmpty()){
-                 vectorAMover.ubicacion = listaDeVectores[0].ubicacion
-
                  for (vector in listaDeVectores){
                      vectorAMover.intentarInfectar(vector)
                      vectorRepository.save(vector)
                  }
-                 vectorRepository.save(vectorAMover)
-             }else{
-                 vectorAMover.ubicacion = ubicacionAMover
-                 vectorRepository.save(vectorAMover)
              }
+             vectorAMover.ubicacion = ubicacionAMover
+             vectorRepository.save(vectorAMover)
     }
 
     override fun mover(vectorId: Long, ubicacionid: Long){

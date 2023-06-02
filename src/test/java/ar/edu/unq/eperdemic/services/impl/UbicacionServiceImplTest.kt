@@ -430,14 +430,13 @@ class UbicacionServiceImplTest {
         assertEquals(ubicacion1.nombre,vectorAMover.ubicacion.nombre)
 
         ubicacionService.moverMasCorto(vectorAMover.id!!,"Ubicacion5")
-
+        val vectorMovido = vectorService.recuperarVector(vectorAMover.id!!)
         // ----- //
-
-        assertEquals(1,vectorAMover.especiesContagiadas.size)
-        assertEquals(especie1.patogeno.tipo,vectorAMover.especiesContagiadas.toList()[0].patogeno.tipo)
-        assertEquals(especie1.nombre,vectorAMover.especiesContagiadas.toList()[0].nombre)
-        assertEquals(especie1.paisDeOrigen,vectorAMover.especiesContagiadas.toList()[0].paisDeOrigen)
-        assertEquals(ubicacion5.nombre,vectorAMover.ubicacion.nombre)
+        assertEquals(1,vectorMovido.especiesContagiadas.size)
+        assertEquals(especie1.patogeno.tipo,vectorMovido.especiesContagiadas.toList()[0].patogeno.tipo)
+        assertEquals(especie1.nombre,vectorMovido.especiesContagiadas.toList()[0].nombre)
+        assertEquals(especie1.paisDeOrigen,vectorMovido.especiesContagiadas.toList()[0].paisDeOrigen)
+        assertEquals(ubicacion5.nombre,vectorMovido.ubicacion.nombre)
 
     }
 
