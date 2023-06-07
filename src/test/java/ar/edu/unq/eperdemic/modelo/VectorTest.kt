@@ -285,4 +285,28 @@ class VectorTest {
         assertTrue(vectorHumano1.mutacionesSufridas.contains(bioalteracionAnimal))
     }
 
+    @Test
+    fun `un vector humano puede ir por CaminoTerreste o caminoMaritimo`() {
+        val caminosValidos = vectorHumano1.tipo.puedeIrPor()
+
+        assertTrue(caminosValidos.containsAll(listOf(Camino.TipoDeCamino.CaminoTerreste, Camino.TipoDeCamino.CaminoMaritimo)))
+        assertEquals(2, caminosValidos.size)
+    }
+
+    @Test
+    fun `un vector insecto puede ir por CaminoTerreste o caminoAereo`() {
+        val caminosValidos = vectorInsecto1.tipo.puedeIrPor()
+
+        assertTrue(caminosValidos.containsAll(listOf(Camino.TipoDeCamino.CaminoTerreste, Camino.TipoDeCamino.CaminoAereo)))
+        assertEquals(2, caminosValidos.size)
+    }
+
+    @Test
+    fun `un vector animal puede ir por CaminoTerreste, caminoAereo o caminoMaritimo`() {
+        val caminosValidos = vectorAnimal1.tipo.puedeIrPor()
+
+        assertTrue(caminosValidos.containsAll(
+            listOf(Camino.TipoDeCamino.CaminoTerreste, Camino.TipoDeCamino.CaminoAereo, Camino.TipoDeCamino.CaminoMaritimo)))
+        assertEquals(3, caminosValidos.size)
+    }
 }

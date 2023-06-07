@@ -50,7 +50,7 @@ class UbicacionServiceImpl(): UbicacionService {
             .validarMovimiento(
                 vectorAMover.ubicacion.nombre,
                 ubicacionAMover.nombre,
-                vectorAMover.puedoTransitarPor())
+                vectorAMover.tipo.puedeIrPor())
 
         if(error == 1){
             throw UbicacionMuyLejana("No es posible llegar desde la actual ubicación del vector a la nueva por medio de un camino.")
