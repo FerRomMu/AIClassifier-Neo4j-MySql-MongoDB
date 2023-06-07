@@ -32,4 +32,17 @@ interface UbicacionNeoRepository : Neo4jRepository<UbicacionNeo, Long> {
                        tipoDeCamino1: Camino.TipoDeCamino,
                        tipoDeCamino2: Camino.TipoDeCamino): List<UbicacionNeo>
 
+    @Query("""
+        Match(udestino:UbicacionNeo {nombre: ${'$'}ubicacionDestino})
+        Match(upartida:UbicacionNeo {nombre: ${'$'}ubicacionPartida})
+        OPTIONAL MATCH(upartida)-[caminos]->(udestino)
+        WITH caminos, ${'$'}caminosValidos AS tipos
+        RETURN
+          CASE
+            WHEN caminos IS NOT NULL AND caminos.tipo IN tipos THEN 0
+            WHEN caminos IS NULL THEN 1
+            ELSE 2
+            END AS r
+    """)
+    fun validarMovimiento(ubicacionPartida:String, ubicacionDestino: String, caminosValidos:List<Camino.TipoDeCamino>): Int
 }

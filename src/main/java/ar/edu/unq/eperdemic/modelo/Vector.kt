@@ -106,6 +106,14 @@ class Vector(var tipo: TipoDeVector) {
         return especie.defensa() < potencia
     }
 
+    fun puedoTransitarPor(): List<Camino.TipoDeCamino> {
+        return when (this.tipo) {
+            TipoDeVector.Persona -> listOf(Camino.TipoDeCamino.CaminoTerreste, Camino.TipoDeCamino.CaminoMaritimo)
+            TipoDeVector.Insecto -> listOf(Camino.TipoDeCamino.CaminoTerreste, Camino.TipoDeCamino.CaminoAereo)
+            TipoDeVector.Animal -> listOf(Camino.TipoDeCamino.CaminoTerreste, Camino.TipoDeCamino.CaminoAereo, Camino.TipoDeCamino.CaminoMaritimo)
+        }
+    }
+
 }
 
 enum class TipoDeVector {
