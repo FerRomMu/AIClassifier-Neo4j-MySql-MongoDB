@@ -247,6 +247,96 @@ class UbicacionRepositoryNeoTest {
         Assertions.assertEquals(caminoMasCorto[2].nombre, quilmes.nombre)
     }
 
+    @Test
+    fun `si hay una ubicacion adyacente y el camino es de un tipo valido validarMovimiento devuelve 0`(){
+        val bera = UbicacionNeo("bera")
+        val quilmes = UbicacionNeo("quilmes")
+        val varela = UbicacionNeo("varela")
+        val bernal = UbicacionNeo("bernal")
+        val solano = UbicacionNeo("solano")
+
+        val caminoABeraMaritimo = Camino(bera, Camino.TipoDeCamino.CaminoMaritimo)
+        val caminoAVarelaAereo = Camino(varela, Camino.TipoDeCamino.CaminoAereo)
+        val caminoAVarelaTerrestre = Camino(varela, Camino.TipoDeCamino.CaminoTerreste)
+        val caminoABernalAereo = Camino(bernal, Camino.TipoDeCamino.CaminoAereo)
+        val caminoASolanoTerrestre = Camino(solano, Camino.TipoDeCamino.CaminoTerreste)
+        val caminoAQuilmesTerrestre = Camino(quilmes, Camino.TipoDeCamino.CaminoTerreste)
+
+        bera.agregarCamino(caminoASolanoTerrestre)
+        varela.agregarCamino(caminoAQuilmesTerrestre)
+        solano.agregarCamino(caminoAQuilmesTerrestre)
+        quilmes.agregarCamino(caminoAVarelaAereo)
+        varela.agregarCamino(caminoABernalAereo)
+        bernal.agregarCamino(caminoAVarelaTerrestre)
+        bernal.agregarCamino(caminoASolanoTerrestre)
+        quilmes.agregarCamino(caminoABeraMaritimo)
+
+        ubicacionNeoRepository.save(bera)
+
+        Assertions.assertEquals(0, ubicacionNeoRepository
+            .validarMovimiento("quilmes", "varela", listOf(Camino.TipoDeCamino.CaminoAereo)))
+    }
+
+    @Test
+    fun `si hay una ubicacion adyacente y pero el camino no es de un tipo valido validarMovimiento devuelve 2`(){
+        val bera = UbicacionNeo("bera")
+        val quilmes = UbicacionNeo("quilmes")
+        val varela = UbicacionNeo("varela")
+        val bernal = UbicacionNeo("bernal")
+        val solano = UbicacionNeo("solano")
+
+        val caminoABeraMaritimo = Camino(bera, Camino.TipoDeCamino.CaminoMaritimo)
+        val caminoAVarelaAereo = Camino(varela, Camino.TipoDeCamino.CaminoAereo)
+        val caminoAVarelaTerrestre = Camino(varela, Camino.TipoDeCamino.CaminoTerreste)
+        val caminoABernalAereo = Camino(bernal, Camino.TipoDeCamino.CaminoAereo)
+        val caminoASolanoTerrestre = Camino(solano, Camino.TipoDeCamino.CaminoTerreste)
+        val caminoAQuilmesTerrestre = Camino(quilmes, Camino.TipoDeCamino.CaminoTerreste)
+
+        bera.agregarCamino(caminoASolanoTerrestre)
+        varela.agregarCamino(caminoAQuilmesTerrestre)
+        solano.agregarCamino(caminoAQuilmesTerrestre)
+        quilmes.agregarCamino(caminoAVarelaAereo)
+        varela.agregarCamino(caminoABernalAereo)
+        bernal.agregarCamino(caminoAVarelaTerrestre)
+        bernal.agregarCamino(caminoASolanoTerrestre)
+        quilmes.agregarCamino(caminoABeraMaritimo)
+
+        ubicacionNeoRepository.save(bera)
+
+        Assertions.assertEquals(2, ubicacionNeoRepository
+            .validarMovimiento("quilmes", "varela", listOf(Camino.TipoDeCamino.CaminoMaritimo)))
+    }
+
+    @Test
+    fun `si no hay una ubicacion adyacente validarMovimiento devuelve 1`(){
+        val bera = UbicacionNeo("bera")
+        val quilmes = UbicacionNeo("quilmes")
+        val varela = UbicacionNeo("varela")
+        val bernal = UbicacionNeo("bernal")
+        val solano = UbicacionNeo("solano")
+
+        val caminoABeraMaritimo = Camino(bera, Camino.TipoDeCamino.CaminoMaritimo)
+        val caminoAVarelaAereo = Camino(varela, Camino.TipoDeCamino.CaminoAereo)
+        val caminoAVarelaTerrestre = Camino(varela, Camino.TipoDeCamino.CaminoTerreste)
+        val caminoABernalAereo = Camino(bernal, Camino.TipoDeCamino.CaminoAereo)
+        val caminoASolanoTerrestre = Camino(solano, Camino.TipoDeCamino.CaminoTerreste)
+        val caminoAQuilmesTerrestre = Camino(quilmes, Camino.TipoDeCamino.CaminoTerreste)
+
+        bera.agregarCamino(caminoASolanoTerrestre)
+        varela.agregarCamino(caminoAQuilmesTerrestre)
+        solano.agregarCamino(caminoAQuilmesTerrestre)
+        quilmes.agregarCamino(caminoAVarelaAereo)
+        varela.agregarCamino(caminoABernalAereo)
+        bernal.agregarCamino(caminoAVarelaTerrestre)
+        bernal.agregarCamino(caminoASolanoTerrestre)
+        quilmes.agregarCamino(caminoABeraMaritimo)
+
+        ubicacionNeoRepository.save(bera)
+
+        Assertions.assertEquals(1, ubicacionNeoRepository
+            .validarMovimiento("varela", "solano", listOf(Camino.TipoDeCamino.CaminoAereo)))
+    }
+
     @AfterEach
     fun tearDown() {
         ubicacionNeoRepository.deleteAll()

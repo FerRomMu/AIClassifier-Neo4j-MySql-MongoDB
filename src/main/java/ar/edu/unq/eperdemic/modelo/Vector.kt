@@ -105,7 +105,6 @@ class Vector(var tipo: TipoDeVector) {
     private fun eliminaPorSupresion(especie: Especie, potencia: Int): Boolean {
         return especie.defensa() < potencia
     }
-
 }
 
 enum class TipoDeVector {
