@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface IDistritoMongoRepository : MongoRepository<Distrito, String> {
+interface DistritoMongoRepository : MongoRepository<Distrito, String> {
 
    // fun distritoMasEnfermo():Distrito
 }
