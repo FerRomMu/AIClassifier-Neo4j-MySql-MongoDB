@@ -56,9 +56,9 @@ class UbicacionServiceImpl(): UbicacionService {
                 ubicacionAMover.nombre,
                 vectorAMover.tipo.puedeIrPor())
 
-        val errorMongo = ubicacionMongoRepository.validarMovimiento(ubicacionAMover.nombre, ubicacionOrigen.nombre)
+        val errorMongo = this.validarDistanciaMongo(ubicacionOrigen.nombre, ubicacionAMover.nombre)
 
-        if(errorNeo == 1 || errorMongo == 1){
+        if(errorNeo == 1 || errorMongo){
             throw UbicacionMuyLejana("No es posible llegar desde la actual ubicación del vector a la nueva por medio de un camino.")
         }
 
@@ -68,9 +68,18 @@ class UbicacionServiceImpl(): UbicacionService {
 
         this.moverVector(vectorAMover,ubicacionAMover)
 
-        val quedanInfectados = ubicacionRepository.tieneAlgunInfectado(ubicacionOrigen.id)
-        ubicacionMongoRepository.actualizarEstadoDeInfectadosEn(ubicacionOrigen.nombre, quedanInfectados)
+        val ubicacionMongo = ubicacionMongoRepository.findByNombre(ubicacionOrigen.nombre)
 
+        val quedanInfectados = ubicacionRepository.cantidadVectoresInfectados(ubicacionOrigen.nombre) > 0
+        ubicacionMongo.hayAlgunInfectado = quedanInfectados
+        ubicacionMongoRepository.save(ubicacionMongo)
+    }
+
+    private fun validarDistanciaMongo(ubicacion1: String, ubicacion2: String): Boolean {
+        val coordenada1 = ubicacionMongoRepository.findByNombre(ubicacion1).coordenada.toGeoJsonPoint().coordinates
+        val coordenada2 = ubicacionMongoRepository.findByNombre(ubicacion2).coordenada.toGeoJsonPoint().coordinates
+
+        return false // distancia en km <= 100
     }
 
     override fun expandir(ubicacionId: Long) {
