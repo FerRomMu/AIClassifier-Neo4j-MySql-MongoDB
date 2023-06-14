@@ -48,21 +48,29 @@ class UbicacionServiceImpl(): UbicacionService {
         val vectorAMover = vectorRepository.findById(vectorId).get()
         val ubicacionAMover =  ubicacionRepository.findById(ubicacionid).get()
 
-        val error = ubicacionNeoRepository
+        val ubicacionOrigen = vectorAMover.ubicacion
+
+        val errorNeo = ubicacionNeoRepository
             .validarMovimiento(
-                vectorAMover.ubicacion.nombre,
+                ubicacionOrigen.nombre,
                 ubicacionAMover.nombre,
                 vectorAMover.tipo.puedeIrPor())
 
-        if(error == 1){
+        val errorMongo = ubicacionMongoRepository.validarMovimiento(ubicacionAMover.nombre, ubicacionOrigen.nombre)
+
+        if(errorNeo == 1 || errorMongo == 1){
             throw UbicacionMuyLejana("No es posible llegar desde la actual ubicación del vector a la nueva por medio de un camino.")
         }
 
-        if(error == 2){
+        if(errorNeo == 2){
             throw UbicacionNoAlcanzable("Se intenta mover a un vector a través de un tipo de camino que no puede atravesar")
         }
 
         this.moverVector(vectorAMover,ubicacionAMover)
+
+        val quedanInfectados = ubicacionRepository.tieneAlgunInfectado(ubicacionOrigen.id)
+        ubicacionMongoRepository.actualizarEstadoDeInfectadosEn(ubicacionOrigen.nombre, quedanInfectados)
+
     }
 
     override fun expandir(ubicacionId: Long) {
