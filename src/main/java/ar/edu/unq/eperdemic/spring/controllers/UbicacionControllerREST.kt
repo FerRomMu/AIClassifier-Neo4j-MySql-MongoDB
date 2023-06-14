@@ -1,6 +1,7 @@
 package ar.edu.unq.eperdemic.spring.controllers;
 
 import ar.edu.unq.eperdemic.modelo.Camino
+import ar.edu.unq.eperdemic.modelo.Coordenada
 import ar.edu.unq.eperdemic.modelo.Ubicacion;
 import ar.edu.unq.eperdemic.modelo.UbicacionNeo
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
@@ -38,8 +39,8 @@ class UbicacionControllerREST {
     }
 
     @PostMapping("/crearUbicacion/{nombreUbicacion}")
-    fun crearUbicacion(@PathVariable("nombreUbicacion")nombreUbicacion: String): UbicacionDTO {
-        return UbicacionDTO.desdeModelo(ubicacionService.crearUbicacion(nombreUbicacion))
+    fun crearUbicacion(@PathVariable("nombreUbicacion")nombreUbicacion: String, @RequestBody coordenada: Coordenada): UbicacionDTO {
+        return UbicacionDTO.desdeModelo(ubicacionService.crearUbicacion(nombreUbicacion,coordenada))
     }
 
     @GetMapping("/{id}")

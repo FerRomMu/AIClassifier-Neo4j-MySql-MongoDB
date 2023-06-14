@@ -34,18 +34,21 @@ class UbicacionServiceImplTest {
     @Autowired lateinit var dataService: DataService
 
     lateinit var dado: Randomizador
+    lateinit var coordenada: Coordenada
 
     @BeforeEach
     fun setUp() {
         dado = Randomizador.getInstance()
         dado.estado = EstadoRandomizadorDeterminístico()
+
+        coordenada = Coordenada(1.0, 2.0)
     }
 
     @Test
     fun  `mover vector a una ubicacion con un humano y un animal`() {
 
-        val cordoba = ubicacionService.crearUbicacion("Cordoba")
-        val chaco = ubicacionService.crearUbicacion("Chaco")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
+        val chaco = ubicacionService.crearUbicacion("Chaco", coordenada)
 
         ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
         dataService.persistir(cordoba)
@@ -94,8 +97,8 @@ class UbicacionServiceImplTest {
     @Test
     fun  `mover vector insecto a una ubicacion con solo insectos`() {
 
-        val cordoba = ubicacionService.crearUbicacion("Cordoba")
-        val chaco = ubicacionService.crearUbicacion("Chaco")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
+        val chaco = ubicacionService.crearUbicacion("Chaco", coordenada)
 
         ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
         dataService.persistir(cordoba)
@@ -142,8 +145,8 @@ class UbicacionServiceImplTest {
     @Test
     fun  `mover vector a ubicacion vacia`() {
 
-        val cordoba = ubicacionService.crearUbicacion("Cordoba")
-        val chaco = ubicacionService.crearUbicacion("Chaco")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
+        val chaco = ubicacionService.crearUbicacion("Chaco", coordenada)
 
         ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
         dataService.persistir(cordoba)
@@ -172,7 +175,7 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `Expandir en una ubicacion`() {
-        val cordoba = ubicacionService.crearUbicacion("Cordoba")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
 
         var vectorLocal = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
         var vectorLocal2 = vectorService.crearVector(TipoDeVector.Animal,cordoba.id!!)
@@ -209,7 +212,7 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `Expandir en una ubicacion sin contagios no hace nada`() {
-        val cordoba = ubicacionService.crearUbicacion("Cordoba")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
 
         val vectorSinContagiar = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
         val vectorSinContagiar2 = vectorService.crearVector(TipoDeVector.Animal,cordoba.id!!)
@@ -225,13 +228,13 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `si creo una ubicacion esta recibe un id`() {
-        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
+        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest", coordenada)
         assertNotNull(ubicacion.id)
     }
 
     @Test
     fun `si creo una ubicacion se guarda una ubicacionNeo con ese nombre tambien`() {
-        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
+        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest", coordenada)
 
         val ubicacionNeoCreada = ubicacionNeoRepository.findByNombre(ubicacion.nombre)
 
@@ -240,7 +243,7 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `si creo una ubicacion la puedo recuperar`() {
-        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
+        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest", coordenada)
         val ubicacionRecuperada = ubicacionService.recuperar(ubicacion.id!!)
 
         assertEquals(ubicacion.nombre, ubicacionRecuperada.nombre)
@@ -249,9 +252,9 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `si trato de crear dos ubicaciones con el mismo nombre recibo error`() {
-        ubicacionService.crearUbicacion("ubicacionRepetida")
+        ubicacionService.crearUbicacion("ubicacionRepetida", coordenada)
 
-        assertThrows(DataDuplicationException::class.java) { ubicacionService.crearUbicacion("ubicacionRepetida") }
+        assertThrows(DataDuplicationException::class.java) { ubicacionService.crearUbicacion("ubicacionRepetida", coordenada) }
     }
 
     @Test
@@ -280,8 +283,8 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `se conectan dos ubicaciones existentes por medio terrestre`() {
-        val Bera = ubicacionService.crearUbicacion("ubicacion neo 1")
-        val ubicacion2 = ubicacionService.crearUbicacion("ubicacion neo 2")
+        val Bera = ubicacionService.crearUbicacion("ubicacion neo 1", coordenada)
+        val ubicacion2 = ubicacionService.crearUbicacion("ubicacion neo 2", coordenada)
 
         ubicacionService.conectar(Bera.nombre, ubicacion2.nombre, Camino.TipoDeCamino.CaminoTerreste)
 
@@ -293,8 +296,8 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `se establecen 2 conexiones unidireccionales entre dos ubicaciones`() {
-        val ubicacion1 = ubicacionService.crearUbicacion("ubicacion neo 1")
-        val ubicacion2 = ubicacionService.crearUbicacion("ubicacion neo 2")
+        val ubicacion1 = ubicacionService.crearUbicacion("ubicacion neo 1", coordenada)
+        val ubicacion2 = ubicacionService.crearUbicacion("ubicacion neo 2", coordenada)
 
         ubicacionService.conectar(ubicacion1.nombre, ubicacion2.nombre, Camino.TipoDeCamino.CaminoTerreste)
         ubicacionService.conectar(ubicacion2.nombre, ubicacion1.nombre, Camino.TipoDeCamino.CaminoAereo)
@@ -320,11 +323,11 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `si pido los caminos conectados a la Ubicacion con nombre Quilmes me los devuelve` () {
-        ubicacionService.crearUbicacion("Bera")
-        ubicacionService.crearUbicacion("Ubicacion2")
-        ubicacionService.crearUbicacion("Ubicacion3")
-        ubicacionService.crearUbicacion("Ubicacion4")
-        ubicacionService.crearUbicacion("Ubicacion5")
+        ubicacionService.crearUbicacion("Bera", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion2", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion3", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion4", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion5", coordenada)
 
         ubicacionService.conectar("Ubicacion2", "Bera", Camino.TipoDeCamino.CaminoTerreste)
         ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
@@ -353,10 +356,10 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `Mover mas corto pero no hay camino` () {
-        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
-        ubicacionService.crearUbicacion("Ubicacion2")
-        ubicacionService.crearUbicacion("Ubicacion3")
-        ubicacionService.crearUbicacion("Ubicacion4")
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion2", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion3", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion4", coordenada)
 
         ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
         ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoTerreste)
@@ -368,9 +371,9 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `Mover mas corto hay camino pero no lo puede recorrer` () {
-        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
-        ubicacionService.crearUbicacion("Ubicacion2")
-        ubicacionService.crearUbicacion("Ubicacion3")
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion2", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion3", coordenada)
 
         ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
         ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
@@ -385,11 +388,11 @@ class UbicacionServiceImplTest {
 
         // Setup //
 
-        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
-        val ubicacion2 = ubicacionService.crearUbicacion("Ubicacion2")
-        val ubicacion3 = ubicacionService.crearUbicacion("Ubicacion3")
-        val ubicacion4 = ubicacionService.crearUbicacion("Ubicacion4")
-        val ubicacion5 = ubicacionService.crearUbicacion("Ubicacion5")
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1", coordenada)
+        val ubicacion2 = ubicacionService.crearUbicacion("Ubicacion2", coordenada)
+        val ubicacion3 = ubicacionService.crearUbicacion("Ubicacion3", coordenada)
+        val ubicacion4 = ubicacionService.crearUbicacion("Ubicacion4", coordenada)
+        val ubicacion5 = ubicacionService.crearUbicacion("Ubicacion5", coordenada)
 
         ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
         ubicacionService.conectar("Ubicacion1", "Ubicacion4", Camino.TipoDeCamino.CaminoTerreste)

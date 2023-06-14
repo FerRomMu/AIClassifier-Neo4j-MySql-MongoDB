@@ -28,10 +28,11 @@ class PatogenoServiceTest {
     @Autowired lateinit var especieService : EspecieService
 
     lateinit var patogeno: Patogeno
+    lateinit var coordenada: Coordenada
 
     @BeforeEach
     fun crearModelo() {
-
+        coordenada = Coordenada(1.0, 2.0)
     }
 
     @Test
@@ -78,7 +79,7 @@ class PatogenoServiceTest {
 
     @Test
     fun `si agrego una especie se persiste en el patogeno`() {
-        val ubicacion = ubicacionService.crearUbicacion("Ubicacion")
+        val ubicacion = ubicacionService.crearUbicacion("Ubicacion", coordenada)
         val vectorInfectado = Vector(TipoDeVector.Persona)
         vectorInfectado.ubicacion = ubicacion
         dataService.persistir(vectorInfectado)
@@ -93,7 +94,7 @@ class PatogenoServiceTest {
 
     @Test
     fun `si agrego una especie infecta a un vector de la ubicacion`() {
-        val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion")
+        val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion",coordenada)
         var vectorInfectado = Vector(TipoDeVector.Persona)
         vectorInfectado.ubicacion = ubicacionPatogeno
         dataService.persistir(vectorInfectado)
@@ -110,7 +111,7 @@ class PatogenoServiceTest {
 
     @Test
     fun `si agrego una especie se persiste la especie`() {
-        val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion")
+        val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion",coordenada)
         val vector = Vector(TipoDeVector.Persona)
         vector.ubicacion = ubicacionPatogeno
         dataService.persistir(vector)
@@ -131,7 +132,7 @@ class PatogenoServiceTest {
         patogeno = Patogeno("Gripe")
 
         patogenoService.crearPatogeno(patogeno)
-        val ubicacionSinVectores = ubicacionService.crearUbicacion("bernal")
+        val ubicacionSinVectores = ubicacionService.crearUbicacion("bernal",coordenada)
 
         assertThrows(DataNotFoundException::class.java) {
             patogenoService.agregarEspecie(patogeno.id!!, "virusT", ubicacionSinVectores.id!!)
@@ -169,7 +170,7 @@ class PatogenoServiceTest {
         dataService.crearSetDeDatosIniciales()
 
         val patogeno = Patogeno("Gripe")
-        val ubicacion = ubicacionService.crearUbicacion("Lugar 21")
+        val ubicacion = ubicacionService.crearUbicacion("Lugar 21",coordenada)
 
         patogenoService.crearPatogeno(patogeno)
         val vector = vectorService.crearVector(TipoDeVector.Persona, ubicacion.id!!)

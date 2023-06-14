@@ -24,10 +24,12 @@ class VectorServiceImplTest {
 
     lateinit var bernal: Ubicacion
 
+    lateinit var coordenada : Coordenada
 
     @BeforeEach
     fun setUp() {
-        bernal = ubicacionService.crearUbicacion("Bernal")
+        coordenada = Coordenada(1.0, 2.0)
+        bernal = ubicacionService.crearUbicacion("Bernal", coordenada)
     }
 
     @Test
