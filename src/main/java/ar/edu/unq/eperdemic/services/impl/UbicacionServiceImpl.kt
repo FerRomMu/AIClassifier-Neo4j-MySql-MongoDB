@@ -10,6 +10,7 @@ import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.exceptions.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
 import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.VectorRepository
@@ -26,6 +27,7 @@ class UbicacionServiceImpl(): UbicacionService {
 
     @Autowired lateinit var ubicacionNeoRepository: UbicacionNeoRepository
     @Autowired lateinit var ubicacionRepository : UbicacionRepository
+    @Autowired lateinit var ubicacionMongoRepository: UbicacionMongoRepository
     @Autowired lateinit var vectorRepository : VectorRepository
 
      fun moverVector(vectorAMover: Vector, ubicacionAMover: Ubicacion) {
@@ -78,12 +80,14 @@ class UbicacionServiceImpl(): UbicacionService {
     }
 
     @Transactional(rollbackFor = [Exception::class], noRollbackFor = [DataIntegrityViolationException::class])
-    override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
+    override fun crearUbicacion(nombreUbicacion: String, coordenada: Coordenada): Ubicacion {
         val ubicacion = Ubicacion(nombreUbicacion)
         val ubicacionNeo = UbicacionNeo(nombreUbicacion)
+        val ubicacionMongo = UbicacionMongo(coordenada, nombreUbicacion)
         try {
             ubicacionRepository.save(ubicacion)
             ubicacionNeoRepository.save(ubicacionNeo)
+            ubicacionMongoRepository.save(ubicacionMongo)
             return ubicacion
         } catch (e: DataIntegrityViolationException) {
             throw DataDuplicationException("Ya existe una ubicación con ese nombre.")
