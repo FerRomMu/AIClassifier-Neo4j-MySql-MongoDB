@@ -10,4 +10,7 @@ import org.springframework.stereotype.Repository
 interface UbicacionMongoRepository: MongoRepository<UbicacionMongo, String> {
     @Query("{nombre:'?0'}")
     fun findByNombre(nombre: String): UbicacionMongo
+
+    @Query("{ 'nombre': ?0, 'coordinates': { \$nearSphere: { \$geometry: { type: 'Point', coordinates: [?1, ?2] }, \$maxDistance: ?3 } } }")
+    fun isLocationNearby(nombre: String, longitud: Double, latitud: Double, distancia: Double): Boolean
 }

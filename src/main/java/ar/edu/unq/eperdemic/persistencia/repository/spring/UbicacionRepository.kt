@@ -36,13 +36,4 @@ interface UbicacionRepository : CrudRepository<Ubicacion, Long> {
     fun nombreEspecieQueMasInfectaVectores(@Param("nombreUbicacion") nombreDeLaUbicacion: String, pageable: Pageable = PageRequest.of(0, 1)) : List<String>
     fun findByNombre(nombre: String): Ubicacion
 
-    /*
-    @Query("select \n" +
-            "0 < (select count(distinct v.id) " +
-                "from Vector v " +
-                "join v.especiesContagiadas es " +
-                "where v.ubicacion.nombre = :nombre)")
-    // arreglar, no funciona
-    fun tieneAlgunInfectado(@Param("nombre") nombre: String): Boolean*/
-
 }

@@ -76,10 +76,11 @@ class UbicacionServiceImpl(): UbicacionService {
     }
 
     private fun validarDistanciaMongo(ubicacion1: String, ubicacion2: String): Boolean {
-        val coordenada1 = ubicacionMongoRepository.findByNombre(ubicacion1).coordenada.toGeoJsonPoint().coordinates
-        val coordenada2 = ubicacionMongoRepository.findByNombre(ubicacion2).coordenada.toGeoJsonPoint().coordinates
+        val coordenada = ubicacionMongoRepository.findByNombre(ubicacion2).coordenada.toGeoJsonPoint().coordinates
 
-        return false // distancia en km <= 100
+        val result = ubicacionMongoRepository.isLocationNearby(ubicacion1, coordenada[0], coordenada[1], 10000.0)
+
+        return result
     }
 
     override fun expandir(ubicacionId: Long) {
