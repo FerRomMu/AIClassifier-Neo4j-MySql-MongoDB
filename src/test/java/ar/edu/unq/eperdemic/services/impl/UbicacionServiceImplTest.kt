@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
+import ar.edu.unq.eperdemic.exceptions.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
 import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
@@ -12,11 +13,9 @@ import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.hibernate.exception.ConstraintViolationException
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -93,6 +92,44 @@ class UbicacionServiceImplTest {
         assertEquals(vectorVictima1.especiesContagiadas.size,1)
         assertEquals(vectorVictima1.especiesContagiadas.first().id, especieAContagiar.id)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
+
+    }
+
+    @Test
+    fun  `cuando intento mover de la ubicacion actual del vector a una nueva por estar a mas de 100000km de distancia falla`() {
+
+        val coordenadaLejana = Coordenada(80.0,90.0)
+        val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
+        val chaco = ubicacionService.crearUbicacion("Chaco", coordenadaLejana)
+
+        ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
+        dataService.persistir(cordoba)
+
+        var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
+
+        var vectorVictima1 = vectorService.crearVector(TipoDeVector.Persona,chaco.id!!)
+        var vectorVictima2 = vectorService.crearVector(TipoDeVector.Animal,chaco.id!!)
+
+        val patogeno = Patogeno("Patogeni_SS")
+        patogeno.setCapacidadDeContagioHumano(100)
+        dataService.persistir(patogeno)
+
+
+        val especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+        dataService.persistir(especieAContagiar)
+
+        vectorService.infectar(vectorAMover,especieAContagiar)
+
+        assertEquals(vectorAMover.especiesContagiadas.size,1)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, especieAContagiar.id)
+        assertEquals(vectorVictima1.especiesContagiadas.size,0)
+        assertEquals(vectorVictima2.especiesContagiadas.size,0)
+
+        var vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
+
+        assertEquals(vectoresEnChaco.size,2)
+
+        assertThrows(UbicacionMuyLejana::class.java) { ubicacionService.mover(vectorAMover.id!!,chaco.id!!) }
 
     }
 

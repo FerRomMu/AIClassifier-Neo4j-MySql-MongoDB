@@ -11,6 +11,7 @@ interface UbicacionMongoRepository: MongoRepository<UbicacionMongo, String> {
     @Query("{nombre:'?0'}")
     fun findByNombre(nombre: String): UbicacionMongo
 
-    @Query("{ 'nombre': ?0, 'coordinates': { \$nearSphere: { \$geometry: { type: 'Point', coordinates: [?1, ?2] }, \$maxDistance: ?3 } } }")
+    @Query(value="{ 'nombre': { \$eq: ?0 }, 'coordenada': { \$nearSphere: { \$geometry: { type: 'Point', coordinates: [?2, ?1] }, \$maxDistance: ?3 } } }",exists = true)
     fun isLocationNearby(nombre: String, longitud: Double, latitud: Double, distancia: Double): Boolean
+
 }
