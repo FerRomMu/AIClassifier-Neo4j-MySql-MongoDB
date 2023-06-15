@@ -494,6 +494,30 @@ class UbicacionServiceImplTest {
         assertEquals(especie1.nombre,vectorMovido.especiesContagiadas.toList()[0].nombre)
         assertEquals(especie1.paisDeOrigen,vectorMovido.especiesContagiadas.toList()[0].paisDeOrigen)
         assertEquals(ubicacion5.nombre,vectorMovido.ubicacion.nombre)
+    }
+
+    @Test
+    fun `Mover el unico vector infectado a otra ubicacion vacia` () {
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1", coordenada)
+
+        val ubicacion2 = ubicacionService.crearUbicacion("Ubicacion2", coordenada)
+        ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
+
+        val vectorAMover = vectorService.crearVector(TipoDeVector.Persona,ubicacion1.id!!)
+        val patogeno1 = Patogeno("patogeno1")
+        val especie1 =  patogeno1.crearEspecie("especie1","P.ORIGEN")
+
+        dataService.persistir(patogeno1)
+        dataService.persistir(especie1)
+        vectorService.infectar(vectorAMover,especie1)
+
+        assertTrue(ubicacionMongoRepository.findByNombre(ubicacion1.nombre).hayAlgunInfectado)
+        assertFalse(ubicacionMongoRepository.findByNombre(ubicacion2.nombre).hayAlgunInfectado)
+
+        ubicacionService.mover(vectorAMover.id!!,ubicacion2.id!!)
+
+        assertFalse(ubicacionMongoRepository.findByNombre(ubicacion1.nombre).hayAlgunInfectado)
+        assertTrue(ubicacionMongoRepository.findByNombre(ubicacion2.nombre).hayAlgunInfectado)
 
     }
 

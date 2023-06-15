@@ -32,6 +32,7 @@ class UbicacionServiceImpl(): UbicacionService {
 
      fun moverVector(vectorAMover: Vector, ubicacionAMover: Ubicacion) {
             val listaDeVectores = ubicacionRepository.vectoresEn(ubicacionAMover.id).toList()
+            val ubicacionOrigen = vectorAMover.ubicacion
 
              if(listaDeVectores.isNotEmpty()){
                  for (vector in listaDeVectores){
@@ -41,6 +42,16 @@ class UbicacionServiceImpl(): UbicacionService {
              }
              vectorAMover.ubicacion = ubicacionAMover
              vectorRepository.save(vectorAMover)
+
+         val ubicacionOrigenMongo = ubicacionMongoRepository.findByNombre(ubicacionOrigen.nombre)
+         val quedanInfectadosOrigen = ubicacionRepository.cantidadVectoresInfectados(ubicacionOrigen.nombre) > 0
+         ubicacionOrigenMongo.hayAlgunInfectado = quedanInfectadosOrigen
+         ubicacionMongoRepository.save(ubicacionOrigenMongo)
+
+         val ubicacionDestinoMongo = ubicacionMongoRepository.findByNombre(ubicacionAMover.nombre)
+         val quedanInfectadosDestino = ubicacionRepository.cantidadVectoresInfectados(ubicacionAMover.nombre) > 0
+         ubicacionDestinoMongo.hayAlgunInfectado = quedanInfectadosDestino
+         ubicacionMongoRepository.save(ubicacionDestinoMongo)
     }
 
     override fun mover(vectorId: Long, ubicacionid: Long){
@@ -67,12 +78,6 @@ class UbicacionServiceImpl(): UbicacionService {
         }
 
         this.moverVector(vectorAMover,ubicacionAMover)
-
-        val ubicacionMongo = ubicacionMongoRepository.findByNombre(ubicacionOrigen.nombre)
-
-        val quedanInfectados = ubicacionRepository.cantidadVectoresInfectados(ubicacionOrigen.nombre) > 0
-        ubicacionMongo.hayAlgunInfectado = quedanInfectados
-        ubicacionMongoRepository.save(ubicacionMongo)
     }
 
     private fun validarDistanciaMongo(ubicacion1: String, ubicacion2: String): Boolean {

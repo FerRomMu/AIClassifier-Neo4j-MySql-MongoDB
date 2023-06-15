@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.services.EspecieService
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.UbicacionService
@@ -26,6 +27,7 @@ class PatogenoServiceTest {
     @Autowired lateinit var vectorService: VectorService
     @Autowired lateinit var dataService: DataService
     @Autowired lateinit var especieService : EspecieService
+    @Autowired lateinit var ubicacionMongoRepository: UbicacionMongoRepository
 
     lateinit var patogeno: Patogeno
     lateinit var coordenada: Coordenada
@@ -182,9 +184,29 @@ class PatogenoServiceTest {
         assertFalse(patogenoService.esPandemia(especie.id!!))
     }
 
+    @Test
+    fun `si agrego una especie se actualiza ubicacionMongo`() {
+        val ubicacion = ubicacionService.crearUbicacion("Ubicacion", coordenada)
+        val vectorInfectado = Vector(TipoDeVector.Persona)
+        vectorInfectado.ubicacion = ubicacion
+        dataService.persistir(vectorInfectado)
+
+        assertFalse(ubicacionMongoRepository.findByNombre(ubicacion.nombre).hayAlgunInfectado)
+
+        patogeno = Patogeno("Gripe")
+        patogenoService.crearPatogeno(patogeno)
+        patogenoService.agregarEspecie(patogeno.id!!, "virusT", ubicacion.id!!)
+        val patogenoRecuperado = patogenoService.recuperarPatogeno(patogeno.id!!)
+
+        assertTrue(patogenoRecuperado.especies.map{e -> e.nombre}.contains("virusT"))
+
+        assertTrue(ubicacionMongoRepository.findByNombre(ubicacion.nombre).hayAlgunInfectado)
+    }
+
     @AfterEach
     fun deleteAll() {
         dataService.eliminarTodo()
+        ubicacionMongoRepository.deleteAll()
     }
 
 }

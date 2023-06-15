@@ -8,6 +8,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.EspecieRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.PatogenoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.VectorRepository
@@ -28,6 +29,7 @@ class PatogenoServiceImpl() : PatogenoService {
     @Autowired lateinit var patogenoRepository: PatogenoRepository
     @Autowired lateinit var vectorRepository: VectorRepository
     @Autowired lateinit var especieRepository: EspecieRepository
+    @Autowired lateinit var ubicacionMongoRepository: UbicacionMongoRepository
 
     override fun crearPatogeno(patogeno: Patogeno): Patogeno {
         return patogenoRepository.save(patogeno)
@@ -53,6 +55,10 @@ class PatogenoServiceImpl() : PatogenoService {
             vectorRepository.save(vectorAInfectar)
             patogenoRepository.save(patogeno)
             especieRepository.save(especieNueva)
+
+            val ubicacionMongo = ubicacionMongoRepository.findByNombre(vectorAInfectar.ubicacion.nombre)
+            ubicacionMongo.hayAlgunInfectado = true
+            ubicacionMongoRepository.save(ubicacionMongo)
 
             return especieNueva
         } catch (e : NoSuchElementException){
