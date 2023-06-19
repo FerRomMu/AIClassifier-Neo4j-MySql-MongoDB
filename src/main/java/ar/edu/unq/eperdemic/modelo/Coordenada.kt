@@ -7,4 +7,5 @@ class Coordenada(val latitud: Double, val longitud: Double) {
     fun toGeoJsonPoint(): GeoJsonPoint {
         return GeoJsonPoint(longitud, latitud)
     }
+
 }
