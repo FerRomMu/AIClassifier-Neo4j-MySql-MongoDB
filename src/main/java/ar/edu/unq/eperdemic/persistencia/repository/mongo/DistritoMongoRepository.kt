@@ -8,10 +8,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface DistritoMongoRepository : MongoRepository<Distrito, String> {
-
-    @Query("{ nombre: 'algo' }")
-    fun distritoMasEnfermo(coordenadas: List<Coordenada>):Distrito?
-
     @Query(value = "{ polygon: { \$geoIntersects: { \$geometry: { type: 'Point', coordinates: [?1, ?0] } } } }")
     fun findByPoint(longitud: Double, latitud: Double): Distrito?
 }
