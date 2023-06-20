@@ -1,15 +1,13 @@
 package ar.edu.unq.eperdemic.services.impl
 
+import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.modelo.Coordenada
 import ar.edu.unq.eperdemic.modelo.Distrito
 import ar.edu.unq.eperdemic.modelo.UbicacionMongo
 import ar.edu.unq.eperdemic.persistencia.repository.mongo.DistritoMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.services.DistritoService
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -88,6 +86,23 @@ class DistritoServiceImplTest {
         val distrMasEnfermo = distritoService.distritoMasEnfermo()
 
         Assertions.assertEquals(distrMasEnfermo.nombre, distritoMasEnfermo.nombre)
+    }
+
+    @Test
+    fun `no se encuentra ningun distrito mas enfermo`() {
+        val distrito1 = Distrito("Nombre Distrito 1",
+                listOf(Coordenada(1.0, 2.0), Coordenada(3.0, 6.0), Coordenada(7.0, 10.0)))
+        val distrito2 = Distrito("Nombre Distrito 2",
+                listOf(Coordenada(11.0, 16.0), Coordenada(17.0, 20.0), Coordenada(21.0, 23.0)))
+        val distrito3 = Distrito("Nombre Distrito 3",
+                listOf(Coordenada(30.0, 32.0),Coordenada(38.0, 34.0), Coordenada(35.0, 40.0)))
+
+        distritoService.crear(distrito1); distritoService.crear(distrito2); distritoService.crear(distrito3);
+
+        Assertions.assertThrows(DataNotFoundException::class.java) {
+            distritoService.distritoMasEnfermo()
+        }
+
     }
 
     @AfterEach
