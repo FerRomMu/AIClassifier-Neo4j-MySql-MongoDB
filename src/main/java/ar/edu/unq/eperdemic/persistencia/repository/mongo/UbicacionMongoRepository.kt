@@ -29,7 +29,7 @@ interface UbicacionMongoRepository: MongoRepository<UbicacionMongo, String> {
         "  { \$group: { _id: \"\$distrito.nombre\", count: { \$sum: 1 }, distrito: { \$first: \"\$distrito\" } } } ",
         "  { \$sort: { count: -1 } } ",
         "  { \$limit: 1 } ",
-        "  { \$project: { _id: 0, nombre: \"\$distrito.nombre\"} }"
+        "  { \$project: { _id: 0, nombre: \"\$distrito.nombre\", coordenadas: \"\$distrito.coordenadas\", polygon: \"\$distrito.polygon\"} }"
     ])
     fun distritoMasEnfermo(): Distrito?
 }
