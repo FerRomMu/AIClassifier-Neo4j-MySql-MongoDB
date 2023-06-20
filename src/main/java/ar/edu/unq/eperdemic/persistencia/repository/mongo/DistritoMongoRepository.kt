@@ -11,4 +11,7 @@ interface DistritoMongoRepository : MongoRepository<Distrito, String> {
 
     @Query("{ nombre: 'algo' }")
     fun distritoMasEnfermo(coordenadas: List<Coordenada>):Distrito?
+
+    @Query("{ polygon: { \$geoIntersects: { \$geometry: { type: 'Point', coordinates: [?2, ?1] } } } }")
+    fun findByPoint(coordenada: Coordenada): Distrito?
 }

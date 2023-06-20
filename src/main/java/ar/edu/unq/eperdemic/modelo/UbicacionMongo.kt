@@ -16,6 +16,7 @@ class UbicacionMongo{
 
     lateinit var coordenada: Coordenada
     var hayAlgunInfectado : Boolean = false
+    var distrito: Distrito? = null
 
     protected constructor() {}
 
