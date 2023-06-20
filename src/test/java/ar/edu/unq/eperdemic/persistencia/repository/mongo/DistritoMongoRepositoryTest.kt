@@ -4,8 +4,7 @@ import ar.edu.unq.eperdemic.modelo.Coordenada
 import ar.edu.unq.eperdemic.modelo.Distrito
 import ar.edu.unq.eperdemic.modelo.UbicacionMongo
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
@@ -27,7 +26,7 @@ class DistritoMongoRepositoryTest {
 
     @Test
     fun `Si guardo un distrito, este se guarda correctamente`() {
-        val distrito = Distrito("Nombre Distrito", listOf(Coordenada(1.0, 2.0), Coordenada(3.0, 4.0)))
+        val distrito = Distrito("Nombre Distrito", listOf(Coordenada(1.0, 2.0), Coordenada(3.0, 4.0), Coordenada(8.0, 10.0)))
 
         distritoMongoRepository.save(distrito)
         val distritoGuardado = distritoMongoRepository.findById(distrito.id!!).get()
@@ -90,8 +89,35 @@ class DistritoMongoRepositoryTest {
         assertEquals(distrMasEnfermo!!.nombre, distritoMasEnfermo.nombre)
     }
 
+    @Test
+    fun ` encuentro un distrito con una cordenada`() {
+        val distrito1 = Distrito("Nombre Distrito 1",
+            listOf(Coordenada(1.0, 2.0), Coordenada(3.0, 6.0), Coordenada(7.0, 11.0)))
+
+        distritoMongoRepository.save(distrito1)
+        val distritoAEncontrar = distritoMongoRepository.findByPoint(2.0,1.0)
+
+        assertEquals(distrito1.id,distritoAEncontrar!!.id)
+        assertEquals(distrito1.nombre,distritoAEncontrar!!.nombre)
+
+        assertTrue(distrito1.coordenadas.all { c -> c.perteneceA(distritoAEncontrar.coordenadas) }
+        )
+    }
+
+    @Test
+    fun ` no encuentro un distrito con una cordenada`() {
+        val distrito1 = Distrito("Nombre Distrito 1",
+            listOf(Coordenada(0.0, 0.0), Coordenada(3.0, 0.0), Coordenada(0.0, 3.0)))
+
+        distritoMongoRepository.save(distrito1)
+        val distritoAEncontrar = distritoMongoRepository.findByPoint(15.0,15.0)
+
+        assertNull(distritoAEncontrar)
+    }
+
     @AfterEach
     fun cleanup() {
         distritoMongoRepository.deleteAll()
+        ubicacionMongoRepository.deleteAll()
     }
 }

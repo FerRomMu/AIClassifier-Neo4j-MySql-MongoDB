@@ -51,6 +51,17 @@ class UbicacionServiceImplTest {
     }
 
     @Test
+    fun `CrearUbicacion con coordenadas invalidas falla` () {
+        val distrito1 = Distrito("Nombre Distrito 1",
+            listOf(Coordenada(0.0, 0.0), Coordenada(3.0, 0.0), Coordenada(0.0, 3.0)))
+        distritoMongoRepository.save(distrito1)
+
+        val coordenadaInv = Coordenada(15.0,15.0)
+
+        assertThrows(DataNotFoundException::class.java) {  ubicacionService.crearUbicacion("Ubicacion1", coordenadaInv) }
+    }
+
+    @Test
     fun  `mover vector a una ubicacion con un humano y un animal`() {
 
         val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)

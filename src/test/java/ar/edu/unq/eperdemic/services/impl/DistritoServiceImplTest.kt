@@ -27,7 +27,7 @@ class DistritoServiceImplTest {
 
     @Test
     fun `Si guardo un distrito, este se guarda correctamente`() {
-        val distrito = Distrito("Nombre Distrito", listOf(Coordenada(1.0, 2.0), Coordenada(3.0, 4.0)))
+        val distrito = Distrito("Nombre Distrito", listOf(Coordenada(1.0, 2.0), Coordenada(3.0, 4.0), Coordenada(5.0, 8.0)))
 
         distritoService.crear(distrito)
         val distritoGuardado = distritoMongoRepository.findById(distrito.id!!).get()
@@ -93,5 +93,6 @@ class DistritoServiceImplTest {
     @AfterEach
     fun cleanup() {
         distritoMongoRepository.deleteAll()
+        ubicacionMongoRepository.deleteAll()
     }
 }
