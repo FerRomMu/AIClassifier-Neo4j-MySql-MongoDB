@@ -33,10 +33,10 @@ class VectorServiceImplTest {
     @BeforeEach
     fun setUp() {
         coordenada = Coordenada(1.0, 2.0)
-        bernal = ubicacionService.crearUbicacion("Bernal", coordenada)
 
         distrito = Distrito("distritoA", listOf(coordenada, Coordenada(2.0, 1.0), Coordenada(2.2, 2.2)))
         distritoMongoRepository.save(distrito)
+        bernal = ubicacionService.crearUbicacion("Bernal", coordenada)
     }
 
     @Test

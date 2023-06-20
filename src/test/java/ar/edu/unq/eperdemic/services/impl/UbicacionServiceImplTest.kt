@@ -104,6 +104,7 @@ class UbicacionServiceImplTest {
     fun  `cuando intento mover de la ubicacion actual del vector a una nueva por estar a mas de 100000km de distancia falla`() {
 
         val coordenadaLejana = Coordenada(80.0,90.0)
+        distritoMongoRepository.save(Distrito("Distritob", listOf(coordenadaLejana, Coordenada(83.0,93.0), Coordenada(81.0, 92.0))))
         val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
         val chaco = ubicacionService.crearUbicacion("Chaco", coordenadaLejana)
 
