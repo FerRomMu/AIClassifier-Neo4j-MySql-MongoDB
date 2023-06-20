@@ -213,6 +213,7 @@ class PatogenoServiceTest {
     fun deleteAll() {
         dataService.eliminarTodo()
         ubicacionMongoRepository.deleteAll()
+        distritoMongoRepository.deleteAll()
     }
 
 }

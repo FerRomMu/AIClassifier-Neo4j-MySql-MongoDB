@@ -533,6 +533,7 @@ class UbicacionServiceImplTest {
         dataService.eliminarTodo()
         ubicacionNeoRepository.deleteAll()
         ubicacionMongoRepository.deleteAll()
+        distritoMongoRepository.deleteAll()
     }
 
 }

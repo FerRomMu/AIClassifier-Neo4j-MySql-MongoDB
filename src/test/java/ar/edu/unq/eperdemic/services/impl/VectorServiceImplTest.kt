@@ -202,6 +202,7 @@ class VectorServiceImplTest {
     fun tearDown() {
         dataService.eliminarTodo()
         ubicacionMongoRepository.deleteAll()
+        distritoMongoRepository.deleteAll()
     }
 
 }
