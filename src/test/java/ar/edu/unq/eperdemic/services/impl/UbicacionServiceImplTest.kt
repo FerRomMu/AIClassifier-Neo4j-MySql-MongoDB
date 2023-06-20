@@ -5,6 +5,7 @@ import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.DistritoMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
@@ -30,12 +31,13 @@ class UbicacionServiceImplTest {
 
     @Autowired lateinit var ubicacionService: UbicacionService
     @Autowired lateinit var ubicacionNeoRepository: UbicacionNeoRepository
-    @Autowired lateinit var ubicacionRepository: UbicacionRepository
     @Autowired lateinit var ubicacionMongoRepository: UbicacionMongoRepository
+    @Autowired lateinit var distritoMongoRepository: DistritoMongoRepository
     @Autowired lateinit var dataService: DataService
 
     lateinit var dado: Randomizador
     lateinit var coordenada: Coordenada
+    lateinit var distrito: Distrito
 
     @BeforeEach
     fun setUp() {
@@ -43,6 +45,20 @@ class UbicacionServiceImplTest {
         dado.estado = EstadoRandomizadorDeterminístico()
 
         coordenada = Coordenada(1.0, 2.0)
+
+        distrito = Distrito("distritoA", listOf(coordenada, Coordenada(2.0, 1.0), Coordenada(2.2, 2.2)))
+        distritoMongoRepository.save(distrito)
+    }
+
+    @Test
+    fun `CrearUbicacion con coordenadas invalidas falla` () {
+        val distrito1 = Distrito("Nombre Distrito 1",
+            listOf(Coordenada(0.0, 0.0), Coordenada(3.0, 0.0), Coordenada(0.0, 3.0)))
+        distritoMongoRepository.save(distrito1)
+
+        val coordenadaInv = Coordenada(15.0,15.0)
+
+        assertThrows(DataNotFoundException::class.java) {  ubicacionService.crearUbicacion("Ubicacion1", coordenadaInv) }
     }
 
     @Test
@@ -98,17 +114,19 @@ class UbicacionServiceImplTest {
     @Test
     fun  `cuando intento mover de la ubicacion actual del vector a una nueva por estar a mas de 100000km de distancia falla`() {
 
-        val coordenadaLejana = Coordenada(80.0,90.0)
+        val coordenadaLejana = Coordenada(60.0,40.0)
+        val distrito2 = Distrito("Distritob", listOf(Coordenada(40.0,40.0), Coordenada(70.0,40.0), Coordenada(70.0, 70.0), Coordenada(40.0,70.0)))
+        distritoMongoRepository.save(distrito2)
         val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
         val chaco = ubicacionService.crearUbicacion("Chaco", coordenadaLejana)
 
         ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
         dataService.persistir(cordoba)
 
-        var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
+        val vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
-        var vectorVictima1 = vectorService.crearVector(TipoDeVector.Persona,chaco.id!!)
-        var vectorVictima2 = vectorService.crearVector(TipoDeVector.Animal,chaco.id!!)
+        val vectorVictima1 = vectorService.crearVector(TipoDeVector.Persona,chaco.id!!)
+        val vectorVictima2 = vectorService.crearVector(TipoDeVector.Animal,chaco.id!!)
 
         val patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioHumano(100)
@@ -125,7 +143,7 @@ class UbicacionServiceImplTest {
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
-        var vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
+        val vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
 
         assertEquals(vectoresEnChaco.size,2)
 
@@ -528,6 +546,7 @@ class UbicacionServiceImplTest {
         dataService.eliminarTodo()
         ubicacionNeoRepository.deleteAll()
         ubicacionMongoRepository.deleteAll()
+        distritoMongoRepository.deleteAll()
     }
 
 }

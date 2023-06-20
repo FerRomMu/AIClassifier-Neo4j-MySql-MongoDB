@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.DistritoMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.services.EspecieService
 import ar.edu.unq.eperdemic.services.PatogenoService
@@ -28,13 +29,18 @@ class PatogenoServiceTest {
     @Autowired lateinit var dataService: DataService
     @Autowired lateinit var especieService : EspecieService
     @Autowired lateinit var ubicacionMongoRepository: UbicacionMongoRepository
+    @Autowired lateinit var distritoMongoRepository: DistritoMongoRepository
 
     lateinit var patogeno: Patogeno
     lateinit var coordenada: Coordenada
+    lateinit var distrito: Distrito
 
     @BeforeEach
     fun crearModelo() {
         coordenada = Coordenada(1.0, 2.0)
+        distrito = Distrito("distritoA", listOf(coordenada, Coordenada(2.0, 1.0), Coordenada(2.2, 2.2)))
+
+        distritoMongoRepository.save(distrito)
     }
 
     @Test
@@ -207,6 +213,7 @@ class PatogenoServiceTest {
     fun deleteAll() {
         dataService.eliminarTodo()
         ubicacionMongoRepository.deleteAll()
+        distritoMongoRepository.deleteAll()
     }
 
 }

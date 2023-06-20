@@ -10,6 +10,7 @@ import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.exceptions.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
 import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.DistritoMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
@@ -28,6 +29,7 @@ class UbicacionServiceImpl(): UbicacionService {
     @Autowired lateinit var ubicacionNeoRepository: UbicacionNeoRepository
     @Autowired lateinit var ubicacionRepository : UbicacionRepository
     @Autowired lateinit var ubicacionMongoRepository: UbicacionMongoRepository
+    @Autowired lateinit var distritoRepository: DistritoMongoRepository
     @Autowired lateinit var vectorRepository : VectorRepository
 
      fun moverVector(vectorAMover: Vector, ubicacionAMover: Ubicacion) {
@@ -107,6 +109,7 @@ class UbicacionServiceImpl(): UbicacionService {
         val ubicacion = Ubicacion(nombreUbicacion)
         val ubicacionNeo = UbicacionNeo(nombreUbicacion)
         val ubicacionMongo = UbicacionMongo(coordenada, nombreUbicacion)
+        ubicacionMongo.distrito = distritoRepository.findByPoint(ubicacionMongo.coordenada.latitud, ubicacionMongo.coordenada.longitud) ?: throw DataNotFoundException("No existe distrito para la coordenada dada.")
         try {
             ubicacionRepository.save(ubicacion)
             ubicacionNeoRepository.save(ubicacionNeo)

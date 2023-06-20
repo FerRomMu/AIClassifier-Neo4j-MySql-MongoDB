@@ -21,8 +21,7 @@ class DistritoServiceimpl: DistritoService {
     }
 
     override fun distritoMasEnfermo(): Distrito {
-        val coordenadasEnfermas = ubicacionRepository.findCoordenadasConInfectados()
-        return distritoRepository.distritoMasEnfermo(coordenadasEnfermas) ?:
+        return ubicacionRepository.distritoMasEnfermo() ?:
             throw DataNotFoundException("No hay distrito con enfermos.")
     }
 
