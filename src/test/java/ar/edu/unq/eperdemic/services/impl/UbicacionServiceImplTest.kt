@@ -103,18 +103,19 @@ class UbicacionServiceImplTest {
     @Test
     fun  `cuando intento mover de la ubicacion actual del vector a una nueva por estar a mas de 100000km de distancia falla`() {
 
-        val coordenadaLejana = Coordenada(80.0,90.0)
-        distritoMongoRepository.save(Distrito("Distritob", listOf(coordenadaLejana, Coordenada(83.0,93.0), Coordenada(81.0, 92.0))))
+        val coordenadaLejana = Coordenada(60.0,40.0)
+        val distrito2 = Distrito("Distritob", listOf(Coordenada(40.0,40.0), Coordenada(70.0,40.0), Coordenada(70.0, 70.0), Coordenada(40.0,70.0)))
+        distritoMongoRepository.save(distrito2)
         val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
         val chaco = ubicacionService.crearUbicacion("Chaco", coordenadaLejana)
 
         ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
         dataService.persistir(cordoba)
 
-        var vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
+        val vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
 
-        var vectorVictima1 = vectorService.crearVector(TipoDeVector.Persona,chaco.id!!)
-        var vectorVictima2 = vectorService.crearVector(TipoDeVector.Animal,chaco.id!!)
+        val vectorVictima1 = vectorService.crearVector(TipoDeVector.Persona,chaco.id!!)
+        val vectorVictima2 = vectorService.crearVector(TipoDeVector.Animal,chaco.id!!)
 
         val patogeno = Patogeno("Patogeni_SS")
         patogeno.setCapacidadDeContagioHumano(100)
@@ -131,7 +132,7 @@ class UbicacionServiceImplTest {
         assertEquals(vectorVictima1.especiesContagiadas.size,0)
         assertEquals(vectorVictima2.especiesContagiadas.size,0)
 
-        var vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
+        val vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
 
         assertEquals(vectoresEnChaco.size,2)
 
