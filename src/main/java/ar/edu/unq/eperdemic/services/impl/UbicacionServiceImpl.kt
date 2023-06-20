@@ -109,7 +109,7 @@ class UbicacionServiceImpl(): UbicacionService {
         val ubicacion = Ubicacion(nombreUbicacion)
         val ubicacionNeo = UbicacionNeo(nombreUbicacion)
         val ubicacionMongo = UbicacionMongo(coordenada, nombreUbicacion)
-        ubicacionMongo.distrito = distritoRepository.findByPoint(ubicacionMongo.coordenada)
+        ubicacionMongo.distrito = distritoRepository.findByPoint(ubicacionMongo.coordenada.latitud, ubicacionMongo.coordenada.longitud) ?: throw DataNotFoundException("No existe distrito para la coordenada dada.")
         try {
             ubicacionRepository.save(ubicacion)
             ubicacionNeoRepository.save(ubicacionNeo)

@@ -5,6 +5,7 @@ import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.DistritoMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
@@ -30,12 +31,13 @@ class UbicacionServiceImplTest {
 
     @Autowired lateinit var ubicacionService: UbicacionService
     @Autowired lateinit var ubicacionNeoRepository: UbicacionNeoRepository
-    @Autowired lateinit var ubicacionRepository: UbicacionRepository
     @Autowired lateinit var ubicacionMongoRepository: UbicacionMongoRepository
+    @Autowired lateinit var distritoMongoRepository: DistritoMongoRepository
     @Autowired lateinit var dataService: DataService
 
     lateinit var dado: Randomizador
     lateinit var coordenada: Coordenada
+    lateinit var distrito: Distrito
 
     @BeforeEach
     fun setUp() {
@@ -43,6 +45,9 @@ class UbicacionServiceImplTest {
         dado.estado = EstadoRandomizadorDeterminístico()
 
         coordenada = Coordenada(1.0, 2.0)
+
+        distrito = Distrito("distritoA", listOf(coordenada, Coordenada(2.0, 1.0), Coordenada(2.2, 2.2)))
+        distritoMongoRepository.save(distrito)
     }
 
     @Test

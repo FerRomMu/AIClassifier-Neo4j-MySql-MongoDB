@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.DistritoMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
@@ -22,15 +23,20 @@ class VectorServiceImplTest {
     @Autowired lateinit var ubicacionService: UbicacionService
     @Autowired lateinit var dataService: DataService
     @Autowired lateinit var ubicacionMongoRepository: UbicacionMongoRepository
+    @Autowired lateinit var distritoMongoRepository: DistritoMongoRepository
 
     lateinit var bernal: Ubicacion
 
     lateinit var coordenada : Coordenada
+    lateinit var distrito: Distrito
 
     @BeforeEach
     fun setUp() {
         coordenada = Coordenada(1.0, 2.0)
         bernal = ubicacionService.crearUbicacion("Bernal", coordenada)
+
+        distrito = Distrito("distritoA", listOf(coordenada, Coordenada(2.0, 1.0), Coordenada(2.2, 2.2)))
+        distritoMongoRepository.save(distrito)
     }
 
     @Test
