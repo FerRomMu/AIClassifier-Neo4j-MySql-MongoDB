@@ -3,7 +3,10 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.exceptions.DataDuplicationException
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
+import ar.edu.unq.eperdemic.exceptions.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.DistritoMongoRepository
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
@@ -11,11 +14,9 @@ import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.impl.DataServiceImpl
 import org.hibernate.exception.ConstraintViolationException
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -30,22 +31,41 @@ class UbicacionServiceImplTest {
 
     @Autowired lateinit var ubicacionService: UbicacionService
     @Autowired lateinit var ubicacionNeoRepository: UbicacionNeoRepository
-    @Autowired lateinit var ubicacionRepository: UbicacionRepository
+    @Autowired lateinit var ubicacionMongoRepository: UbicacionMongoRepository
+    @Autowired lateinit var distritoMongoRepository: DistritoMongoRepository
     @Autowired lateinit var dataService: DataService
 
     lateinit var dado: Randomizador
+    lateinit var coordenada: Coordenada
+    lateinit var distrito: Distrito
 
     @BeforeEach
     fun setUp() {
         dado = Randomizador.getInstance()
         dado.estado = EstadoRandomizadorDeterminístico()
+
+        coordenada = Coordenada(1.0, 2.0)
+
+        distrito = Distrito("distritoA", listOf(coordenada, Coordenada(2.0, 1.0), Coordenada(2.2, 2.2)))
+        distritoMongoRepository.save(distrito)
+    }
+
+    @Test
+    fun `CrearUbicacion con coordenadas invalidas falla` () {
+        val distrito1 = Distrito("Nombre Distrito 1",
+            listOf(Coordenada(0.0, 0.0), Coordenada(3.0, 0.0), Coordenada(0.0, 3.0)))
+        distritoMongoRepository.save(distrito1)
+
+        val coordenadaInv = Coordenada(15.0,15.0)
+
+        assertThrows(DataNotFoundException::class.java) {  ubicacionService.crearUbicacion("Ubicacion1", coordenadaInv) }
     }
 
     @Test
     fun  `mover vector a una ubicacion con un humano y un animal`() {
 
-        val cordoba = ubicacionService.crearUbicacion("Cordoba")
-        val chaco = ubicacionService.crearUbicacion("Chaco")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
+        val chaco = ubicacionService.crearUbicacion("Chaco", coordenada)
 
         ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
         dataService.persistir(cordoba)
@@ -92,10 +112,50 @@ class UbicacionServiceImplTest {
     }
 
     @Test
+    fun  `cuando intento mover de la ubicacion actual del vector a una nueva por estar a mas de 100000km de distancia falla`() {
+
+        val coordenadaLejana = Coordenada(60.0,40.0)
+        val distrito2 = Distrito("Distritob", listOf(Coordenada(40.0,40.0), Coordenada(70.0,40.0), Coordenada(70.0, 70.0), Coordenada(40.0,70.0)))
+        distritoMongoRepository.save(distrito2)
+        val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
+        val chaco = ubicacionService.crearUbicacion("Chaco", coordenadaLejana)
+
+        ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
+        dataService.persistir(cordoba)
+
+        val vectorAMover = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
+
+        val vectorVictima1 = vectorService.crearVector(TipoDeVector.Persona,chaco.id!!)
+        val vectorVictima2 = vectorService.crearVector(TipoDeVector.Animal,chaco.id!!)
+
+        val patogeno = Patogeno("Patogeni_SS")
+        patogeno.setCapacidadDeContagioHumano(100)
+        dataService.persistir(patogeno)
+
+
+        val especieAContagiar = patogeno.crearEspecie("Especie_Sl","Honduras")
+        dataService.persistir(especieAContagiar)
+
+        vectorService.infectar(vectorAMover,especieAContagiar)
+
+        assertEquals(vectorAMover.especiesContagiadas.size,1)
+        assertEquals(vectorAMover.especiesContagiadas.first().id, especieAContagiar.id)
+        assertEquals(vectorVictima1.especiesContagiadas.size,0)
+        assertEquals(vectorVictima2.especiesContagiadas.size,0)
+
+        val vectoresEnChaco = ubicacionService.vectoresEn(chaco.id!!)
+
+        assertEquals(vectoresEnChaco.size,2)
+
+        assertThrows(UbicacionMuyLejana::class.java) { ubicacionService.mover(vectorAMover.id!!,chaco.id!!) }
+
+    }
+
+    @Test
     fun  `mover vector insecto a una ubicacion con solo insectos`() {
 
-        val cordoba = ubicacionService.crearUbicacion("Cordoba")
-        val chaco = ubicacionService.crearUbicacion("Chaco")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
+        val chaco = ubicacionService.crearUbicacion("Chaco", coordenada)
 
         ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
         dataService.persistir(cordoba)
@@ -142,8 +202,8 @@ class UbicacionServiceImplTest {
     @Test
     fun  `mover vector a ubicacion vacia`() {
 
-        val cordoba = ubicacionService.crearUbicacion("Cordoba")
-        val chaco = ubicacionService.crearUbicacion("Chaco")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
+        val chaco = ubicacionService.crearUbicacion("Chaco", coordenada)
 
         ubicacionService.conectar("Cordoba", "Chaco", Camino.TipoDeCamino.CaminoTerreste)
         dataService.persistir(cordoba)
@@ -172,7 +232,7 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `Expandir en una ubicacion`() {
-        val cordoba = ubicacionService.crearUbicacion("Cordoba")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
 
         var vectorLocal = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
         var vectorLocal2 = vectorService.crearVector(TipoDeVector.Animal,cordoba.id!!)
@@ -209,7 +269,7 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `Expandir en una ubicacion sin contagios no hace nada`() {
-        val cordoba = ubicacionService.crearUbicacion("Cordoba")
+        val cordoba = ubicacionService.crearUbicacion("Cordoba", coordenada)
 
         val vectorSinContagiar = vectorService.crearVector(TipoDeVector.Persona,cordoba.id!!)
         val vectorSinContagiar2 = vectorService.crearVector(TipoDeVector.Animal,cordoba.id!!)
@@ -225,13 +285,13 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `si creo una ubicacion esta recibe un id`() {
-        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
+        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest", coordenada)
         assertNotNull(ubicacion.id)
     }
 
     @Test
     fun `si creo una ubicacion se guarda una ubicacionNeo con ese nombre tambien`() {
-        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
+        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest", coordenada)
 
         val ubicacionNeoCreada = ubicacionNeoRepository.findByNombre(ubicacion.nombre)
 
@@ -240,7 +300,7 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `si creo una ubicacion la puedo recuperar`() {
-        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest")
+        val ubicacion = ubicacionService.crearUbicacion("ubicacionTest", coordenada)
         val ubicacionRecuperada = ubicacionService.recuperar(ubicacion.id!!)
 
         assertEquals(ubicacion.nombre, ubicacionRecuperada.nombre)
@@ -249,9 +309,9 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `si trato de crear dos ubicaciones con el mismo nombre recibo error`() {
-        ubicacionService.crearUbicacion("ubicacionRepetida")
+        ubicacionService.crearUbicacion("ubicacionRepetida", coordenada)
 
-        assertThrows(DataDuplicationException::class.java) { ubicacionService.crearUbicacion("ubicacionRepetida") }
+        assertThrows(DataDuplicationException::class.java) { ubicacionService.crearUbicacion("ubicacionRepetida", coordenada) }
     }
 
     @Test
@@ -280,8 +340,8 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `se conectan dos ubicaciones existentes por medio terrestre`() {
-        val Bera = ubicacionService.crearUbicacion("ubicacion neo 1")
-        val ubicacion2 = ubicacionService.crearUbicacion("ubicacion neo 2")
+        val Bera = ubicacionService.crearUbicacion("ubicacion neo 1", coordenada)
+        val ubicacion2 = ubicacionService.crearUbicacion("ubicacion neo 2", coordenada)
 
         ubicacionService.conectar(Bera.nombre, ubicacion2.nombre, Camino.TipoDeCamino.CaminoTerreste)
 
@@ -293,8 +353,8 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `se establecen 2 conexiones unidireccionales entre dos ubicaciones`() {
-        val ubicacion1 = ubicacionService.crearUbicacion("ubicacion neo 1")
-        val ubicacion2 = ubicacionService.crearUbicacion("ubicacion neo 2")
+        val ubicacion1 = ubicacionService.crearUbicacion("ubicacion neo 1", coordenada)
+        val ubicacion2 = ubicacionService.crearUbicacion("ubicacion neo 2", coordenada)
 
         ubicacionService.conectar(ubicacion1.nombre, ubicacion2.nombre, Camino.TipoDeCamino.CaminoTerreste)
         ubicacionService.conectar(ubicacion2.nombre, ubicacion1.nombre, Camino.TipoDeCamino.CaminoAereo)
@@ -320,11 +380,11 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `si pido los caminos conectados a la Ubicacion con nombre Quilmes me los devuelve` () {
-        ubicacionService.crearUbicacion("Bera")
-        ubicacionService.crearUbicacion("Ubicacion2")
-        ubicacionService.crearUbicacion("Ubicacion3")
-        ubicacionService.crearUbicacion("Ubicacion4")
-        ubicacionService.crearUbicacion("Ubicacion5")
+        ubicacionService.crearUbicacion("Bera", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion2", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion3", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion4", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion5", coordenada)
 
         ubicacionService.conectar("Ubicacion2", "Bera", Camino.TipoDeCamino.CaminoTerreste)
         ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
@@ -353,10 +413,10 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `Mover mas corto pero no hay camino` () {
-        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
-        ubicacionService.crearUbicacion("Ubicacion2")
-        ubicacionService.crearUbicacion("Ubicacion3")
-        ubicacionService.crearUbicacion("Ubicacion4")
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion2", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion3", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion4", coordenada)
 
         ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
         ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoTerreste)
@@ -368,9 +428,9 @@ class UbicacionServiceImplTest {
 
     @Test
     fun `Mover mas corto hay camino pero no lo puede recorrer` () {
-        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
-        ubicacionService.crearUbicacion("Ubicacion2")
-        ubicacionService.crearUbicacion("Ubicacion3")
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion2", coordenada)
+        ubicacionService.crearUbicacion("Ubicacion3", coordenada)
 
         ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
         ubicacionService.conectar("Ubicacion2", "Ubicacion3", Camino.TipoDeCamino.CaminoAereo)
@@ -385,11 +445,11 @@ class UbicacionServiceImplTest {
 
         // Setup //
 
-        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1")
-        val ubicacion2 = ubicacionService.crearUbicacion("Ubicacion2")
-        val ubicacion3 = ubicacionService.crearUbicacion("Ubicacion3")
-        val ubicacion4 = ubicacionService.crearUbicacion("Ubicacion4")
-        val ubicacion5 = ubicacionService.crearUbicacion("Ubicacion5")
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1", coordenada)
+        val ubicacion2 = ubicacionService.crearUbicacion("Ubicacion2", coordenada)
+        val ubicacion3 = ubicacionService.crearUbicacion("Ubicacion3", coordenada)
+        val ubicacion4 = ubicacionService.crearUbicacion("Ubicacion4", coordenada)
+        val ubicacion5 = ubicacionService.crearUbicacion("Ubicacion5", coordenada)
 
         ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
         ubicacionService.conectar("Ubicacion1", "Ubicacion4", Camino.TipoDeCamino.CaminoTerreste)
@@ -452,6 +512,30 @@ class UbicacionServiceImplTest {
         assertEquals(especie1.nombre,vectorMovido.especiesContagiadas.toList()[0].nombre)
         assertEquals(especie1.paisDeOrigen,vectorMovido.especiesContagiadas.toList()[0].paisDeOrigen)
         assertEquals(ubicacion5.nombre,vectorMovido.ubicacion.nombre)
+    }
+
+    @Test
+    fun `Mover el unico vector infectado a otra ubicacion vacia` () {
+        val ubicacion1 = ubicacionService.crearUbicacion("Ubicacion1", coordenada)
+
+        val ubicacion2 = ubicacionService.crearUbicacion("Ubicacion2", coordenada)
+        ubicacionService.conectar("Ubicacion1", "Ubicacion2", Camino.TipoDeCamino.CaminoTerreste)
+
+        val vectorAMover = vectorService.crearVector(TipoDeVector.Persona,ubicacion1.id!!)
+        val patogeno1 = Patogeno("patogeno1")
+        val especie1 =  patogeno1.crearEspecie("especie1","P.ORIGEN")
+
+        dataService.persistir(patogeno1)
+        dataService.persistir(especie1)
+        vectorService.infectar(vectorAMover,especie1)
+
+        assertTrue(ubicacionMongoRepository.findByNombre(ubicacion1.nombre).hayAlgunInfectado)
+        assertFalse(ubicacionMongoRepository.findByNombre(ubicacion2.nombre).hayAlgunInfectado)
+
+        ubicacionService.mover(vectorAMover.id!!,ubicacion2.id!!)
+
+        assertFalse(ubicacionMongoRepository.findByNombre(ubicacion1.nombre).hayAlgunInfectado)
+        assertTrue(ubicacionMongoRepository.findByNombre(ubicacion2.nombre).hayAlgunInfectado)
 
     }
 
@@ -461,6 +545,8 @@ class UbicacionServiceImplTest {
     fun tearDown() {
         dataService.eliminarTodo()
         ubicacionNeoRepository.deleteAll()
+        ubicacionMongoRepository.deleteAll()
+        distritoMongoRepository.deleteAll()
     }
 
 }

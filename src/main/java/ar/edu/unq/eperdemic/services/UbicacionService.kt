@@ -1,16 +1,13 @@
 package ar.edu.unq.eperdemic.services
 
-import ar.edu.unq.eperdemic.modelo.Camino
-import ar.edu.unq.eperdemic.modelo.Ubicacion
-import ar.edu.unq.eperdemic.modelo.UbicacionNeo
-import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.*
 
 interface UbicacionService {
 
     fun mover(vectorId: Long, ubicacionid: Long)
     fun expandir(ubicacionId: Long)
     /* Operaciones CRUD*/
-    fun crearUbicacion(nombreUbicacion: String): Ubicacion
+    fun crearUbicacion(nombreUbicacion: String, coordenada: Coordenada): Ubicacion
     fun recuperar(id: Long): Ubicacion
     fun recuperarTodos(): List<Ubicacion>
     fun vectoresEn(id: Long): List<Vector>

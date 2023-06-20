@@ -3,6 +3,8 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.exceptions.DataNotFoundException
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.DistritoMongoRepository
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.services.EspecieService
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.UbicacionService
@@ -26,12 +28,19 @@ class PatogenoServiceTest {
     @Autowired lateinit var vectorService: VectorService
     @Autowired lateinit var dataService: DataService
     @Autowired lateinit var especieService : EspecieService
+    @Autowired lateinit var ubicacionMongoRepository: UbicacionMongoRepository
+    @Autowired lateinit var distritoMongoRepository: DistritoMongoRepository
 
     lateinit var patogeno: Patogeno
+    lateinit var coordenada: Coordenada
+    lateinit var distrito: Distrito
 
     @BeforeEach
     fun crearModelo() {
+        coordenada = Coordenada(1.0, 2.0)
+        distrito = Distrito("distritoA", listOf(coordenada, Coordenada(2.0, 1.0), Coordenada(2.2, 2.2)))
 
+        distritoMongoRepository.save(distrito)
     }
 
     @Test
@@ -78,7 +87,7 @@ class PatogenoServiceTest {
 
     @Test
     fun `si agrego una especie se persiste en el patogeno`() {
-        val ubicacion = ubicacionService.crearUbicacion("Ubicacion")
+        val ubicacion = ubicacionService.crearUbicacion("Ubicacion", coordenada)
         val vectorInfectado = Vector(TipoDeVector.Persona)
         vectorInfectado.ubicacion = ubicacion
         dataService.persistir(vectorInfectado)
@@ -93,7 +102,7 @@ class PatogenoServiceTest {
 
     @Test
     fun `si agrego una especie infecta a un vector de la ubicacion`() {
-        val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion")
+        val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion",coordenada)
         var vectorInfectado = Vector(TipoDeVector.Persona)
         vectorInfectado.ubicacion = ubicacionPatogeno
         dataService.persistir(vectorInfectado)
@@ -110,7 +119,7 @@ class PatogenoServiceTest {
 
     @Test
     fun `si agrego una especie se persiste la especie`() {
-        val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion")
+        val ubicacionPatogeno = ubicacionService.crearUbicacion("Ubicacion",coordenada)
         val vector = Vector(TipoDeVector.Persona)
         vector.ubicacion = ubicacionPatogeno
         dataService.persistir(vector)
@@ -131,7 +140,7 @@ class PatogenoServiceTest {
         patogeno = Patogeno("Gripe")
 
         patogenoService.crearPatogeno(patogeno)
-        val ubicacionSinVectores = ubicacionService.crearUbicacion("bernal")
+        val ubicacionSinVectores = ubicacionService.crearUbicacion("bernal",coordenada)
 
         assertThrows(DataNotFoundException::class.java) {
             patogenoService.agregarEspecie(patogeno.id!!, "virusT", ubicacionSinVectores.id!!)
@@ -169,7 +178,7 @@ class PatogenoServiceTest {
         dataService.crearSetDeDatosIniciales()
 
         val patogeno = Patogeno("Gripe")
-        val ubicacion = ubicacionService.crearUbicacion("Lugar 21")
+        val ubicacion = ubicacionService.crearUbicacion("Lugar 21",coordenada)
 
         patogenoService.crearPatogeno(patogeno)
         val vector = vectorService.crearVector(TipoDeVector.Persona, ubicacion.id!!)
@@ -181,9 +190,30 @@ class PatogenoServiceTest {
         assertFalse(patogenoService.esPandemia(especie.id!!))
     }
 
+    @Test
+    fun `si agrego una especie se actualiza ubicacionMongo`() {
+        val ubicacion = ubicacionService.crearUbicacion("Ubicacion", coordenada)
+        val vectorInfectado = Vector(TipoDeVector.Persona)
+        vectorInfectado.ubicacion = ubicacion
+        dataService.persistir(vectorInfectado)
+
+        assertFalse(ubicacionMongoRepository.findByNombre(ubicacion.nombre).hayAlgunInfectado)
+
+        patogeno = Patogeno("Gripe")
+        patogenoService.crearPatogeno(patogeno)
+        patogenoService.agregarEspecie(patogeno.id!!, "virusT", ubicacion.id!!)
+        val patogenoRecuperado = patogenoService.recuperarPatogeno(patogeno.id!!)
+
+        assertTrue(patogenoRecuperado.especies.map{e -> e.nombre}.contains("virusT"))
+
+        assertTrue(ubicacionMongoRepository.findByNombre(ubicacion.nombre).hayAlgunInfectado)
+    }
+
     @AfterEach
     fun deleteAll() {
         dataService.eliminarTodo()
+        ubicacionMongoRepository.deleteAll()
+        distritoMongoRepository.deleteAll()
     }
 
 }

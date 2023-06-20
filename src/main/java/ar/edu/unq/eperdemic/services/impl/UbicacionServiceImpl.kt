@@ -10,6 +10,8 @@ import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.exceptions.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.exceptions.UbicacionNoAlcanzable
 import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.DistritoMongoRepository
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.neo.UbicacionNeoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.VectorRepository
@@ -26,10 +28,13 @@ class UbicacionServiceImpl(): UbicacionService {
 
     @Autowired lateinit var ubicacionNeoRepository: UbicacionNeoRepository
     @Autowired lateinit var ubicacionRepository : UbicacionRepository
+    @Autowired lateinit var ubicacionMongoRepository: UbicacionMongoRepository
+    @Autowired lateinit var distritoRepository: DistritoMongoRepository
     @Autowired lateinit var vectorRepository : VectorRepository
 
      fun moverVector(vectorAMover: Vector, ubicacionAMover: Ubicacion) {
             val listaDeVectores = ubicacionRepository.vectoresEn(ubicacionAMover.id).toList()
+            val ubicacionOrigen = vectorAMover.ubicacion
 
              if(listaDeVectores.isNotEmpty()){
                  for (vector in listaDeVectores){
@@ -39,28 +44,50 @@ class UbicacionServiceImpl(): UbicacionService {
              }
              vectorAMover.ubicacion = ubicacionAMover
              vectorRepository.save(vectorAMover)
+
+         val ubicacionOrigenMongo = ubicacionMongoRepository.findByNombre(ubicacionOrigen.nombre)
+         val quedanInfectadosOrigen = ubicacionRepository.cantidadVectoresInfectados(ubicacionOrigen.nombre) > 0
+         ubicacionOrigenMongo.hayAlgunInfectado = quedanInfectadosOrigen
+         ubicacionMongoRepository.save(ubicacionOrigenMongo)
+
+         val ubicacionDestinoMongo = ubicacionMongoRepository.findByNombre(ubicacionAMover.nombre)
+         val quedanInfectadosDestino = ubicacionRepository.cantidadVectoresInfectados(ubicacionAMover.nombre) > 0
+         ubicacionDestinoMongo.hayAlgunInfectado = quedanInfectadosDestino
+         ubicacionMongoRepository.save(ubicacionDestinoMongo)
     }
 
     override fun mover(vectorId: Long, ubicacionid: Long){
+
         val vectorAMover = vectorRepository.findById(vectorId).get()
         val ubicacionAMover =  ubicacionRepository.findById(ubicacionid).get()
-        val ubicacionesQueSePuedenLLegar = ubicacionNeoRepository.conectados(vectorAMover.ubicacion.nombre)
 
-        if(! ubicacionesQueSePuedenLLegar.any { uNeo -> uNeo.esLaUbicacion(ubicacionAMover.nombre) } ){
-            throw UbicacionMuyLejana("no es posible llegar desde la actual ubicación del vector a la nueva por medio de un camino.")
+        val ubicacionOrigen = vectorAMover.ubicacion
+
+        val errorNeo = ubicacionNeoRepository
+            .validarMovimiento(
+                ubicacionOrigen.nombre,
+                ubicacionAMover.nombre,
+                vectorAMover.tipo.puedeIrPor())
+
+        val errorMongo = this.validarDistanciaMongo(ubicacionOrigen.nombre, ubicacionAMover.nombre)
+
+        if(errorNeo == 1 || errorMongo){
+            throw UbicacionMuyLejana("No es posible llegar desde la actual ubicación del vector a la nueva por medio de un camino.")
         }
 
-        val caminosubicacionNEOOrigen =  ubicacionNeoRepository.findByNombre(vectorAMover.ubicacion.nombre).caminos.
-                                            filter{c -> c.ubicacioDestino.nombre == ubicacionAMover.nombre}.toMutableList()
-        if(this.puedoUsarAlgunCamino(vectorAMover,caminosubicacionNEOOrigen)){
-            this.moverVector(vectorAMover,ubicacionAMover)
-        }else{
-            throw UbicacionNoAlcanzable("se intenta mover a un vector a través de un tipo de camino que no puede atravesar")
+        if(errorNeo == 2){
+            throw UbicacionNoAlcanzable("Se intenta mover a un vector a través de un tipo de camino que no puede atravesar")
         }
+
+        this.moverVector(vectorAMover,ubicacionAMover)
     }
 
-    fun puedoUsarAlgunCamino(vector: Vector, caminosUbicacionNeo: MutableList<Camino>): Boolean {
-        return caminosUbicacionNeo.any { c -> c.puedePasar(vector) }
+    private fun validarDistanciaMongo(ubicacion1: String, ubicacion2: String): Boolean {
+        val coordenada = ubicacionMongoRepository.findByNombre(ubicacion2).coordenada.toGeoJsonPoint().coordinates
+
+        val result = !ubicacionMongoRepository.isLocationNearby(ubicacion1, coordenada[0], coordenada[1], 100000.0)
+
+        return result
     }
 
     override fun expandir(ubicacionId: Long) {
@@ -78,12 +105,15 @@ class UbicacionServiceImpl(): UbicacionService {
     }
 
     @Transactional(rollbackFor = [Exception::class], noRollbackFor = [DataIntegrityViolationException::class])
-    override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
+    override fun crearUbicacion(nombreUbicacion: String, coordenada: Coordenada): Ubicacion {
         val ubicacion = Ubicacion(nombreUbicacion)
         val ubicacionNeo = UbicacionNeo(nombreUbicacion)
+        val ubicacionMongo = UbicacionMongo(coordenada, nombreUbicacion)
+        ubicacionMongo.distrito = distritoRepository.findByPoint(ubicacionMongo.coordenada.latitud, ubicacionMongo.coordenada.longitud) ?: throw DataNotFoundException("No existe distrito para la coordenada dada.")
         try {
             ubicacionRepository.save(ubicacion)
             ubicacionNeoRepository.save(ubicacionNeo)
+            ubicacionMongoRepository.save(ubicacionMongo)
             return ubicacion
         } catch (e: DataIntegrityViolationException) {
             throw DataDuplicationException("Ya existe una ubicación con ese nombre.")

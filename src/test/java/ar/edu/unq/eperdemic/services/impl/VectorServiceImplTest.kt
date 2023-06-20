@@ -2,12 +2,13 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.exceptions.IdNotFoundException
 import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.DistritoMongoRepository
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.utils.DataService
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -21,13 +22,21 @@ class VectorServiceImplTest {
     @Autowired lateinit var vectorService: VectorService
     @Autowired lateinit var ubicacionService: UbicacionService
     @Autowired lateinit var dataService: DataService
+    @Autowired lateinit var ubicacionMongoRepository: UbicacionMongoRepository
+    @Autowired lateinit var distritoMongoRepository: DistritoMongoRepository
 
     lateinit var bernal: Ubicacion
 
+    lateinit var coordenada : Coordenada
+    lateinit var distrito: Distrito
 
     @BeforeEach
     fun setUp() {
-        bernal = ubicacionService.crearUbicacion("Bernal")
+        coordenada = Coordenada(1.0, 2.0)
+
+        distrito = Distrito("distritoA", listOf(coordenada, Coordenada(2.0, 1.0), Coordenada(2.2, 2.2)))
+        distritoMongoRepository.save(distrito)
+        bernal = ubicacionService.crearUbicacion("Bernal", coordenada)
     }
 
     @Test
@@ -55,13 +64,15 @@ class VectorServiceImplTest {
 
     @Test
     fun `Si miro las enfermedades de un vector las recibo`() {
+        var ubicacion = ubicacionService.crearUbicacion("ubicacion1",coordenada)
+
+        val vectorAInfectar = vectorService.crearVector(TipoDeVector.Persona, ubicacion.id!!)
 
         val patogenoDeLaEspecie = Patogeno("Gripe")
         dataService.persistir(patogenoDeLaEspecie)
 
-        val vectorAInfectar = Vector(TipoDeVector.Persona)
-
         val especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
+        dataService.persistir(especieAContagiar)
 
         vectorService.infectar(vectorAInfectar,especieAContagiar)
         val resultado = vectorService.enfermedades(vectorAInfectar.id!!)
@@ -162,9 +173,36 @@ class VectorServiceImplTest {
         assertEquals(0, vectores.size)
     }
 
+    @Test
+    fun `si infecto a un vector sano actualiza ubicacionMongo `() {
+        var ubicacion = ubicacionService.crearUbicacion("ubicacion1",coordenada)
+
+        val vectorAInfectar = vectorService.crearVector(TipoDeVector.Persona, ubicacion.id!!)
+
+        val patogenoDeLaEspecie = Patogeno("Gripe")
+        dataService.persistir(patogenoDeLaEspecie)
+
+        val especieAContagiar = Especie(patogenoDeLaEspecie,"Especie_AR2T","Francia")
+        dataService.persistir(especieAContagiar)
+
+        assertEquals(vectorAInfectar.especiesContagiadas.size, 0)
+        assertFalse(ubicacionMongoRepository.findByNombre(ubicacion.nombre).hayAlgunInfectado)
+
+        vectorService.infectar(vectorAInfectar,especieAContagiar)
+
+        assertEquals(vectorAInfectar.especiesContagiadas.size, 1)
+        assertEquals(vectorAInfectar.especiesContagiadas.first().id, especieAContagiar.id)
+        assertEquals(vectorAInfectar.especiesContagiadas.first().nombre, especieAContagiar.nombre)
+
+        assertTrue(ubicacionMongoRepository.findByNombre(ubicacion.nombre).hayAlgunInfectado)
+
+    }
+
     @AfterEach
     fun tearDown() {
         dataService.eliminarTodo()
+        ubicacionMongoRepository.deleteAll()
+        distritoMongoRepository.deleteAll()
     }
 
 }

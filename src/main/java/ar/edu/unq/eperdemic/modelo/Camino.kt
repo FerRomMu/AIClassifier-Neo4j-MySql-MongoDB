@@ -12,18 +12,6 @@ class Camino(@TargetNode var ubicacioDestino: UbicacionNeo, val tipo: TipoDeCami
 
     enum class TipoDeCamino {
         CaminoTerreste, CaminoMaritimo, CaminoAereo;
-
-        fun puedeTransitar(tipo: TipoDeVector): Boolean {
-            return when (this) {
-                TipoDeCamino.CaminoTerreste -> tipo.esPersona() || tipo.esAnimal() || tipo.esInsecto()
-                TipoDeCamino.CaminoMaritimo -> tipo.esPersona() || tipo.esAnimal()
-                TipoDeCamino.CaminoAereo -> tipo.esInsecto() || tipo.esAnimal()
-            }
-        }
-    }
-
-    fun puedePasar(vector: Vector) : Boolean{
-        return this.tipo.puedeTransitar(vector.tipo)
     }
 
 }

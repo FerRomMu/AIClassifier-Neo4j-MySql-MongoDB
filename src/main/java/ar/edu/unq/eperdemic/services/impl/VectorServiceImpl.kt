@@ -11,6 +11,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.persistencia.repository.mongo.UbicacionMongoRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.EspecieRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.UbicacionRepository
 import ar.edu.unq.eperdemic.persistencia.repository.spring.VectorRepository
@@ -27,12 +28,18 @@ class VectorServiceImpl(): VectorService {
 
     @Autowired lateinit var vectorRepository: VectorRepository
     @Autowired lateinit var ubicacionRepository: UbicacionRepository
+    @Autowired lateinit var ubicacionMongoRepository: UbicacionMongoRepository
     @Autowired lateinit var especieRepository: EspecieRepository
 
     override fun infectar(vector: Vector, especie: Especie) {
         vector.agregarEspecie(especie)
         vectorRepository.save(vector)
         especieRepository.save(especie)
+
+        val ubicacionMongo = ubicacionMongoRepository.findByNombre(vector.ubicacion.nombre)
+        ubicacionMongo.hayAlgunInfectado = true
+        ubicacionMongoRepository.save(ubicacionMongo)
+
     }
 
     override fun enfermedades(vectorId: Long): List<Especie> {
