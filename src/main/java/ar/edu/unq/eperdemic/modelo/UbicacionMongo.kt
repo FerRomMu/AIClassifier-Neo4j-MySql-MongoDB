@@ -24,4 +24,11 @@ class UbicacionMongo{
         this.coordenada = coordenada
         this.nombre = nombre
     }
+
+    constructor(coordenada: Coordenada, nombre: String, distrito: Distrito) {
+        this.coordenada = coordenada
+        this.nombre = nombre
+        this.distrito = distrito
+    }
+
 }
