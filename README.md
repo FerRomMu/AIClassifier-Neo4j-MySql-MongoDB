@@ -1,3 +1,9 @@
+# ARCHIVO DE TP UNIVERSITARIO
+
+Este es un tp realizado en la materia EPERS sobre manejo de persistencia de datos. Se utilizaron ORMs, MySQL, Neo4j, MongoDB y en la tarea libre se generó una integración con clasificadores utilizando AI.
+
+# Introducción
+
 Año 2123; se ve en alza un nuevo virus bio-mecánico que parece afectar a los humanos convirtiéndolos en entidades mentalmente degradadas pero físicamente mejoradas. Estas mejoras en la fuerza, agilidad, destreza y tamaño en los seres humanos se dan a través de unas protuberancias con aspecto mecánico que crecen en los individuos una vez infectados. Asimismo, estas protuberancias mecánicas expelen un extraño aceite ocre que ayuda al virus a propagarse.
 
 <p align="center">
